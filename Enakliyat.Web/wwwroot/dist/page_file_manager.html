@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Studio ASP | File Manager</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	
+	<!-- ================== BEGIN core-css ================== -->
+	<link href="assets/css/vendor.min.css" rel="stylesheet">
+	<link href="assets/css/app.min.css" rel="stylesheet">
+	<!-- ================== END core-css ================== -->
+	
+</head>
+<body>
+	<!-- BEGIN #app -->
+	<div id="app" class="app app-content-full-height app-sidebar-minified">
+		
+		<!-- BEGIN #header -->
+		<div id="header" class="app-header">
+			<!-- BEGIN mobile-toggler -->
+			<div class="mobile-toggler">
+				<button type="button" class="menu-toggler" data-toggle="sidebar-mobile">
+					<span class="bar"></span>
+					<span class="bar"></span>
+				</button>
+			</div>
+			<!-- END mobile-toggler -->
+			
+			<!-- BEGIN brand -->
+			<div class="brand">
+				<div class="desktop-toggler">
+					<button type="button" class="menu-toggler" data-toggle="sidebar-minify">
+						<span class="bar"></span>
+						<span class="bar"></span>
+					</button>
+				</div>
+				
+				<a href="index.html" class="brand-logo">
+					<img src="assets/img/logo.png" class="invert-dark" alt="" height="20">
+				</a>
+			</div>
+			<!-- END brand -->
+			
+			<!-- BEGIN menu -->
+			<div class="menu">
+				<form class="menu-search" method="POST" name="header_search_form">
+					<div class="menu-search-icon"><i class="fa fa-search"></i></div>
+					<div class="menu-search-input">
+						<input type="text" class="form-control" placeholder="Search menu...">
+					</div>
+				</form>
+				<div class="menu-item dropdown">
+					<a href="#" data-bs-toggle="dropdown" data-display="static" class="menu-link">
+						<div class="menu-icon"><i class="fa fa-bell nav-icon"></i></div>
+						<div class="menu-label">3</div>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end dropdown-notification">
+						<h6 class="dropdown-header text-body-emphasis mb-1">Notifications</h6>
+						<a href="#" class="dropdown-notification-item">
+							<div class="dropdown-notification-icon">
+								<i class="fa fa-receipt fa-lg fa-fw text-success"></i>
+							</div>
+							<div class="dropdown-notification-info">
+								<div class="title">Your store has a new order for 2 items totaling $1,299.00</div>
+								<div class="time">just now</div>
+							</div>
+							<div class="dropdown-notification-arrow">
+								<i class="fa fa-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="dropdown-notification-item">
+							<div class="dropdown-notification-icon">
+								<i class="far fa-user-circle fa-lg fa-fw text-muted"></i>
+							</div>
+							<div class="dropdown-notification-info">
+								<div class="title">3 new customer account is created</div>
+								<div class="time">2 minutes ago</div>
+							</div>
+							<div class="dropdown-notification-arrow">
+								<i class="fa fa-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="dropdown-notification-item">
+							<div class="dropdown-notification-icon">
+								<img src="assets/img/icon/android.svg" alt="" width="26">
+							</div>
+							<div class="dropdown-notification-info">
+								<div class="title">Your android application has been approved</div>
+								<div class="time">5 minutes ago</div>
+							</div>
+							<div class="dropdown-notification-arrow">
+								<i class="fa fa-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="dropdown-notification-item">
+							<div class="dropdown-notification-icon">
+								<img src="assets/img/icon/paypal.svg" alt="" width="26">
+							</div>
+							<div class="dropdown-notification-info">
+								<div class="title">Paypal payment method has been enabled for your store</div>
+								<div class="time">10 minutes ago</div>
+							</div>
+							<div class="dropdown-notification-arrow">
+								<i class="fa fa-chevron-right"></i>
+							</div>
+						</a>
+						<div class="p-2 text-center mb-n1">
+							<a href="#" class="text-body-emphasis text-opacity-50 text-decoration-none">See all</a>
+						</div>
+					</div>
+				</div>
+				<div class="menu-item dropdown">
+					<a href="#" data-bs-toggle="dropdown" data-display="static" class="menu-link">
+						<div class="menu-img online">
+							<img src="assets/img/user/user.jpg" alt="" class="ms-100 mh-100 rounded-circle">
+						</div>
+						<div class="menu-text">johnsmith@studio-asp.com</div>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end me-lg-3">
+						<a class="dropdown-item d-flex align-items-center" href="profile.html">Edit Profile <i class="fa fa-user-circle fa-fw ms-auto text-body text-opacity-50"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="email_inbox.html">Inbox <i class="fa fa-envelope fa-fw ms-auto text-body text-opacity-50"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="calendar.html">Calendar <i class="fa fa-calendar-alt fa-fw ms-auto text-body text-opacity-50"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="settings.html">Setting <i class="fa fa-wrench fa-fw ms-auto text-body text-opacity-50"></i></a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item d-flex align-items-center" href="page_login.html">Log Out <i class="fa fa-toggle-off fa-fw ms-auto text-body text-opacity-50"></i></a>
+					</div>
+				</div>
+			</div>
+			<!-- END menu -->
+		</div>
+		<!-- END #header -->
+		
+		<!-- BEGIN #sidebar -->
+		<div id="sidebar" class="app-sidebar">
+			<!-- BEGIN scrollbar -->
+			<div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
+				<!-- BEGIN menu -->
+				<div class="menu">
+					<div class="menu-header">Navigation</div>
+					<div class="menu-item">
+						<a href="index.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-laptop"></i></span>
+							<span class="menu-text">Dashboard</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="analytics.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-chart-pie"></i></span>
+							<span class="menu-text">Analytics</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon">
+								<i class="fa fa-envelope"></i>
+								<span class="menu-icon-label">6</span>
+							</span>
+							<span class="menu-text">Email</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="email_inbox.html" class="menu-link">
+									<span class="menu-text">Inbox</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="email_compose.html" class="menu-link">
+									<span class="menu-text">Compose</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="email_detail.html" class="menu-link">
+									<span class="menu-text">Detail</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-divider"></div>
+					<div class="menu-header">Components</div>
+					<div class="menu-item">
+						<a href="widgets.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-qrcode"></i></span>
+							<span class="menu-text">Widgets</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="javascript:;" class="menu-link">
+							<div class="menu-icon"><i class="fa fa-microchip"></i></div>
+							<div class="menu-text d-flex align-items-center">AI Studio</div> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="ai_chat.html" class="menu-link">
+									<div class="menu-text">AI Chat</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ai_image_generator.html" class="menu-link">
+									<div class="menu-text">AI Image Generator</div>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="javascript:;" class="menu-link">
+							<div class="menu-icon">
+								<i class="fa fa-wallet"></i>
+							</div>
+							<div class="menu-text d-flex align-items-center">POS System</div> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="pos_customer_order.html" target="_blank" class="menu-link">
+									<div class="menu-text">Customer Order</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_kitchen_order.html" target="_blank" class="menu-link">
+									<div class="menu-text">Kitchen Order</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_counter_checkout.html" target="_blank" class="menu-link">
+									<div class="menu-text">Counter Checkout</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_table_booking.html" target="_blank" class="menu-link">
+									<div class="menu-text">Table Booking</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_menu_stock.html" target="_blank" class="menu-link">
+									<div class="menu-text">Menu Stock</div>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-heart"></i></span>
+							<span class="menu-text">UI Kits</span> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="ui_bootstrap.html" class="menu-link">
+									<span class="menu-text">Bootstrap</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_buttons.html" class="menu-link">
+									<span class="menu-text">Buttons</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_card.html" class="menu-link">
+									<span class="menu-text">Card</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_icons.html" class="menu-link">
+									<span class="menu-text">Icons</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_modal_notification.html" class="menu-link">
+									<span class="menu-text">Modal & Notification</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_typography.html" class="menu-link">
+									<span class="menu-text">Typography</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_tabs_accordions.html" class="menu-link">
+									<span class="menu-text">Tabs & Accordions</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-file-alt"></i></span>
+							<span class="menu-text">Forms</span> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="form_elements.html" class="menu-link">
+									<span class="menu-text">Form Elements</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="form_plugins.html" class="menu-link">
+									<span class="menu-text">Form Plugins</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="form_wizards.html" class="menu-link">
+									<span class="menu-text">Wizards</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-table"></i></span>
+							<span class="menu-text">Tables</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="table_elements.html" class="menu-link">
+									<span class="menu-text">Table Elements</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="table_plugins.html" class="menu-link">
+									<span class="menu-text">Table Plugins</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-chart-bar"></i></span>
+							<span class="menu-text">Charts</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="chart_js.html" class="menu-link">
+									<span class="menu-text">Chart.js</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="chart_apex.html" class="menu-link">
+									<span class="menu-text">Apexcharts.js</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item">
+						<a href="map.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-map-marker-alt"></i></span>
+							<span class="menu-text">Map</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-code-branch"></i></span>
+							<span class="menu-text">Layout</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="layout_starter.html" class="menu-link">
+									<span class="menu-text">Starter Page</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_fixed_footer.html" class="menu-link">
+									<span class="menu-text">Fixed Footer</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_full_height.html" class="menu-link">
+									<span class="menu-text">Full Height</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_full_width.html" class="menu-link">
+									<span class="menu-text">Full Width</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_boxed_layout.html" class="menu-link">
+									<span class="menu-text">Boxed Layout</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_minified_sidebar.html" class="menu-link">
+									<span class="menu-text">Minified Sidebar</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_top_nav.html" class="menu-link">
+									<span class="menu-text">Top Nav</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_mixed_nav.html" class="menu-link">
+									<span class="menu-text">Mixed Nav</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_mixed_nav_boxed_layout.html" class="menu-link">
+									<span class="menu-text">Mixed Nav Boxed Layout</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub active">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-globe"></i></span>
+							<span class="menu-text">Pages</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="page_scrum_board.html" class="menu-link">
+									<span class="menu-text">Scrum Board</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_products.html" class="menu-link">
+									<span class="menu-text">Products</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_product_details.html" class="menu-link">
+									<span class="menu-text">Product Details</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_orders.html" class="menu-link">
+									<span class="menu-text">Orders</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_order_details.html" class="menu-link">
+									<span class="menu-text">Order Details</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_gallery.html" class="menu-link">
+									<span class="menu-text">Gallery</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_search_results.html" class="menu-link">
+									<span class="menu-text">Search Results</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_coming_soon.html" class="menu-link">
+									<span class="menu-text">Coming Soon Page</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_404_error.html" class="menu-link">
+									<span class="menu-text">404 Error Page</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_login.html" class="menu-link">
+									<span class="menu-text">Login</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_register.html" class="menu-link">
+									<span class="menu-text">Register</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_messenger.html" class="menu-link">
+									<span class="menu-text">Messenger</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_data_management.html" class="menu-link">
+									<span class="menu-text">Data Management</span>
+								</a>
+							</div>
+							<div class="menu-item active">
+								<a href="page_file_manager.html" class="menu-link">
+									<span class="menu-text">File Manager</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_pricing.html" class="menu-link">
+									<span class="menu-text">Pricing Page</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item">
+						<a href="landing.html" target="_blank" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-crown"></i></span>
+							<span class="menu-text">Landing Page</span>
+						</a>
+					</div>
+					<div class="menu-divider"></div>
+					<div class="menu-header">Users</div>
+					<div class="menu-item">
+						<a href="profile.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-user-circle"></i></span>
+							<span class="menu-text">Profile</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="calendar.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-calendar"></i></span>
+							<span class="menu-text">Calendar</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="settings.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-cog"></i></span>
+							<span class="menu-text">Settings</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="helper.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-question-circle"></i></span>
+							<span class="menu-text">Helper</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="asp_identity.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-fingerprint"></i></span>
+							<span class="menu-text">ASP Identity</span>
+						</a>
+					</div>
+					<div class="p-3 px-4 mt-auto hide-on-minified">
+						<a href="https://seantheme.com/studio-asp/documentation/index.html" class="btn btn-secondary d-block w-100 fw-600 rounded-pill">
+							<i class="fa fa-code-branch me-1 ms-n1 opacity-5"></i> Documentation
+						</a>
+					</div>
+				</div>
+				<!-- END menu -->
+			</div>
+			<!-- END scrollbar -->
+			
+			<!-- BEGIN mobile-sidebar-backdrop -->
+			<button class="app-sidebar-mobile-backdrop" data-dismiss="sidebar-mobile"></button>
+			<!-- END mobile-sidebar-backdrop -->
+		</div>
+		<!-- END #sidebar -->
+		
+		<!-- BEGIN #content -->
+		<div id="content" class="app-content d-flex flex-column">
+			<!-- BEGIN breadcrumb -->
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item"><a href="javascript:;">PAGES</a></li>
+				<li class="breadcrumb-item active">FILE MANAGER</li>
+			</ol>
+			<!-- END breadcrumb -->
+			<!-- BEGIN page-header -->
+			<h1 class="page-header">File Manager <small>header small text goes here...</small></h1>
+			<!-- END page-header -->
+			
+			<div class="card flex-1 m-0 d-flex flex-column overflow-hidden">
+				<div class="card-header d-flex bg-none">
+					<div class="fw-bold flex-1">File Manager</div>
+					<a href="#" data-toggle="card-expand" class="text-body text-opacity-50 text-decoration-none"><i class="fa fa-fw fa-expand"></i> Expand</a>
+				</div>
+				<div class="card-body p-0 flex-1 overflow-hidden">
+					<div class="file-manager h-100" id="fileManager">
+						<div class="file-manager-toolbar">
+							 <button type="button" class="btn shadow-none text-body border-0"><i class="fa fa-lg me-1 fa-plus"></i> File</button>
+							 <button type="button" class="btn shadow-none text-body border-0"><i class="fa fa-lg me-1 fa-plus"></i> Folder</button>
+							 <button type="button" class="btn shadow-none text-body text-opacity-50 border-0" disabled><i class="fa fa-lg me-1 fa-copy"></i> Copy</button>
+							 <button type="button" class="btn shadow-none text-body text-opacity-50 border-0" disabled><i class="fa fa-lg me-1 fa-move"></i> Move</button>
+							 <button type="button" class="btn shadow-none text-body border-0"><i class="fa fa-lg me-1 fa-upload"></i> Upload</button>
+							 <button type="button" class="btn shadow-none text-body text-opacity-50 border-0" disabled><i class="fa fa-lg me-1 fa-download"></i> Download</button>
+							 <button type="button" class="btn shadow-none text-body text-opacity-50 border-0" disabled><i class="fa fa-lg me-1 fa-xmark"></i> Delete</button>
+							 <button type="button" class="btn shadow-none text-body text-opacity-50 border-0" disabled><i class="fa fa-lg me-1 fa-rotate-left"></i> Restore</button>
+							 <button type="button" class="btn shadow-none text-body text-opacity-50 border-0" disabled><i class="fa fa-lg me-1 fa-file"></i> Rename</button>
+							 <button type="button" class="btn shadow-none text-body text-opacity-50 border-0" disabled><i class="fa fa-lg me-1 fa-pen"></i> Edit</button>
+							 <button type="button" class="btn shadow-none text-body text-opacity-50 border-0" disabled><i class="fa fa-lg me-1 fa-pen-to-square"></i> HTML Editor</button>
+							 <button type="button" class="btn shadow-none text-body text-opacity-50 border-0" disabled><i class="fa fa-lg me-1 fa-key"></i> Permissions</button>
+							 <button type="button" class="btn shadow-none text-body text-opacity-50 border-0" disabled><i class="fa fa-lg me-1 fa-file"></i> View</button>
+							 <button type="button" class="btn shadow-none text-body text-opacity-50 border-0" disabled><i class="fa fa-lg me-1 fa-lock-open"></i> Extract</button>
+							 <button type="button" class="btn shadow-none text-body text-opacity-50 border-0" disabled><i class="fa fa-lg me-1 fa-file-zipper"></i> Compress</button>
+						</div>
+						<div class="file-manager-container">
+							<div class="file-manager-sidebar">
+								<div class="file-manager-sidebar-mobile-toggler">
+									<button type="button" class="btn" data-toggle-class="file-manager-sidebar-mobile-toggled" data-target="#fileManager"><i class="far fa-lg fa-folder"></i></button>
+								</div>
+								<div class="file-manager-sidebar-content">
+									<div data-scrollbar="true" data-height="100%" class="p-3">
+										<input type="text" class="form-control form-control-sm mb-3" placeholder="Seach file..." />
+										<div class="file-tree mb-3">
+											<div class="file-node has-sub expand selected">
+												<a href="javascript:;" class="file-link">
+													<span class="file-arrow"></span>
+													<span class="file-info">
+														<span class="file-icon"><i class="fa fa-folder fa-lg text-warning"></i></span>
+														<span class="file-text">public_html</span>
+													</span>
+												</a>
+												<div class="file-tree">
+													<div class="file-node has-sub">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="fa fa-folder fa-lg text-warning"></i></span>
+																<span class="file-text">services</span>
+															</span>
+														</a>
+														<div class="file-tree">
+															<div class="file-node has-sub">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="fa fa-folder fa-lg text-warning"></i></span>
+																		<span class="file-text">app_development</span>
+																	</span>
+																</a>
+																<div class="file-tree">
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">index.html</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">android_app.html</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">ios_app.html</span>
+																			</span>
+																		</a>
+																	</div>
+																</div>
+															</div>
+															<div class="file-node has-sub">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="fa fa-folder fa-lg text-warning"></i></span>
+																		<span class="file-text">digital_marketing</span>
+																	</span>
+																</a>
+																<div class="file-tree">
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">index.html</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">social_media.html</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">seo.html</span>
+																			</span>
+																		</a>
+																	</div>
+																</div>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">index.html</span>
+																	</span>
+																</a>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">web_design.html</span>
+																	</span>
+																</a>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">seo_services.html</span>
+																	</span>
+																</a>
+															</div>
+														</div>
+													</div>
+													<div class="file-node has-sub">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="fa fa-folder fa-lg text-warning"></i></span>
+																<span class="file-text">portfolio</span>
+															</span>
+														</a>
+														<div class="file-tree">
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">index.html</span>
+																	</span>
+																</a>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">project_1.html</span>
+																	</span>
+																</a>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">project_2.html</span>
+																	</span>
+																</a>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">project_3.html</span>
+																	</span>
+																</a>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">project_4.html</span>
+																	</span>
+																</a>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">project_5.html</span>
+																	</span>
+																</a>
+															</div>
+														</div>
+													</div>
+													<div class="file-node has-sub">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="fa fa-folder fa-lg text-warning"></i></span>
+																<span class="file-text">blog</span>
+															</span>
+														</a>
+														<div class="file-tree">
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">index.html</span>
+																	</span>
+																</a>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">post_1.html</span>
+																	</span>
+																</a>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">post_2.html</span>
+																	</span>
+																</a>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">post_3.html</span>
+																	</span>
+																</a>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">post_4.html</span>
+																	</span>
+																</a>
+															</div>
+															<div class="file-node">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																		<span class="file-text">post_5.html</span>
+																	</span>
+																</a>
+															</div>
+														</div>
+													</div>
+													<div class="file-node has-sub">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="fa fa-folder fa-lg text-warning"></i></span>
+																<span class="file-text">assets</span>
+															</span>
+														</a>
+														<div class="file-tree">
+															<div class="file-node has-sub">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="fa fa-folder fa-lg text-warning"></i></span>
+																		<span class="file-text">css</span>
+																	</span>
+																</a>
+																<div class="file-tree">
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">styles.css</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">main.css</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">responsive.css</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">typography.css</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">colors.css</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">layout.css</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">animations.css</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">forms.css</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">buttons.css</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">grids.css</span>
+																			</span>
+																		</a>
+																	</div>
+																</div>
+															</div>
+															<div class="file-node has-sub">
+																<a href="javascript:;" class="file-link">
+																	<span class="file-arrow"></span>
+																	<span class="file-info">
+																		<span class="file-icon"><i class="fa fa-folder fa-lg text-warning"></i></span>
+																		<span class="file-text">js</span>
+																	</span>
+																</a>
+																<div class="file-tree">
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">main.js</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">script.js</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">sliders.js</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">gallery.js</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">form-validation.js</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">animations.js</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">navigation.js</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">modal.js</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">tabs.js</span>
+																			</span>
+																		</a>
+																	</div>
+																	<div class="file-node">
+																		<a href="javascript:;" class="file-link">
+																			<span class="file-arrow"></span>
+																			<span class="file-info">
+																				<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																				<span class="file-text">accordion.js</span>
+																			</span>
+																		</a>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="file-node">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																<span class="file-text">index.html</span>
+															</span>
+														</a>
+													</div>
+													<div class="file-node">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																<span class="file-text">home.html</span>
+															</span>
+														</a>
+													</div>
+													<div class="file-node">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																<span class="file-text">about.html</span>
+															</span>
+														</a>
+													</div>
+													<div class="file-node">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																<span class="file-text">contact.html</span>
+															</span>
+														</a>
+													</div>
+													<div class="file-node">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																<span class="file-text">testimonials.html</span>
+															</span>
+														</a>
+													</div>
+													<div class="file-node">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																<span class="file-text">faq.html</span>
+															</span>
+														</a>
+													</div>
+													<div class="file-node">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																<span class="file-text">pricing.html</span>
+															</span>
+														</a>
+													</div>
+													<div class="file-node">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="far fa-file-code fa-lg text-body text-opacity-50"></i></span>
+																<span class="file-text">404.shtml</span>
+															</span>
+														</a>
+													</div>
+													<div class="file-node">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="fa fa-file-text fa-lg text-body text-opacity-50"></i></span>
+																<span class="file-text">.htaccess</span>
+															</span>
+														</a>
+													</div>
+													<div class="file-node">
+														<a href="javascript:;" class="file-link">
+															<span class="file-arrow"></span>
+															<span class="file-info">
+																<span class="file-icon"><i class="far fa-file-image fa-lg text-success"></i></span>
+																<span class="file-text">favicon.ico</span>
+															</span>
+														</a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="file-manager-sidebar-footer">
+									<div class="d-flex align-items-center">
+										<div class="mx-n1">
+											<span class="iconify fa-3x" data-icon="solar:ssd-square-bold-duotone"></span>
+										</div>
+										<div class="flex-1 ps-3 small">
+											<div class="fw-bold">SSD Storage:</div>
+											<div class="progress h-5px my-1">
+												<div class="progress-bar progress-bar-striped bg-gray-500" style="width: 80%"></div>
+											</div>
+											<div class="fw-bold text-body text-opacity-75">
+												<b class="text-body">127.7GB</b> free of <b class="text-body">256GB</b>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="file-manager-content d-flex flex-column">
+								<div class="mb-0 d-flex text-nowrap p-3 border-bottom">
+									<button type="button" class="btn btn-sm btn-default me-2 px-2"><i class="fa fa-fw fa-home"></i></button>
+									<button type="button" class="btn btn-sm btn-default me-2" disabled><i class="fa fa-fw fa-arrow-turn-up ms-n1"></i>  Up One Level</button>
+							
+									<div class="btn-group me-2">
+										<button type="button" class="btn btn-sm btn-default" disabled><i class="fa me-1 fa-arrow-left"></i> Back</button>
+										<button type="button" class="btn btn-sm btn-default text-opacity-50" disabled><i class="fa me-1 fa-arrow-right"></i> Forward</button>
+									</div>
+									<button type="button" class="btn btn-sm btn-default me-2 px-2"><i class="fa fa-fw fa-arrows-rotate"></i></button>
+							
+									<div class="btn-group me-2">
+										<button type="button" class="btn btn-sm btn-default"><i class="fa fa-fw fa-check ms-n1"></i> Select All</button>
+										<button type="button" class="btn btn-sm btn-default"><i class="far fa-fw fa-square ms-n1"></i> Unselect All</button>
+									</div>
+								</div>
+								<div class="flex-1 overflow-hidden">
+									<div data-scrollbar="true" data-skip-mobile="true" data-height="100%" class="p-0">
+										<table class="table table-striped table-borderless table-sm m-0 text-nowrap">
+											<thead>
+												<tr class="border-bottom">
+													<th class="w-10px ps-10px"></th>
+													<th class="px-10px">Name</th>
+													<th class="px-10px w-100px">Size</th>
+													<th class="px-10px w-200px">Last Modified</th>
+													<th class="px-10px w-200px">Type</th>
+													<th class="px-10px w-100px">Permission</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="fa fa-folder text-warning fa-lg"></i></td>
+													<td class="px-10px border-0">services</td>
+													<td class="px-10px">4 KB</td>
+													<td class="px-10px">Jun 11, 2025, 10:35PM</td>
+													<td class="px-10px">http:/unix-directory</td>
+													<td class="px-10px border-0">0755</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="fa fa-folder text-warning fa-lg"></i></td>
+													<td class="px-10px border-0">portfolio</td>
+													<td class="px-10px">4 KB</td>
+													<td class="px-10px">Jun 11, 2025, 10:36PM</td>
+													<td class="px-10px">http:/unix-directory</td>
+													<td class="px-10px border-0">0755</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="fa fa-folder text-warning fa-lg"></i></td>
+													<td class="px-10px border-0">blog</td>
+													<td class="px-10px">4 KB</td>
+													<td class="px-10px">Jun 11, 2025, 10:04PM</td>
+													<td class="px-10px">http:/unix-directory</td>
+													<td class="px-10px border-0">0755</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="fa fa-folder text-warning fa-lg"></i></td>
+													<td class="px-10px border-0">assets</td>
+													<td class="px-10px">4 KB</td>
+													<td class="px-10px">Jun 11, 2025, 10:14PM</td>
+													<td class="px-10px">http:/unix-directory</td>
+													<td class="px-10px border-0">0755</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="fa fa-folder text-warning fa-lg"></i></td>
+													<td class="px-10px border-0">php</td>
+													<td class="px-10px">4 KB</td>
+													<td class="px-10px">Jun 11, 2025, 10:36PM</td>
+													<td class="px-10px">http:/unix-directory</td>
+													<td class="px-10px border-0">0755</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="fa fa-folder text-warning fa-lg"></i></td>
+													<td class="px-10px border-0">docs</td>
+													<td class="px-10px">4 KB</td>
+													<td class="px-10px">Jun 11, 2025, 10:36PM</td>
+													<td class="px-10px">http:/unix-directory</td>
+													<td class="px-10px border-0">0755</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="fa fa-folder text-warning fa-lg"></i></td>
+													<td class="px-10px border-0">archives</td>
+													<td class="px-10px">4 KB</td>
+													<td class="px-10px">Jun 11, 2025, 10:36PM</td>
+													<td class="px-10px">http:/unix-directory</td>
+													<td class="px-10px border-0">0755</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="fa fa-folder text-warning fa-lg"></i></td>
+													<td class="px-10px border-0">video</td>
+													<td class="px-10px">4 KB</td>
+													<td class="px-10px">Jun 11, 2025, 10:36PM</td>
+													<td class="px-10px">http:/unix-directory</td>
+													<td class="px-10px border-0">0755</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="fa fa-folder text-warning fa-lg"></i></td>
+													<td class="px-10px border-0">audio</td>
+													<td class="px-10px">4 KB</td>
+													<td class="px-10px">Jun 11, 2025, 10:36PM</td>
+													<td class="px-10px">http:/unix-directory</td>
+													<td class="px-10px border-0">0755</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="fa fa-folder text-warning fa-lg"></i></td>
+													<td class="px-10px border-0">docs</td>
+													<td class="px-10px">4 KB</td>
+													<td class="px-10px">Jun 11, 2025, 10:36PM</td>
+													<td class="px-10px">http:/unix-directory</td>
+													<td class="px-10px border-0">0755</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="far fa-file-code text-body text-opacity-50 fa-lg"></i></td>
+													<td class="px-10px border-0">index.html</td>
+													<td class="px-10px">39.5 KB</td>
+													<td class="px-10px">July 05, 2025, 10:35PM</td>
+													<td class="px-10px">text/html</td>
+													<td class="px-10px border-0">0644</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="far fa-file-code text-body text-opacity-50 fa-lg"></i></td>
+													<td class="px-10px border-0">home.html</td>
+													<td class="px-10px">129.1 KB</td>
+													<td class="px-10px">July 06, 2025, 1:00PM</td>
+													<td class="px-10px">text/html</td>
+													<td class="px-10px border-0">0644</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="far fa-file-code text-body text-opacity-50 fa-lg"></i></td>
+													<td class="px-10px border-0">about.html</td>
+													<td class="px-10px">24 KB</td>
+													<td class="px-10px">July 01, 2025, 6:59AM</td>
+													<td class="px-10px">text/html</td>
+													<td class="px-10px border-0">0644</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="far fa-file-code text-body text-opacity-50 fa-lg"></i></td>
+													<td class="px-10px border-0">contact.html</td>
+													<td class="px-10px">39.5 KB</td>
+													<td class="px-10px">July 05, 2025, 10:35PM</td>
+													<td class="px-10px">text/html</td>
+													<td class="px-10px border-0">0644</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="far fa-file-code text-body text-opacity-50 fa-lg"></i></td>
+													<td class="px-10px border-0">testimonials.html</td>
+													<td class="px-10px">11 KB</td>
+													<td class="px-10px">July 05, 2025, 10:35PM</td>
+													<td class="px-10px">text/html</td>
+													<td class="px-10px border-0">0644</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="far fa-file-code text-body text-opacity-50 fa-lg"></i></td>
+													<td class="px-10px border-0">faq.html</td>
+													<td class="px-10px">12 KB</td>
+													<td class="px-10px">July 05, 2025, 1.59PM</td>
+													<td class="px-10px">text/html</td>
+													<td class="px-10px border-0">0644</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="far fa-file-code text-body text-opacity-50 fa-lg"></i></td>
+													<td class="px-10px border-0">pricing.html</td>
+													<td class="px-10px">128 KB</td>
+													<td class="px-10px">July 05, 2025, 12.49PM</td>
+													<td class="px-10px">text/html</td>
+													<td class="px-10px border-0">0644</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="far fa-file-code text-body text-opacity-50 fa-lg"></i></td>
+													<td class="px-10px border-0">404.shtml</td>
+													<td class="px-10px">251 bytes</td>
+													<td class="px-10px">July 10, 2025, 10.35AM</td>
+													<td class="px-10px">text/html</td>
+													<td class="px-10px border-0">0644</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="fa fa-file-text text-body text-opacity-50 fa-lg"></i></td>
+													<td class="px-10px border-0">.htaccess</td>
+													<td class="px-10px">128 KB</td>
+													<td class="px-10px">August 05, 2025, 12.49PM</td>
+													<td class="px-10px">text/html</td>
+													<td class="px-10px border-0">0644</td>
+												</tr>
+												<tr>
+													<td class="ps-10px border-0 text-center"><i class="far fa-file-image text-teal fa-lg"></i></td>
+													<td class="px-10px border-0">favicon.ico</td>
+													<td class="px-10px">2 KB</td>
+													<td class="px-10px">July 05, 2025, 7.39AM</td>
+													<td class="px-10px">image/x-generic</td>
+													<td class="px-10px border-0">0644</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- END #content -->
+		
+		<!-- BEGIN theme-panel -->
+	<div class="theme-panel">
+		<a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn"><i class="fa fa-cog"></i></a>
+		<div class="theme-panel-content">
+			<ul class="theme-list clearfix">
+				<li><a href="javascript:;" class="bg-red" data-theme="theme-red" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Red" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-pink" data-theme="theme-pink" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Pink" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-orange" data-theme="theme-orange" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Orange" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-yellow" data-theme="theme-yellow" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Yellow" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-lime" data-theme="theme-lime" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Lime" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-green" data-theme="theme-green" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Green" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-teal" data-theme="theme-teal" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Teal" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-cyan" data-theme="theme-cyan" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Aqua" data-original-title="" title="">&nbsp;</a></li>
+				<li class="active"><a href="javascript:;" class="bg-blue" data-theme="" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Default" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-purple" data-theme="theme-purple" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Purple" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-indigo" data-theme="theme-indigo" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Indigo" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-gray-600" data-theme="theme-gray-600" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Gray" data-original-title="" title="">&nbsp;</a></li>
+			</ul>
+			<hr class="mb-0">
+			<div class="row mt-10px pt-3px">
+				<div class="col-9 control-label text-body-emphasis fw-bold">
+					<div class="d-flex">Dark Mode <span class="badge bg-theme text-theme-color ms-1 position-relative py-4px px-6px d-flex align-items-center">NEW</span></div>
+					<div class="lh-sm fs-13px fw-semibold">
+						<small class="text-body-emphasis opacity-50">
+							Adjust the appearance to reduce glare and give your eyes a break.
+						</small>
+					</div>
+				</div>
+				<div class="col-3 d-flex">
+					<div class="form-check form-switch ms-auto mb-0">
+						<input type="checkbox" class="form-check-input" name="app-theme-dark-mode" id="appThemeDarkMode" value="1">
+						<label class="form-check-label" for="appThemeDarkMode"></label>
+					</div>
+				</div>
+			</div>
+			<hr class="mb-0">
+			<div class="row mt-10px pt-3px">
+				<div class="col-9">
+					<div class="fw-bold text-body d-flex">
+						RTL Support <span class="badge bg-theme text-theme-color ms-1 position-relative py-4px px-6px d-flex align-items-center">NEW</span>
+					</div>
+					<div class="lh-sm fs-13px fw-semibold">
+						<small class="text-body-emphasis opacity-50">Easily switch to right-to-left layout for Arabic, Hebrew, and other RTL languages.</small>
+					</div>
+				</div>
+				<div class="col-3 d-flex">
+					<div class="form-check form-switch ms-auto mb-0">
+						<input type="checkbox" class="form-check-input" name="app-theme-rtl-mode" id="appThemeRtl" value="1" />
+						<label class="form-check-label" for="appThemeRtlMode"></label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END theme-panel -->
+		<!-- BEGIN btn-scroll-top -->
+		<a href="#" data-click="scroll-top" class="btn-scroll-top fade"><i class="fa fa-arrow-up"></i></a>
+		<!-- END btn-scroll-top -->
+	</div>
+	<!-- END #app -->
+	
+	<!-- ================== BEGIN core-js ================== -->
+	<script src="assets/js/vendor.min.js"></script>
+	<script src="assets/js/app.min.js"></script>
+	<!-- ================== END core-js ================== -->
+	
+	
+	<!-- ================== BEGIN page-module-js ================== -->
+	<script type="module" src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+	<script type="module" src="assets/js/demo/file-manager.demo.js"></script>
+	<!-- ================== END page-module-js ================== -->
+</body>
+</html>

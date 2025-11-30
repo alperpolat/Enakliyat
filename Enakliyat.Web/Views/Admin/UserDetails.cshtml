@@ -1,0 +1,104 @@
+@model Enakliyat.Web.Models.AdminUserDetailsViewModel
+
+@{
+    ViewData["Title"] = "Admin - Kullanıcı Detayı";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h3 class="mb-1">@Model.User.Name</h3>
+            <div class="text-muted small">@Model.User.Email · @Model.User.PhoneNumber</div>
+        </div>
+        <div>
+            <a asp-action="Users" class="btn btn-sm btn-outline-secondary">← Kullanıcı listesine dön</a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Kullanıcı Bilgileri</h5>
+                    <dl class="row small mb-0">
+                        <dt class="col-4">İsim</dt>
+                        <dd class="col-8 mb-1">@Model.User.Name</dd>
+                        <dt class="col-4">E-posta</dt>
+                        <dd class="col-8 mb-1">@Model.User.Email</dd>
+                        <dt class="col-4">Telefon</dt>
+                        <dd class="col-8 mb-1">@Model.User.PhoneNumber</dd>
+                        <dt class="col-4">Durum</dt>
+                        <dd class="col-8 mb-1">
+                            @if (Model.User.IsBanned)
+                            {
+                                <span class="badge bg-danger">Banlı</span>
+                            }
+                            else if (Model.User.IsSuspended)
+                            {
+                                <span class="badge bg-warning text-dark">Dondurulmuş</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Aktif</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Toplam Talep</h5>
+                    <div class="display-6 fw-bold mb-2">@Model.Requests.Count</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-body">
+            <h5 class="card-title mb-0">Talep Geçmişi</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Oluşturma</th>
+                            <th>Tip</th>
+                            <th>Durum</th>
+                            <th>Nereden</th>
+                            <th>Nereye</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (!Model.Requests.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-3 small">Bu kullanıcıya ait talep bulunamadı.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        var index = 1;
+                        foreach (var r in Model.Requests)
+                        {
+                            <tr>
+                                <td>@index</td>
+                                <td>@r.CreatedAt.ToLocalTime().ToString("g")</td>
+                                <td>@r.MoveType</td>
+                                <td>@r.Status</td>
+                                <td>@r.FromAddress</td>
+                                <td>@r.ToAddress</td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

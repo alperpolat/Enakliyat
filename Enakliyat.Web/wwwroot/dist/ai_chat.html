@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Studio ASP | AI Chat</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	
+	<!-- ================== BEGIN core-css ================== -->
+	<link href="assets/css/vendor.min.css" rel="stylesheet">
+	<link href="assets/css/app.min.css" rel="stylesheet">
+	<!-- ================== END core-css ================== -->
+	
+</head>
+<body>
+	<!-- BEGIN #app -->
+	<div id="app" class="app app-header-fixed app-sidebar-fixed app-content-full-height vh-100">
+		<!-- BEGIN #header -->
+		<div id="header" class="app-header">
+			<!-- BEGIN mobile-toggler -->
+			<div class="mobile-toggler">
+				<button type="button" class="menu-toggler" data-toggle="sidebar-mobile">
+					<span class="bar"></span>
+					<span class="bar"></span>
+				</button>
+			</div>
+			<!-- END mobile-toggler -->
+			
+			<!-- BEGIN brand -->
+			<div class="brand">
+				<div class="desktop-toggler">
+					<button type="button" class="menu-toggler" data-toggle="sidebar-minify">
+						<span class="bar"></span>
+						<span class="bar"></span>
+					</button>
+				</div>
+				
+				<a href="index.html" class="brand-logo">
+					<img src="assets/img/logo.png" class="invert-dark" alt="" height="20">
+				</a>
+			</div>
+			<!-- END brand -->
+			
+			<!-- BEGIN menu -->
+			<div class="menu">
+				<form class="menu-search" method="POST" name="header_search_form">
+					<div class="menu-search-icon"><i class="fa fa-search"></i></div>
+					<div class="menu-search-input">
+						<input type="text" class="form-control" placeholder="Search menu...">
+					</div>
+				</form>
+				<div class="menu-item dropdown">
+					<a href="#" data-bs-toggle="dropdown" data-display="static" class="menu-link">
+						<div class="menu-icon"><i class="fa fa-bell nav-icon"></i></div>
+						<div class="menu-label">3</div>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end dropdown-notification">
+						<h6 class="dropdown-header text-body-emphasis mb-1">Notifications</h6>
+						<a href="#" class="dropdown-notification-item">
+							<div class="dropdown-notification-icon">
+								<i class="fa fa-receipt fa-lg fa-fw text-success"></i>
+							</div>
+							<div class="dropdown-notification-info">
+								<div class="title">Your store has a new order for 2 items totaling $1,299.00</div>
+								<div class="time">just now</div>
+							</div>
+							<div class="dropdown-notification-arrow">
+								<i class="fa fa-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="dropdown-notification-item">
+							<div class="dropdown-notification-icon">
+								<i class="far fa-user-circle fa-lg fa-fw text-muted"></i>
+							</div>
+							<div class="dropdown-notification-info">
+								<div class="title">3 new customer account is created</div>
+								<div class="time">2 minutes ago</div>
+							</div>
+							<div class="dropdown-notification-arrow">
+								<i class="fa fa-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="dropdown-notification-item">
+							<div class="dropdown-notification-icon">
+								<img src="assets/img/icon/android.svg" alt="" width="26">
+							</div>
+							<div class="dropdown-notification-info">
+								<div class="title">Your android application has been approved</div>
+								<div class="time">5 minutes ago</div>
+							</div>
+							<div class="dropdown-notification-arrow">
+								<i class="fa fa-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="dropdown-notification-item">
+							<div class="dropdown-notification-icon">
+								<img src="assets/img/icon/paypal.svg" alt="" width="26">
+							</div>
+							<div class="dropdown-notification-info">
+								<div class="title">Paypal payment method has been enabled for your store</div>
+								<div class="time">10 minutes ago</div>
+							</div>
+							<div class="dropdown-notification-arrow">
+								<i class="fa fa-chevron-right"></i>
+							</div>
+						</a>
+						<div class="p-2 text-center mb-n1">
+							<a href="#" class="text-body-emphasis text-opacity-50 text-decoration-none">See all</a>
+						</div>
+					</div>
+				</div>
+				<div class="menu-item dropdown">
+					<a href="#" data-bs-toggle="dropdown" data-display="static" class="menu-link">
+						<div class="menu-img online">
+							<img src="assets/img/user/user.jpg" alt="" class="ms-100 mh-100 rounded-circle">
+						</div>
+						<div class="menu-text">johnsmith@studio-asp.com</div>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end me-lg-3">
+						<a class="dropdown-item d-flex align-items-center" href="profile.html">Edit Profile <i class="fa fa-user-circle fa-fw ms-auto text-body text-opacity-50"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="email_inbox.html">Inbox <i class="fa fa-envelope fa-fw ms-auto text-body text-opacity-50"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="calendar.html">Calendar <i class="fa fa-calendar-alt fa-fw ms-auto text-body text-opacity-50"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="settings.html">Setting <i class="fa fa-wrench fa-fw ms-auto text-body text-opacity-50"></i></a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item d-flex align-items-center" href="page_login.html">Log Out <i class="fa fa-toggle-off fa-fw ms-auto text-body text-opacity-50"></i></a>
+					</div>
+				</div>
+			</div>
+			<!-- END menu -->
+		</div>
+		<!-- END #header -->
+		<!-- BEGIN #sidebar -->
+		<div id="sidebar" class="app-sidebar">
+			<!-- BEGIN scrollbar -->
+			<div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
+				<!-- BEGIN menu -->
+				<div class="menu">
+					<div class="menu-header">Navigation</div>
+					<div class="menu-item">
+						<a href="index.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-laptop"></i></span>
+							<span class="menu-text">Dashboard</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="analytics.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-chart-pie"></i></span>
+							<span class="menu-text">Analytics</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon">
+								<i class="fa fa-envelope"></i>
+								<span class="menu-icon-label">6</span>
+							</span>
+							<span class="menu-text">Email</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="email_inbox.html" class="menu-link">
+									<span class="menu-text">Inbox</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="email_compose.html" class="menu-link">
+									<span class="menu-text">Compose</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="email_detail.html" class="menu-link">
+									<span class="menu-text">Detail</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-divider"></div>
+					<div class="menu-header">Components</div>
+					<div class="menu-item">
+						<a href="widgets.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-qrcode"></i></span>
+							<span class="menu-text">Widgets</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub active">
+						<a href="javascript:;" class="menu-link">
+							<div class="menu-icon"><i class="fa fa-microchip"></i></div>
+							<div class="menu-text d-flex align-items-center">AI Studio</div> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item active">
+								<a href="ai_chat.html" class="menu-link">
+									<div class="menu-text">AI Chat</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ai_image_generator.html" class="menu-link">
+									<div class="menu-text">AI Image Generator</div>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="javascript:;" class="menu-link">
+							<div class="menu-icon">
+								<i class="fa fa-wallet"></i>
+							</div>
+							<div class="menu-text d-flex align-items-center">POS System</div> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="pos_customer_order.html" target="_blank" class="menu-link">
+									<div class="menu-text">Customer Order</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_kitchen_order.html" target="_blank" class="menu-link">
+									<div class="menu-text">Kitchen Order</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_counter_checkout.html" target="_blank" class="menu-link">
+									<div class="menu-text">Counter Checkout</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_table_booking.html" target="_blank" class="menu-link">
+									<div class="menu-text">Table Booking</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_menu_stock.html" target="_blank" class="menu-link">
+									<div class="menu-text">Menu Stock</div>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-heart"></i></span>
+							<span class="menu-text">UI Kits</span> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="ui_bootstrap.html" class="menu-link">
+									<span class="menu-text">Bootstrap</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_buttons.html" class="menu-link">
+									<span class="menu-text">Buttons</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_card.html" class="menu-link">
+									<span class="menu-text">Card</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_icons.html" class="menu-link">
+									<span class="menu-text">Icons</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_modal_notification.html" class="menu-link">
+									<span class="menu-text">Modal & Notification</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_typography.html" class="menu-link">
+									<span class="menu-text">Typography</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_tabs_accordions.html" class="menu-link">
+									<span class="menu-text">Tabs & Accordions</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-file-alt"></i></span>
+							<span class="menu-text">Forms</span> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="form_elements.html" class="menu-link">
+									<span class="menu-text">Form Elements</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="form_plugins.html" class="menu-link">
+									<span class="menu-text">Form Plugins</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="form_wizards.html" class="menu-link">
+									<span class="menu-text">Wizards</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-table"></i></span>
+							<span class="menu-text">Tables</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="table_elements.html" class="menu-link">
+									<span class="menu-text">Table Elements</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="table_plugins.html" class="menu-link">
+									<span class="menu-text">Table Plugins</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-chart-bar"></i></span>
+							<span class="menu-text">Charts</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="chart_js.html" class="menu-link">
+									<span class="menu-text">Chart.js</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="chart_apex.html" class="menu-link">
+									<span class="menu-text">Apexcharts.js</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item">
+						<a href="map.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-map-marker-alt"></i></span>
+							<span class="menu-text">Map</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-code-branch"></i></span>
+							<span class="menu-text">Layout</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="layout_starter.html" class="menu-link">
+									<span class="menu-text">Starter Page</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_fixed_footer.html" class="menu-link">
+									<span class="menu-text">Fixed Footer</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_full_height.html" class="menu-link">
+									<span class="menu-text">Full Height</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_full_width.html" class="menu-link">
+									<span class="menu-text">Full Width</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_boxed_layout.html" class="menu-link">
+									<span class="menu-text">Boxed Layout</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_minified_sidebar.html" class="menu-link">
+									<span class="menu-text">Minified Sidebar</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_top_nav.html" class="menu-link">
+									<span class="menu-text">Top Nav</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_mixed_nav.html" class="menu-link">
+									<span class="menu-text">Mixed Nav</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_mixed_nav_boxed_layout.html" class="menu-link">
+									<span class="menu-text">Mixed Nav Boxed Layout</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-globe"></i></span>
+							<span class="menu-text">Pages</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="page_scrum_board.html" class="menu-link">
+									<span class="menu-text">Scrum Board</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_products.html" class="menu-link">
+									<span class="menu-text">Products</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_product_details.html" class="menu-link">
+									<span class="menu-text">Product Details</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_orders.html" class="menu-link">
+									<span class="menu-text">Orders</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_order_details.html" class="menu-link">
+									<span class="menu-text">Order Details</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_gallery.html" class="menu-link">
+									<span class="menu-text">Gallery</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_search_results.html" class="menu-link">
+									<span class="menu-text">Search Results</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_coming_soon.html" class="menu-link">
+									<span class="menu-text">Coming Soon Page</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_404_error.html" class="menu-link">
+									<span class="menu-text">404 Error Page</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_login.html" class="menu-link">
+									<span class="menu-text">Login</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_register.html" class="menu-link">
+									<span class="menu-text">Register</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_messenger.html" class="menu-link">
+									<span class="menu-text">Messenger</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_data_management.html" class="menu-link">
+									<span class="menu-text">Data Management</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_file_manager.html" class="menu-link">
+									<span class="menu-text">File Manager</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_pricing.html" class="menu-link">
+									<span class="menu-text">Pricing Page</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item">
+						<a href="landing.html" target="_blank" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-crown"></i></span>
+							<span class="menu-text">Landing Page</span>
+						</a>
+					</div>
+					<div class="menu-divider"></div>
+					<div class="menu-header">Users</div>
+					<div class="menu-item">
+						<a href="profile.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-user-circle"></i></span>
+							<span class="menu-text">Profile</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="calendar.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-calendar"></i></span>
+							<span class="menu-text">Calendar</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="settings.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-cog"></i></span>
+							<span class="menu-text">Settings</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="helper.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-question-circle"></i></span>
+							<span class="menu-text">Helper</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="asp_identity.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-fingerprint"></i></span>
+							<span class="menu-text">ASP Identity</span>
+						</a>
+					</div>
+					<div class="p-3 px-4 mt-auto hide-on-minified">
+						<a href="https://seantheme.com/studio-asp/documentation/index.html" class="btn btn-secondary d-block w-100 fw-600 rounded-pill">
+							<i class="fa fa-code-branch me-1 ms-n1 opacity-5"></i> Documentation
+						</a>
+					</div>
+				</div>
+				<!-- END menu -->
+			</div>
+			<!-- END scrollbar -->
+			
+			<!-- BEGIN mobile-sidebar-backdrop -->
+			<button class="app-sidebar-mobile-backdrop" data-dismiss="sidebar-mobile"></button>
+			<!-- END mobile-sidebar-backdrop -->
+		</div>
+		<!-- END #sidebar -->
+		
+		<!-- BEGIN #content -->
+		<div id="content" class="app-content p-0 d-flex bg-component h-100">
+			<a class="d-lg-none btn btn-icon btn-lg bg-component text-body rounded-0 z-3 rounded-end-3 mt-5 shadow position-absolute top-0 start-0 " data-bs-toggle="offcanvas" href="#aiChatSidebar" role="button" aria-controls="offcanvasExample">
+				<i class="fa fa-gear"></i>
+			</a>
+			<!-- BEGIN ai-chat-sidebar -->
+			<div class="w-300px bg-component offcanvas offcanvas-start position-lg-relative transform-lg-none visibility-lg-initial z-lg-3 border-end" id="aiChatSidebar">
+				<!-- BEGIN ai-chat-sidebar-mobile-bg -->
+				<div class="bg-component d-lg-none d-block position-absolute top-0 end-0 w-100 h-100"></div>
+				<!-- END ai-chat-sidebar-mobile-bg -->
+				
+				<!-- BEGIN ai-chat-sidebar-content -->
+				<div class="position-relative h-100 d-flex flex-column">
+					<!-- BEGIN ai-chat-new-btn -->
+					<div class="p-3">
+						<button type="button" class="btn btn-lg fs-14px py-2 rounded-3 btn-theme w-100 fw-semibold border-0" data-toggle-ai-tab="aiChatIntro"><i class="fa fa-plus me-2 ms-n2 my-4px"></i> New Chat</button>
+					</div>
+					<!-- END ai-chat-new-btn -->
+					
+					<hr class="m-0 opacity-100 border-top" />
+					
+					<!-- BEGIN ai-chat-history -->
+					<div class="flex-1 overflow-hidden text-body">
+						<!-- BEGIN scrollbar -->
+						<div data-scrollbar="true" class="p-3" data-height="100%">
+							<div class="fw-bold mb-2 d-flex align-items-center">
+								<iconify-icon icon="solar:calendar-bold-duotone" class="fs-20px w-20px me-7px text-gray-600 pb-2px"></iconify-icon> 
+								Today
+							</div>
+							<div class="px-2">
+								<div class="position-relative hover-bg-body hover-show rounded-4 py-8px px-3 ps-20px border-0 d-flex align-items-center">
+									<div class="flex-1 text-body">Plan My Dream Vacation</div>
+									<a href="#" class="stretched-link" data-toggle-ai-tab="aiChatPrev"></a>
+									<div class="dropdown position-relative z-3">
+										<a href="#" data-bs-toggle="dropdown" class="link-gray-500 d-none hover-show-elm"><i class="fa fa-ellipsis"></i></a>
+										<div class="dropdown-menu">
+											<a href="#" class="dropdown-item">Share Chat</a>
+											<a href="#" class="dropdown-item">See Details</a>
+											<div class="dropdown-divider"></div>
+											<a href="#" class="dropdown-item">Rename</a>
+											<a href="#" class="dropdown-item">Archive</a>
+											<a href="#" class="dropdown-item">Delete</a>
+										</div>
+									</div>
+								</div>
+								<div class="position-relative hover-bg-body hover-show rounded-4 py-8px px-3 ps-20px border-0 d-flex align-items-center">
+									<div class="flex-1 text-body">Craft a Winning Pitch</div>
+									<a href="#" class="stretched-link" data-toggle-ai-tab="aiChatPrev"></a>
+									<div class="dropdown position-relative z-3">
+										<a href="#" data-bs-toggle="dropdown" class="link-gray-500 d-none hover-show-elm"><i class="fa fa-ellipsis"></i></a>
+										<div class="dropdown-menu">
+											<a href="#" class="dropdown-item">Share Chat</a>
+											<a href="#" class="dropdown-item">See Details</a>
+											<div class="dropdown-divider"></div>
+											<a href="#" class="dropdown-item">Rename</a>
+											<a href="#" class="dropdown-item">Archive</a>
+											<a href="#" class="dropdown-item">Delete</a>
+										</div>
+									</div>
+								</div>
+								<div class="position-relative hover-bg-body hover-show rounded-4 py-8px px-3 ps-20px border-0 d-flex align-items-center">
+									<div class="flex-1 text-body">Organize My Day</div>
+									<a href="#" class="stretched-link" data-toggle-ai-tab="aiChatPrev"></a>
+									<div class="dropdown position-relative z-3">
+										<a href="#" data-bs-toggle="dropdown" class="link-gray-500 d-none hover-show-elm"><i class="fa fa-ellipsis"></i></a>
+										<div class="dropdown-menu">
+											<a href="#" class="dropdown-item">Share Chat</a>
+											<a href="#" class="dropdown-item">See Details</a>
+											<div class="dropdown-divider"></div>
+											<a href="#" class="dropdown-item">Rename</a>
+											<a href="#" class="dropdown-item">Archive</a>
+											<a href="#" class="dropdown-item">Delete</a>
+										</div>
+									</div>
+								</div>
+								<div class="position-relative hover-bg-body hover-show rounded-4 py-8px px-3 ps-20px border-0 d-flex align-items-center">
+									<div class="flex-1 text-body">Write Custom Code</div>
+									<a href="#" class="stretched-link" data-toggle-ai-tab="aiChatPrev"></a>
+									<div class="dropdown position-relative z-3">
+										<a href="#" data-bs-toggle="dropdown" class="link-gray-500 d-none hover-show-elm"><i class="fa fa-ellipsis"></i></a>
+										<div class="dropdown-menu">
+											<a href="#" class="dropdown-item">Share Chat</a>
+											<a href="#" class="dropdown-item">See Details</a>
+											<div class="dropdown-divider"></div>
+											<a href="#" class="dropdown-item">Rename</a>
+											<a href="#" class="dropdown-item">Archive</a>
+											<a href="#" class="dropdown-item">Delete</a>
+										</div>
+									</div>
+								</div>
+								<div class="position-relative hover-bg-body hover-show rounded-4 py-8px px-3 ps-20px border-0 d-flex align-items-center">
+									<div class="flex-1 text-body">Draft a Polished Email</div>
+									<a href="#" class="stretched-link" data-toggle-ai-tab="aiChatPrev"></a>
+									<div class="dropdown position-relative z-3">
+										<a href="#" data-bs-toggle="dropdown" class="link-gray-500 d-none hover-show-elm"><i class="fa fa-ellipsis"></i></a>
+										<div class="dropdown-menu">
+											<a href="#" class="dropdown-item">Share Chat</a>
+											<a href="#" class="dropdown-item">See Details</a>
+											<div class="dropdown-divider"></div>
+											<a href="#" class="dropdown-item">Rename</a>
+											<a href="#" class="dropdown-item">Archive</a>
+											<a href="#" class="dropdown-item">Delete</a>
+										</div>
+									</div>
+								</div>
+								<div class="position-relative hover-bg-body hover-show rounded-4 py-8px px-3 ps-20px border-0 d-flex align-items-center">
+									<div class="flex-1 text-body">Brainstorm Ideas</div>
+									<a href="#" class="stretched-link" data-toggle-ai-tab="aiChatPrev"></a>
+									<div class="dropdown position-relative z-3">
+										<a href="#" data-bs-toggle="dropdown" class="link-gray-500 d-none hover-show-elm"><i class="fa fa-ellipsis"></i></a>
+										<div class="dropdown-menu">
+											<a href="#" class="dropdown-item">Share Chat</a>
+											<a href="#" class="dropdown-item">See Details</a>
+											<div class="dropdown-divider"></div>
+											<a href="#" class="dropdown-item">Rename</a>
+											<a href="#" class="dropdown-item">Archive</a>
+											<a href="#" class="dropdown-item">Delete</a>
+										</div>
+									</div>
+								</div>
+							</div>
+								
+							<div class="fw-bold mb-2 d-flex align-items-center mt-4">
+								<iconify-icon icon="solar:calendar-bold-duotone" class="fs-20px w-20px me-7px text-gray-600 pb-2px"></iconify-icon>
+								1 Week Ago
+							</div>
+							<div class="fs-6 px-2">
+								<div class="position-relative hover-bg-body hover-show rounded-4 py-8px px-3 ps-20px border-0 d-flex align-items-center">
+									<div class="flex-1 text-body">Summarize an Article</div><a href="#" class="stretched-link" data-toggle-ai-tab="aiChatPrev"></a>
+									<div class="dropdown position-relative z-3">
+										<a href="#" data-bs-toggle="dropdown" class="link-gray-500 d-none hover-show-elm"><i class="fa fa-ellipsis"></i></a>
+										<div class="dropdown-menu">
+											<a href="#" class="dropdown-item">Share Chat</a>
+											<a href="#" class="dropdown-item">See Details</a>
+											<div class="dropdown-divider"></div>
+											<a href="#" class="dropdown-item">Rename</a>
+											<a href="#" class="dropdown-item">Archive</a>
+											<a href="#" class="dropdown-item">Delete</a>
+										</div>
+									</div>
+								</div>
+								<div class="position-relative hover-bg-body hover-show rounded-4 py-8px px-3 ps-20px border-0 d-flex align-items-center">
+									<div class="flex-1 text-body">Prepare for a Speech</div>
+									<a href="#" class="stretched-link" data-toggle-ai-tab="aiChatPrev"></a>
+									<div class="dropdown position-relative z-3">
+										<a href="#" data-bs-toggle="dropdown" class="link-gray-500 d-none hover-show-elm"><i class="fa fa-ellipsis"></i></a>
+										<div class="dropdown-menu">
+											<a href="#" class="dropdown-item">Share Chat</a>
+											<a href="#" class="dropdown-item">See Details</a>
+											<div class="dropdown-divider"></div>
+											<a href="#" class="dropdown-item">Rename</a>
+											<a href="#" class="dropdown-item">Archive</a>
+											<a href="#" class="dropdown-item">Delete</a>
+										</div>
+									</div>
+								</div>
+								<div class="position-relative hover-bg-body hover-show rounded-4 py-8px px-3 ps-20px border-0 d-flex align-items-center">
+									<div class="flex-1 text-body">Create a Business Proposal</div>
+									<a href="#" class="stretched-link" data-toggle-ai-tab="aiChatPrev"></a>
+									<div class="dropdown position-relative z-3">
+										<a href="#" data-bs-toggle="dropdown" class="link-gray-500 d-none hover-show-elm"><i class="fa fa-ellipsis"></i></a>
+										<div class="dropdown-menu">
+											<a href="#" class="dropdown-item">Share Chat</a>
+											<a href="#" class="dropdown-item">See Details</a>
+											<div class="dropdown-divider"></div>
+											<a href="#" class="dropdown-item">Rename</a>
+											<a href="#" class="dropdown-item">Archive</a>
+											<a href="#" class="dropdown-item">Delete</a>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="fw-bold mb-2 d-flex align-items-center mt-4">
+								<iconify-icon icon="solar:calendar-bold-duotone" class="fs-20px w-20px me-7px text-gray-600 pb-2px"></iconify-icon> 
+								2 Weeks Ago
+							</div>
+							<div class="fs-6 px-2">
+								<div class="position-relative hover-bg-body hover-show rounded-4 py-8px px-3 ps-20px border-0 d-flex align-items-center">
+									<div class="flex-1 text-body">Organize Project Tasks</div>
+									<a href="#" class="stretched-link" data-toggle-ai-tab="aiChatPrev"></a>
+									<div class="dropdown position-relative z-3">
+										<a href="#" data-bs-toggle="dropdown" class="link-gray-500 d-none hover-show-elm"><i class="fa fa-ellipsis"></i></a>
+										<div class="dropdown-menu">
+											<a href="#" class="dropdown-item">Share Chat</a>
+											<a href="#" class="dropdown-item">See Details</a>
+											<div class="dropdown-divider"></div>
+											<a href="#" class="dropdown-item">Rename</a>
+											<a href="#" class="dropdown-item">Archive</a>
+											<a href="#" class="dropdown-item">Delete</a>
+										</div>
+									</div>
+								</div>
+								<div class="position-relative hover-bg-body hover-show rounded-4 py-8px px-3 ps-20px border-0 d-flex align-items-center">
+									<div class="flex-1 text-body">Research Market Trends</div>
+									<a href="#" class="stretched-link" data-toggle-ai-tab="aiChatPrev"></a>
+									<div class="dropdown position-relative z-3">
+										<a href="#" data-bs-toggle="dropdown" class="link-gray-500 d-none hover-show-elm"><i class="fa fa-ellipsis"></i></a>
+										<div class="dropdown-menu">
+											<a href="#" class="dropdown-item">Share Chat</a>
+											<a href="#" class="dropdown-item">See Details</a>
+											<div class="dropdown-divider"></div>
+											<a href="#" class="dropdown-item">Rename</a>
+											<a href="#" class="dropdown-item">Archive</a>
+											<a href="#" class="dropdown-item">Delete</a>
+										</div>
+									</div>
+								</div>
+								<div class="position-relative hover-bg-body hover-show rounded-4 py-8px px-3 ps-20px border-0 d-flex align-items-center">
+									<div class="flex-1 text-body">Craft Social Media Posts</div>
+									<a href="#" class="stretched-link" data-toggle-ai-tab="aiChatPrev"></a>
+									<div class="dropdown position-relative z-3">
+										<a href="#" data-bs-toggle="dropdown" class="link-gray-500 d-none hover-show-elm"><i class="fa fa-ellipsis"></i></a>
+										<div class="dropdown-menu">
+											<a href="#" class="dropdown-item">Share Chat</a>
+											<a href="#" class="dropdown-item">See Details</a>
+											<div class="dropdown-divider"></div>
+											<a href="#" class="dropdown-item">Rename</a>
+											<a href="#" class="dropdown-item">Archive</a>
+											<a href="#" class="dropdown-item">Delete</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- END scrollbar -->
+					</div>
+					<!-- END ai-chat-history -->
+					
+					<hr class="m-0 opacity-100 border-top" />
+					
+					<!-- BEGIN ai-chat-info -->
+					<div class="p-2">
+						<div class="py-8px px-2 d-flex align-items-center">
+							<i class="far fa-folder fa-lg fa-fw me-2"></i>
+							Explore Bots
+						</div>
+						<div class="py-8px px-2 d-flex align-items-center">
+							<i class="far fa-gem fa-lg fa-fw me-2"></i>
+							Go Pro
+						</div>
+					</div>
+					<!-- END ai-chat-info -->
+					
+					<hr class="m-0 opacity-100 border-top" />
+					
+					<!-- BEGIN ai-chat-user-info -->
+					<div class="rounded-4 px-3 py-3 border-0">
+						<div class="fw-semibold flex-1 text-body d-flex align-items-center">
+							<div class="w-30px h-30px me-2 fw-400 rounded-circle text-white bg-dark d-flex align-items-center justify-content-center">
+								S
+							</div>
+							support@seantheme.com
+						</div>
+					</div>
+					<!-- END ai-chat-user-info -->
+				</div>
+				<!-- END ai-chat-sidebar-content -->
+			</div>
+			<!-- END ai-chat-sidebar -->
+			
+			<!-- BEGIN ai-chat-content -->
+			<div class="flex-1 d-flex flex-column mw-100 h-100">
+				<!-- BEGIN ai-chat-tabs -->
+				<div class="flex-1 overflow-hidden w-100 h-100">
+					<div class="h-100 p-2 p-lg-4" data-scrollbar="true" data-height="100%">
+						<div class="tab-content px-3 px-lg-4 py-3">
+							<!-- BEGIN ai-chat-intro -->
+							<div id="aiChatIntro" class="tab-pane fade show active">
+								<div class="display-6 fw-bold mb-0">
+									<span class="text-theme">Hello, there</span>
+								</div>
+								<div class="fs-3 fw-bold text-body mb-4">How can I assist you today?</div>
+								<div class="row g-4">
+									<div class="col-sm-6 col-xl-4">
+										<a class="card cursor-pointer h-100 hover-bg-body position-relative overflow-hidden rounded-4 text-decoration-none" data-toggle-ai-tab="aiChatNew" data-toggle-ai-input="Suggest hidden gems and must-see spots for my next trip.">
+											<div class="card-body p-4">
+												<div class="mb-3 d-flex">
+													<iconify-icon icon="solar:calendar-date-bold-duotone" class="fs-40px text-gray-600"></iconify-icon>
+												</div>
+												<div class="text-gray-500 fw-semibold mb-1">Plan My Adventure</div>
+												<div class="fs-15px fw-bold">Suggest hidden gems and must-see spots for my next trip.</div>
+											</div>
+										</a>
+									</div>
+									<div class="col-sm-6 col-xl-4">
+										<a class="card cursor-pointer h-100 hover-bg-body position-relative overflow-hidden rounded-4 text-decoration-none" data-toggle-ai-tab="aiChatNew" data-toggle-ai-input="Create a concise and professional response for any situation.">
+											<div class="card-body p-4">
+												<div class="mb-3 d-flex">
+													<iconify-icon icon="solar:chat-square-arrow-bold-duotone" class="fs-40px text-gray-600"></iconify-icon>
+												</div>
+												<div class="text-gray-500 fw-semibold mb-1">Draft a Quick Reply</div>
+												<div class="fs-15px fw-bold">Create a concise and professional response for any situation.</div>
+											</div>
+										</a>
+									</div>
+									<div class="col-sm-6 col-xl-4">
+										<a class="card cursor-pointer h-100 hover-bg-body position-relative overflow-hidden rounded-4 text-decoration-none" data-toggle-ai-tab="aiChatNew" data-toggle-ai-input="Break down complex ideas into simple, easy-to-understand explanations.">
+											<div class="card-body p-4">
+												<div class="mb-3 d-flex">
+													<iconify-icon icon="solar:layers-minimalistic-bold-duotone" class="fs-40px text-gray-600"></iconify-icon>
+												</div>
+												<div class="text-gray-500 fw-semibold mb-1">Simplify This</div>
+												<div class="fs-15px fw-bold">Break down complex ideas into simple, easy-to-understand explanations.</div>
+											</div>
+										</a>
+									</div>
+									<div class="col-sm-6 col-xl-4">
+										<a class="card cursor-pointer h-100 hover-bg-body position-relative overflow-hidden rounded-4 text-decoration-none" data-toggle-ai-tab="aiChatNew" data-toggle-ai-input="Write and troubleshoot code with smart fixes for tricky errors.">
+											<div class="card-body p-4">
+												<div class="mb-3 d-flex">
+													<iconify-icon icon="solar:code-bold-duotone" class="fs-40px text-gray-600"></iconify-icon>
+												</div>
+												<div class="text-gray-500 fw-semibold mb-1">Code & Debug</div>
+												<div class="fs-15px fw-bold">Write and troubleshoot code with smart fixes for tricky errors.</div>
+											</div>
+										</a>
+									</div>
+									<div class="col-sm-6 col-xl-4">
+										<a class="card cursor-pointer h-100 hover-bg-body position-relative overflow-hidden rounded-4 text-decoration-none" data-toggle-ai-tab="aiChatNew" data-toggle-ai-input="Generate fresh ideas for projects, names, or creative solutions.">
+											<div class="card-body p-4">
+												<div class="mb-3 d-flex">
+													<iconify-icon icon="solar:lightbulb-bolt-bold-duotone" class="fs-40px text-gray-600"></iconify-icon>
+												</div>
+												<div class="text-gray-500 fw-semibold mb-1">Brainstorm Anything</div>
+												<div class="fs-15px fw-bold">Generate fresh ideas for projects, names, or creative solutions.</div>
+											</div>
+										</a>
+									</div>
+									<div class="col-sm-6 col-xl-4">
+										<a class="card cursor-pointer h-100 hover-bg-body position-relative overflow-hidden rounded-4 text-decoration-none" data-toggle-ai-tab="aiChatNew" data-toggle-ai-input="Craft emails, reports, or social posts in a polished, clear tone.">
+											<div class="card-body p-4">
+												<div class="mb-3 d-flex">
+													<iconify-icon icon="solar:pen-2-bold-duotone" class="fs-40px text-gray-600"></iconify-icon>
+												</div>
+												<div class="text-gray-500 fw-semibold mb-1">Write It for Me</div>
+												<div class="fs-15px fw-bold">Craft emails, reports, or social posts in a polished, clear tone.</div>
+											</div>
+										</a>
+									</div>
+								</div>
+							</div>
+							<!-- END ai-chat-intro -->
+					
+							<!-- BEGIN ai-chat-prev -->
+							<div id="aiChatPrev" class="tab-pane fade">
+								<!-- BEGIN chat-human -->
+								<div class="d-flex justify-content-end align-items-end mb-3">
+									<div class="rounded-4 px-3 py-2 bg-body mw-75">
+										Can you generate some content for social media captions?
+									</div>
+									<div>
+										<div class="w-30px h-30px my-2px ms-2 me-2 rounded-circle text-white bg-dark d-flex align-items-center justify-content-center">
+											S
+										</div>
+									</div>
+								</div>
+								<!-- END chat-human -->
+								
+								<!-- BEGIN chat-ai -->
+								<div class="mb-3">
+									<div class="d-flex justify-content-start align-items-end">
+										<div>
+											<div class="w-30px h-30px my-2px ms-2 fs-16px me-2 rounded-circle bg-theme text-theme-color d-flex align-items-center justify-content-center">
+												<i class="fa fa-shekel-sign"></i>
+											</div>
+										</div>
+										<div class="rounded-4 px-3 py-2 bg-body mw-75">
+											<div>Absolutely! What’s the topic or product?</div>
+										</div>
+									</div>
+									<div class="d-flex">
+										<div class="w-30px h-30px me-2 ms-2"></div>
+										<div class="d-flex flex-wrap w-100 p-2 opacity-75">
+											<a href="#" class="link-gray-500 text-decoration me-2"><i class="far fa-fw fa-copy"></i></a>
+											<a href="#" class="link-gray-500 text-decoration me-2"><i class="far fa-fw fa-thumbs-up"></i></a>
+											<a href="#" class="link-gray-500 text-decoration me-2"><i class="far fa-fw fa-thumbs-down"></i></a>
+											<a href="#" class="link-gray-500 text-decoration me-2"><i class="fa fa-fw fa-microphone"></i></a>
+											<a href="#" class="link-gray-500 text-decoration"><i class="fa fa-fw fa-arrow-rotate-right"></i></a>
+										</div>
+									</div>
+								</div>
+								<!-- END chat-ai -->
+		
+								<!-- BEGIN chat-human -->
+								<div class="d-flex justify-content-end align-items-end mb-3">
+									<div class="rounded-4 px-3 py-2 bg-body mw-75">
+										Let’s say… a coffee shop promotion.
+									</div>
+									<div>
+										<div class="w-30px h-30px my-2px ms-2 me-2 rounded-circle text-white bg-dark d-flex align-items-center justify-content-center">
+											S
+										</div>
+									</div>
+								</div>
+								<!-- END chat-human -->
+								
+								<!-- BEGIN chat-ai -->
+								<div class="mb-3">
+									<div class="d-flex justify-content-start align-items-end">
+										<div>
+											<div class="w-30px h-30px my-2px ms-2 fs-16px me-2 rounded-circle bg-theme text-theme-color d-flex align-items-center justify-content-center">
+												<i class="fa fa-shekel-sign"></i>
+											</div>
+										</div>
+										<div class="rounded-4 px-3 py-2 bg-body mw-75">
+											<div>How about these:</div>
+											<ol class="my-2 ps-4">
+												<li>Start your day with the perfect brew – 20% off all lattes today!</li>
+												<li>Coffee first, everything else later. Grab your cup now!</li>
+												<li>A little caffeine, a lot of happiness. Visit us for your daily fix!</li>
+											</ol>
+											<div>Need more options?</div>
+										</div>
+									</div>
+									<div class="d-flex">
+										<div class="w-30px h-30px me-2 ms-2"></div>
+										<div class="d-flex flex-wrap w-100 p-2 opacity-75">
+											<a href="#" class="link-gray-500 text-decoration me-2"><i class="far fa-fw fa-copy"></i></a>
+											<a href="#" class="link-gray-500 text-decoration me-2"><i class="far fa-fw fa-thumbs-up"></i></a>
+											<a href="#" class="link-gray-500 text-decoration me-2"><i class="far fa-fw fa-thumbs-down"></i></a>
+											<a href="#" class="link-gray-500 text-decoration me-2"><i class="fa fa-fw fa-microphone"></i></a>
+											<a href="#" class="link-gray-500 text-decoration"><i class="fa fa-fw fa-arrow-rotate-right"></i></a>
+										</div>
+									</div>
+								</div>
+								<!-- END chat-ai -->
+		
+								<!-- BEGIN chat-human -->
+								<div class="d-flex justify-content-end align-items-end mb-3">
+									<div class="rounded-4 px-3 py-2 bg-body mw-75">
+										How can I fetch API data in Vue.js?
+									</div>
+									<div>
+										<div class="w-30px h-30px my-2px ms-2 me-2 rounded-circle text-white bg-dark d-flex align-items-center justify-content-center">
+											S
+										</div>
+									</div>
+								</div>
+								<!-- END chat-human -->
+								
+								<!-- BEGIN chat-ai -->
+								<div class="mb-3">
+									<div class="d-flex justify-content-start align-items-end">
+										<div>
+											<div class="w-30px h-30px my-2px ms-2 fs-16px me-2 rounded-circle bg-theme text-theme-color d-flex align-items-center justify-content-center">
+												<i class="fa fa-shekel-sign"></i>
+											</div>
+										</div>
+										<div class="rounded-4 px-3 py-2 bg-body mw-75">
+											Here’s a simple example:
+											<div class="card border-0 rounded-3 my-2 overflow-hidden shadow">
+												<div class="card-header d-flex bg-component border-0">
+													<span class="flex-1">vue</span>
+													<span><a href="#" class="text-body text-decoration-none"><i class="far fa-copy"></i> Copy</a></span>
+												</div>
+												<div class="hljs-container p-3">
+											<pre><code class="html hljs">&lt;script&gt;
+export default {
+  async mounted() {
+    const response = await fetch('https://api.example.com/data');
+    const data = await response.json();
+    console.log(data);
+  }
+}
+&lt;/script&gt;					
+</code></pre>
+												</div>
+											</div>
+											Would you like me to explain how this works?
+										</div>
+									</div>
+									<div class="d-flex">
+										<div class="w-30px h-30px me-2 ms-2"></div>
+										<div class="d-flex flex-wrap w-100 p-2 opacity-75">
+											<a href="#" class="link-gray-500 text-decoration me-2"><i class="far fa-fw fa-copy"></i></a>
+											<a href="#" class="link-gray-500 text-decoration me-2"><i class="far fa-fw fa-thumbs-up"></i></a>
+											<a href="#" class="link-gray-500 text-decoration me-2"><i class="far fa-fw fa-thumbs-down"></i></a>
+											<a href="#" class="link-gray-500 text-decoration me-2"><i class="fa fa-fw fa-microphone"></i></a>
+											<a href="#" class="link-gray-500 text-decoration"><i class="fa fa-fw fa-arrow-rotate-right"></i></a>
+										</div>
+									</div>
+								</div>
+								<!-- END chat-ai -->
+							</div>
+							<!-- END ai-chat-prev -->
+					
+							<!-- BEGIN ai-chat-new -->
+							<div id="aiChatNew" class="tab-pane fade">
+								
+							</div>
+							<!-- END ai-chat-new -->
+						</div>
+					</div>
+				</div>
+				<!-- END ai-chat-tabs -->
+				
+				<!-- BEGIN ai-chat-input -->
+				<div>
+					<div class="px-lg-4 px-3 pb-3">
+						<div class="position-relative mx-lg-4 mx-2 h-100">
+							<div class="position-absolute start-0 bottom-0 px-2 pb-2 d-flex">
+								<button type="button" class="btn btn-lg text-gray-500 p-0 w-30px h-30px d-flex align-items-center justify-content-center me-1"><i class="fa fa-fw fa-plus"></i></button>
+								<button type="button" class="btn btn-lg text-gray-500 p-0 w-30px h-30px d-flex align-items-center justify-content-center me-1"><i class="fa fa-fw fa-globe"></i></button>
+								<button type="button" class="btn btn-lg text-gray-500 p-0 w-30px h-30px d-flex align-items-center justify-content-center"><i class="fa fa-fw fa-microphone"></i></button>
+							</div>
+							<input type="text" class="form-control form-control-lg rounded-4 pt-10px fs-6" style="padding-bottom: 80px;" id="userInput" placeholder="Message AI Bot" />
+							<div class="position-absolute end-0 bottom-0 px-2 pb-2" style="z-index: 1050;">
+								<button id="sendButton" class="btn btn-lg border-0 btn-theme">
+									<i class="fa fa-arrow-right"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- END ai-chat-input -->
+			</div>
+			<!-- END ai-chat-content -->
+		</div>
+		<!-- END #content -->
+		
+		<!-- BEGIN theme-panel -->
+	<div class="theme-panel">
+		<a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn"><i class="fa fa-cog"></i></a>
+		<div class="theme-panel-content">
+			<ul class="theme-list clearfix">
+				<li><a href="javascript:;" class="bg-red" data-theme="theme-red" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Red" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-pink" data-theme="theme-pink" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Pink" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-orange" data-theme="theme-orange" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Orange" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-yellow" data-theme="theme-yellow" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Yellow" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-lime" data-theme="theme-lime" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Lime" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-green" data-theme="theme-green" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Green" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-teal" data-theme="theme-teal" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Teal" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-cyan" data-theme="theme-cyan" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Aqua" data-original-title="" title="">&nbsp;</a></li>
+				<li class="active"><a href="javascript:;" class="bg-blue" data-theme="" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Default" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-purple" data-theme="theme-purple" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Purple" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-indigo" data-theme="theme-indigo" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Indigo" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-gray-600" data-theme="theme-gray-600" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Gray" data-original-title="" title="">&nbsp;</a></li>
+			</ul>
+			<hr class="mb-0">
+			<div class="row mt-10px pt-3px">
+				<div class="col-9 control-label text-body-emphasis fw-bold">
+					<div class="d-flex">Dark Mode <span class="badge bg-theme text-theme-color ms-1 position-relative py-4px px-6px d-flex align-items-center">NEW</span></div>
+					<div class="lh-sm fs-13px fw-semibold">
+						<small class="text-body-emphasis opacity-50">
+							Adjust the appearance to reduce glare and give your eyes a break.
+						</small>
+					</div>
+				</div>
+				<div class="col-3 d-flex">
+					<div class="form-check form-switch ms-auto mb-0">
+						<input type="checkbox" class="form-check-input" name="app-theme-dark-mode" id="appThemeDarkMode" value="1">
+						<label class="form-check-label" for="appThemeDarkMode"></label>
+					</div>
+				</div>
+			</div>
+			<hr class="mb-0">
+			<div class="row mt-10px pt-3px">
+				<div class="col-9">
+					<div class="fw-bold text-body d-flex">
+						RTL Support <span class="badge bg-theme text-theme-color ms-1 position-relative py-4px px-6px d-flex align-items-center">NEW</span>
+					</div>
+					<div class="lh-sm fs-13px fw-semibold">
+						<small class="text-body-emphasis opacity-50">Easily switch to right-to-left layout for Arabic, Hebrew, and other RTL languages.</small>
+					</div>
+				</div>
+				<div class="col-3 d-flex">
+					<div class="form-check form-switch ms-auto mb-0">
+						<input type="checkbox" class="form-check-input" name="app-theme-rtl-mode" id="appThemeRtl" value="1" />
+						<label class="form-check-label" for="appThemeRtlMode"></label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END theme-panel -->
+		<!-- BEGIN btn-scroll-top -->
+		<a href="#" data-click="scroll-top" class="btn-scroll-top fade"><i class="fa fa-arrow-up"></i></a>
+		<!-- END btn-scroll-top -->
+	</div>
+	<!-- END #app -->
+	
+	<!-- ================== BEGIN core-js ================== -->
+	<script src="assets/js/vendor.min.js"></script>
+	<script src="assets/js/app.min.js"></script>
+	<!-- ================== END core-js ================== -->
+	
+	<!-- ================== BEGIN page-js ================== -->
+	<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+	<script src="assets/plugins/@highlightjs/cdn-assets/highlight.min.js"></script>
+	<script src="assets/js/demo/highlightjs.demo.js"></script>
+	<script src="assets/js/demo/ai-chat.demo.js"></script>
+	<!-- ================== END page-js ================== -->
+	
+</body>
+</html>

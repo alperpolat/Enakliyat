@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Enakliyat.Web</title>
+    <script type="importmap"></script>
+    <!-- dist theme css -->
+    <link href="~/dist/assets/css/vendor.min.css" rel="stylesheet" />
+    <link href="~/dist/assets/css/app.min.css" rel="stylesheet" />
+    <!-- legacy bootstrap/site css (varsa) -->
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="app">
+        <div id="header" class="app-header navbar navbar-expand-lg p-0 bg-gray-800 text-body text-opacity-75" data-bs-theme="dark">
+            <div class="container-xxl px-3 px-lg-5">
+                <button class="navbar-toggler border-0 p-0 me-3 fs-24px shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                    <span class="h-2px w-25px bg-gray-500 d-block mb-1"></span>
+                    <span class="h-2px w-25px bg-gray-500 d-block"></span>
+                </button>
+                <a class="navbar-brand d-flex align-items-center position-relative me-auto text-decoration-none" asp-controller="Home" asp-action="Index">
+                    <span class="fw-bold" style="font-size: 24px; letter-spacing: 0.5px;">
+                        <span style="color:#1a73e8;">N</span>
+                        <span style="color:#34a853;">a</span>
+                        <span style="color:#fbbc05;">k</span>
+                        <span style="color:#ea4335;">l</span>
+                        <span style="color:#34a853;">i</span>
+                        <span style="color:#1a73e8;">y</span>
+                        <span style="color:#ea4335;">e</span>
+                        <span style="color:#fbbc05;">3</span>
+                        <span style="color:#34a853;">6</span>
+                        <span style="color:#1a73e8;">0</span>
+                    </span>
+                </a>
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <div class="navbar-nav ms-auto mb-2 mb-lg-0 fw-500 align-items-lg-center">
+                        <div class="nav-item me-2">
+                            <a asp-controller="Home" asp-action="Index" class="nav-link">Teklif Al</a>
+                        </div>
+                        <div class="nav-item me-2">
+                            <a asp-controller="Home" asp-action="Requests" class="nav-link">Taleplerim</a>
+                        </div>
+                        @if (User.HasClaim("IsAdmin", "True"))
+                        {
+                            <div class="nav-item dropdown me-2">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Admin</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-controller="Admin" asp-action="Dashboard">Dashboard</a>
+                                    <a class="dropdown-item" asp-controller="Admin" asp-action="Requests">Talepler</a>
+                                    <a class="dropdown-item" asp-controller="Admin" asp-action="Reservations">Rezervasyonlar</a>
+                                    <a class="dropdown-item" asp-controller="Admin" asp-action="Carriers">Nakliyeciler</a>
+                                    <a class="dropdown-item" asp-controller="Admin" asp-action="Users">Kullanıcılar</a>
+                                    <a class="dropdown-item" asp-controller="Admin" asp-action="AddOnServices">Ek Hizmetler</a>
+                                    <a class="dropdown-item" asp-controller="Admin" asp-action="Reviews">Yorumlar</a>
+                                </div>
+                            </div>
+                        }
+                        @if (User.HasClaim("IsCarrier", "True"))
+                        {
+                            <div class="nav-item dropdown me-2">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Nakliyeci Paneli</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Profile">Profil & Belgeler</a>
+                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Dashboard">Dashboard</a>
+                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Leads">Talepler (Leads)</a>
+                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Offers">Tekliflerim</a>
+                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Reservations">Rezervasyonlarım (Liste)</a>
+                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="ReservationsCalendar">Rezervasyon Takvimi</a>
+                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Reviews">Yorumlarım</a>
+                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Payments">Ödemeler</a>
+                                    <div class="dropdown-divider"></div>
+                                    <form asp-controller="CarrierAccount" asp-action="Logout" method="post" class="px-3 py-1">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-link p-0">Çıkış</button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <div class="nav-item dropdown ms-lg-3">
+                                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+                                    <span class="me-2">@User.Identity.Name</span>
+                                    <i class="fa fa-user-circle"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-1">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-link p-0">Çıkış</button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <main role="main">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["Info"] != null)
+            {
+                <div class="alert alert-info alert-dismissible fade show mt-2" role="alert">
+                    @TempData["Info"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @RenderBody()
+        </main>
+        </div>
+
+    <footer class="py-5 bg-gray-800 text-body text-opacity-75" data-bs-theme="dark">
+        <div class="container-xxl px-3 px-lg-5">
+            <div class="row gx-lg-5 gx-3 gy-lg-4 gy-3">
+                <div class="col-lg-3 col-md-6">
+                    <div class="mb-3">
+                        <span class="fw-bold text-white" style="font-size: 24px; letter-spacing: 0.5px;">
+                            <span style="color:#1a73e8;">N</span>
+                            <span style="color:#34a853;">a</span>
+                            <span style="color:#fbbc05;">k</span>
+                            <span style="color:#ea4335;">l</span>
+                            <span style="color:#34a853;">i</span>
+                            <span style="color:#1a73e8;">y</span>
+                            <span style="color:#ea4335;">e</span>
+                            <span style="color:#fbbc05;">3</span>
+                            <span style="color:#34a853;">6</span>
+                            <span style="color:#1a73e8;">0</span>
+                        </span>
+                    </div>
+                    <p class="mb-4">
+                        Nakliye360, Türkiye genelinde onaylı nakliyecilerle güvenli ve şeffaf taşınma deneyimi sunar. Tek form ile onlarca teklif al, yorum ve puanlara göre karşılaştır.
+                    </p>
+                    <h5>Bizi Takip Edin</h5>
+                    <div class="d-flex">
+                        <a href="#" class="me-2 text-body text-opacity-50"><i class="fab fa-lg fa-facebook fa-fw"></i></a>
+                        <a href="#" class="me-2 text-body text-opacity-50"><i class="fab fa-lg fa-instagram fa-fw"></i></a>
+                        <a href="#" class="me-2 text-body text-opacity-50"><i class="fab fa-lg fa-twitter fa-fw"></i></a>
+                        <a href="#" class="me-2 text-body text-opacity-50"><i class="fab fa-lg fa-youtube fa-fw"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Hızlı Linkler</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-1"><a asp-controller="Home" asp-action="Index" class="text-decoration-none text-body text-opacity-75">Teklif Al</a></li>
+                        <li class="mb-1"><a asp-controller="Home" asp-action="Requests" class="text-decoration-none text-body text-opacity-75">Taleplerim</a></li>
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Hakkımızda</a></li>
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">İletişim</a></li>
+                    </ul>
+                    <hr class="text-body text-opacity-50">
+                    <h5>Hizmetler</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Evden Eve Nakliyat</a></li>
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Parça Eşya Taşıma</a></li>
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Şehirler Arası Taşıma</a></li>
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Depolama Hizmeti</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Kaynaklar</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Sık Sorulan Sorular</a></li>
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Müşteri Destek</a></li>
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Blog</a></li>
+                    </ul>
+                    <hr class="text-body text-opacity-50">
+                    <h5>Yasal</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-1"><a asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-body text-opacity-75">Gizlilik Politikası</a></li>
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Kullanıcı Sözleşmesi</a></li>
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">KVKK</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Yardım Merkezi</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Canlı Destek</a></li>
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">WhatsApp Destek</a></li>
+                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Taşınma Rehberi</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="text-body text-opacity-50">
+            <div class="row">
+                <div class="col-sm-6 mb-3 mb-lg-0">
+                    <div class="small">&copy; @DateTime.Now.Year Nakliye360. Tüm hakları saklıdır.</div>
+                </div>
+                <div class="col-sm-6 text-sm-end small">
+                    <a href="#" class="text-decoration-none text-body text-opacity-50">Site Haritası</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

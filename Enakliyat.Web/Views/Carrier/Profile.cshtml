@@ -1,0 +1,113 @@
+@model Enakliyat.Web.Models.CarrierProfileViewModel
+
+@{
+    ViewData["Title"] = "Nakliyeci - Profil & Belgeler";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Profil & Belgeler</h3>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Firma Profili</h5>
+                    <form asp-action="Profile" method="post" class="small">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-2">
+                            <label class="form-label form-label-sm">Yetkili İsim</label>
+                            <input asp-for="Carrier.Name" class="form-control form-control-sm" />
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label form-label-sm">Firma Adı</label>
+                            <input asp-for="Carrier.CompanyName" class="form-control form-control-sm" />
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label form-label-sm">Telefon</label>
+                            <input asp-for="Carrier.PhoneNumber" class="form-control form-control-sm" />
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label form-label-sm">E-posta</label>
+                            <input asp-for="Carrier.Email" class="form-control form-control-sm" />
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label form-label-sm">Yetki / Belge No</label>
+                            <input asp-for="Carrier.LicenseNumber" class="form-control form-control-sm" />
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label form-label-sm">Araç / Kapasite Bilgisi</label>
+                            <input asp-for="Carrier.VehicleInfo" class="form-control form-control-sm" />
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label form-label-sm">Hizmet Verilen Bölgeler</label>
+                            <textarea asp-for="Carrier.ServiceAreas" rows="2" class="form-control form-control-sm"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label form-label-sm">Kısa Açıklama</label>
+                            <textarea asp-for="Carrier.Description" rows="3" class="form-control form-control-sm"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary">Profili Güncelle</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Belgeler</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle mb-0 small">
+                            <thead>
+                                <tr>
+                                    <th>Belge Tipi</th>
+                                    <th>Durum</th>
+                                    <th>Dosya</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @if (!Model.Documents.Any())
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center py-2">Henüz yüklenmiş belge yok.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var d in Model.Documents)
+                                {
+                                    <tr>
+                                        <td>@d.DocumentType</td>
+                                        <td>
+                                            @if (d.IsApproved)
+                                            {
+                                                <span class="badge bg-success">Onaylı</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning text-dark">İncelemede</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(d.FilePath))
+                                            {
+                                                <a href="~/@d.FilePath" target="_blank" class="text-decoration-none">Görüntüle</a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">-</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="small text-muted mt-2">
+                        Belge yükleme akışı şimdilik dummy; gerçek dosya yükleme entegrasyonu daha sonra eklenebilir.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

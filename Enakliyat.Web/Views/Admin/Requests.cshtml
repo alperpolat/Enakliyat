@@ -1,0 +1,284 @@
+@model IEnumerable<Enakliyat.Domain.MoveRequest>
+
+@{
+    ViewData["Title"] = "Admin - Tüm Talepler";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Tüm Talepler</h3>
+
+    <form asp-action="Requests" method="get" class="row g-2 mb-3">
+        <div class="col-md-3">
+            <select name="cityId" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">Şehir (Hepsi)</option>
+                @foreach (var city in (IEnumerable<Enakliyat.Domain.City>)ViewBag.Cities)
+                {
+                    var selected = ViewBag.SelectedCityId != null && (int)ViewBag.SelectedCityId == city.Id;
+                    <option value="@city.Id" selected="@(selected ? "selected" : null)">@city.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="districtId" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">İlçe (Hepsi)</option>
+                @if (ViewBag.Districts != null)
+                {
+                    foreach (var district in (IEnumerable<Enakliyat.Domain.District>)ViewBag.Districts)
+                    {
+                        var selected = ViewBag.SelectedDistrictId != null && (int)ViewBag.SelectedDistrictId == district.Id;
+                        <option value="@district.Id" selected="@(selected ? "selected" : null)">@district.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="moveType" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="All">Taşıma Tipi (Hepsi)</option>
+                @{
+                    string selectedMoveType = ViewBag.SelectedMoveType ?? "All";
+                }
+                <option value="Home" selected="@(selectedMoveType == "Home" ? "selected" : null)">Ev Taşıma</option>
+                <option value="Partial" selected="@(selectedMoveType == "Partial" ? "selected" : null)">Parça Eşya</option>
+                <option value="Office" selected="@(selectedMoveType == "Office" ? "selected" : null)">Ofis Taşıma</option>
+                <option value="Storage" selected="@(selectedMoveType == "Storage" ? "selected" : null)">Depolama</option>
+                <option value="International" selected="@(selectedMoveType == "International" ? "selected" : null)">Uluslararası</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="All">Durum (Hepsi)</option>
+                @{
+                    string selectedStatus = ViewBag.SelectedStatus ?? "All";
+                }
+                <option value="Yeni" selected="@(selectedStatus == "Yeni" ? "selected" : null)">Yeni</option>
+                <option value="Teklif Bekliyor" selected="@(selectedStatus == "Teklif Bekliyor" ? "selected" : null)">Teklif Bekliyor</option>
+                <option value="Teklif Kabul Edildi" selected="@(selectedStatus == "Teklif Kabul Edildi" ? "selected" : null)">Teklif Kabul Edildi</option>
+                <option value="Taşınma Tamamlandı" selected="@(selectedStatus == "Taşınma Tamamlandı" ? "selected" : null)">Taşınma Tamamlandı</option>
+                <option value="İptal" selected="@(selectedStatus == "İptal" ? "selected" : null)">İptal</option>
+            </select>
+        </div>
+        <div class="col-md-2 mt-1 mt-md-0">
+            <a asp-action="Requests" class="btn btn-sm btn-outline-secondary">Filtreyi Temizle</a>
+        </div>
+    </form>
+
+    @{
+        var hasAnyFilter = ViewBag.SelectedCityId != null || ViewBag.SelectedDistrictId != null ||
+                           (ViewBag.SelectedMoveType != null && ViewBag.SelectedMoveType != "All") ||
+                           (ViewBag.SelectedStatus != null && ViewBag.SelectedStatus != "All");
+    }
+
+    @if (hasAnyFilter)
+    {
+        <div class="mb-3">
+            <span class="me-2 text-muted">Aktif filtreler:</span>
+
+            @if (ViewBag.SelectedCityId != null)
+            {
+                var city = ((IEnumerable<Enakliyat.Domain.City>)ViewBag.Cities)
+                    .FirstOrDefault(c => c.Id == (int)ViewBag.SelectedCityId);
+                if (city != null)
+                {
+                    <span class="badge bg-primary me-1">Şehir: @city.Name</span>
+                }
+            }
+
+            @if (ViewBag.SelectedDistrictId != null && ViewBag.Districts != null)
+            {
+                var districts = (IEnumerable<Enakliyat.Domain.District>)ViewBag.Districts;
+                var district = districts.FirstOrDefault(d => d.Id == (int)ViewBag.SelectedDistrictId);
+                if (district != null)
+                {
+                    <span class="badge bg-secondary me-1">İlçe: @district.Name</span>
+                }
+            }
+
+            @if (ViewBag.SelectedMoveType != null && ViewBag.SelectedMoveType != "All")
+            {
+                <span class="badge bg-info text-dark me-1">Tip: @ViewBag.SelectedMoveType</span>
+            }
+
+            @if (ViewBag.SelectedStatus != null && ViewBag.SelectedStatus != "All")
+            {
+                <span class="badge bg-success me-1">Durum: @ViewBag.SelectedStatus</span>
+            }
+        </div>
+    }
+
+    @{
+        var completedPaidIds = ViewBag.CompletedPaidIds as IEnumerable<int> ?? Enumerable.Empty<int>();
+        var completedPaidRequests = Model.Where(m => completedPaidIds.Contains(m.Id)).ToList();
+    }
+
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <button class="nav-link active" id="tab-all" data-bs-toggle="tab" data-bs-target="#tabAll" type="button">Tüm Talepler</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="tab-completed" data-bs-toggle="tab" data-bs-target="#tabCompleted" type="button">
+                Tamamlanan ve Ödemesi Alınmış (@completedPaidRequests.Count)
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="tabAll" role="tabpanel" aria-labelledby="tab-all">
+            <table class="table table-striped table-hover table-sm align-middle">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Kullanıcı</th>
+                        <th>Oluşturma Tarihi</th>
+                        <th>Taşıma Tipi</th>
+                        <th>Durum</th>
+                        <th>Nereden</th>
+                        <th>Nereye</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="9" class="text-center">Henüz talep yok.</td>
+                    </tr>
+                }
+                else
+                {
+                    var page = ViewBag.Page != null ? (int)ViewBag.Page : 1;
+                    var pageSize = ViewBag.PageSize != null ? (int)ViewBag.PageSize : 20;
+                    var index = 1 + (page - 1) * pageSize;
+
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@index</td>
+                            <td>@(item.User?.Email ?? "-")</td>
+                            <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
+                            <td>@item.MoveType</td>
+                            <td>
+                                @switch (item.Status)
+                                {
+                                    case "Yeni":
+                                        <span class="badge bg-primary">Yeni</span>;
+                                        break;
+                                    case "Teklif Bekliyor":
+                                        <span class="badge bg-info text-dark">Teklif Bekliyor</span>;
+                                        break;
+                                    case "Teklif Kabul Edildi":
+                                        <span class="badge bg-success">Teklif Kabul Edildi</span>;
+                                        break;
+                                    case "Taşınma Tamamlandı":
+                                        <span class="badge bg-success">Taşınma Tamamlandı</span>;
+                                        break;
+                                    case "İptal":
+                                        <span class="badge bg-danger">İptal</span>;
+                                        break;
+                                    default:
+                                        <span class="badge bg-secondary">@item.Status</span>;
+                                        break;
+                                }
+                            </td>
+                            <td>@item.FromAddress</td>
+                            <td>@item.ToAddress</td>
+                            <td></td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-secondary me-1" asp-action="Offers" asp-route-moveRequestId="@item.Id">Teklifler</a>
+                                <a class="btn btn-sm btn-outline-primary" asp-action="RequestDetails" asp-route-id="@item.Id">Detay</a>
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                }
+                </tbody>
+            </table>
+
+            @{
+                int currentPage = ViewBag.Page != null ? (int)ViewBag.Page : 1;
+                int totalPages = ViewBag.TotalPages != null ? (int)ViewBag.TotalPages : 1;
+            }
+
+            @if (totalPages > 1)
+            {
+                <nav aria-label="Talepler sayfalama">
+                    <ul class="pagination pagination-sm justify-content-end">
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            <a class="page-link" asp-action="Requests" asp-route-page="@(currentPage - 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-cityId="@ViewBag.SelectedCityId" asp-route-districtId="@ViewBag.SelectedDistrictId" asp-route-moveType="@ViewBag.SelectedMoveType" asp-route-status="@ViewBag.SelectedStatus">Önceki</a>
+                        </li>
+
+                        @for (var i = 1; i <= totalPages; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Requests" asp-route-page="@i" asp-route-pageSize="@ViewBag.PageSize" asp-route-cityId="@ViewBag.SelectedCityId" asp-route-districtId="@ViewBag.SelectedDistrictId" asp-route-moveType="@ViewBag.SelectedMoveType" asp-route-status="@ViewBag.SelectedStatus">@i</a>
+                            </li>
+                        }
+
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            <a class="page-link" asp-action="Requests" asp-route-page="@(currentPage + 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-cityId="@ViewBag.SelectedCityId" asp-route-districtId="@ViewBag.SelectedDistrictId" asp-route-moveType="@ViewBag.SelectedMoveType" asp-route-status="@ViewBag.SelectedStatus">Sonraki</a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+        </div>
+
+        <div class="tab-pane fade" id="tabCompleted" role="tabpanel" aria-labelledby="tab-completed">
+            <table class="table table-striped table-hover table-sm align-middle">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Kullanıcı</th>
+                        <th>Oluşturma Tarihi</th>
+                        <th>Taşıma Tipi</th>
+                        <th>Durum</th>
+                        <th>Nereden</th>
+                        <th>Nereye</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (!completedPaidRequests.Any())
+                {
+                    <tr>
+                        <td colspan="9" class="text-center">Tamamlanmış ve ödemesi alınmış talep yok.</td>
+                    </tr>
+                }
+                else
+                {
+                    var index = 1;
+                    foreach (var item in completedPaidRequests)
+                    {
+                        <tr>
+                            <td>@index</td>
+                            <td>@(item.User?.Email ?? "-")</td>
+                            <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
+                            <td>@item.MoveType</td>
+                            <td>@item.Status</td>
+                            <td>@item.FromAddress</td>
+                            <td>@item.ToAddress</td>
+                            <td class="text-end">
+                                <form asp-action="UpdateStatus" method="post" class="d-flex gap-2 justify-content-end">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <select name="status" class="form-select form-select-sm" style="max-width: 180px;">
+                                        <option value="Yeni" selected="@(item.Status == "Yeni" ? "selected" : null)">Yeni</option>
+                                        <option value="Teklif Bekliyor" selected="@(item.Status == "Teklif Bekliyor" ? "selected" : null)">Teklif Bekliyor</option>
+                                        <option value="Taşınma Tamamlandı" selected="@(item.Status == "Taşınma Tamamlandı" ? "selected" : null)">Taşınma Tamamlandı</option>
+                                        <option value="İptal" selected="@(item.Status == "İptal" ? "selected" : null)">İptal</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-primary">Kaydet</button>
+                                </form>
+                            </td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Offers" asp-route-moveRequestId="@item.Id">Teklifler</a>
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

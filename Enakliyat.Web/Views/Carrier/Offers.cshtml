@@ -1,0 +1,85 @@
+@model IEnumerable<Enakliyat.Domain.Offer>
+
+@{
+    ViewData["Title"] = "Nakliyeci - Tekliflerim";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Tekliflerim</h3>
+
+    @if (ViewBag.NewOffersCount != null && ViewBag.NewOffersCount > 0)
+    {
+        <div class="alert alert-info py-2">
+            Son 24 saat içinde <strong>@ViewBag.NewOffersCount</strong> yeni talep için teklif bekleniyor.
+        </div>
+    }
+
+    <form asp-action="Offers" method="get" class="row g-2 mb-3">
+        <div class="col-md-3">
+            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="All">Durum (Hepsi)</option>
+                @{
+                    string selectedStatus = ViewBag.SelectedStatus ?? "All";
+                }
+                <option value="Beklemede" selected="@(selectedStatus == "Beklemede" ? "selected" : null)">Beklemede</option>
+                <option value="Kabul Edildi" selected="@(selectedStatus == "Kabul Edildi" ? "selected" : null)">Kabul Edildi</option>
+                <option value="Reddedildi" selected="@(selectedStatus == "Reddedildi" ? "selected" : null)">Reddedildi</option>
+            </select>
+        </div>
+    </form>
+
+    <table class="table table-striped table-hover table-sm align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Talep No</th>
+                <th>Müşteri</th>
+                <th>Nereden</th>
+                <th>Nereye</th>
+                <th>Oluşturma</th>
+                <th>Durum</th>
+                <th>Fiyat</th>
+                <th>Not</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="10" class="text-center">Henüz teklifiniz yok.</td>
+            </tr>
+        }
+        else
+        {
+            var index = 1;
+            foreach (var o in Model)
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@o.MoveRequestId</td>
+                    <td>@(o.MoveRequest?.User?.Email ?? "-")</td>
+                    <td>@o.MoveRequest?.FromAddress</td>
+                    <td>@o.MoveRequest?.ToAddress</td>
+                    <td>@o.CreatedAt.ToLocalTime().ToString("g")</td>
+                    <td>@o.Status</td>
+                    <td style="min-width: 160px;">
+                        <form asp-action="EditOffer" method="post" class="d-flex gap-1 align-items-center">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@o.Id" />
+                            <input type="hidden" name="statusFilter" value="@ViewBag.SelectedStatus" />
+                            <input name="price" type="number" step="0.01" class="form-control form-control-sm" value="@o.Price" />
+                            <input name="note" class="form-control form-control-sm" value="@o.Note" />
+                            <button type="submit" class="btn btn-sm btn-primary ms-1">Kaydet</button>
+                        </form>
+                    </td>
+                    <td class="text-end" style="white-space: nowrap;">
+                        <a class="btn btn-sm btn-outline-secondary" asp-controller="Home" asp-action="Details" asp-route-id="@o.MoveRequestId" target="_blank">Talep Detayı</a>
+                    </td>
+                </tr>
+                index++;
+            }
+        }
+        </tbody>
+    </table>
+</div>

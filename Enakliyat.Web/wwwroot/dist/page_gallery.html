@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Studio ASP | Gallery</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	
+	<!-- ================== BEGIN core-css ================== -->
+	<link href="assets/css/vendor.min.css" rel="stylesheet">
+	<link href="assets/css/app.min.css" rel="stylesheet">
+	<!-- ================== END core-css ================== -->
+	
+	<!-- ================== BEGIN page-css ================== -->
+	<link href="assets/plugins/photoswipe/dist/photoswipe.css" rel="stylesheet">
+	<!-- ================== END page-css ================== -->
+
+</head>
+<body>
+	<!-- BEGIN #app -->
+	<div id="app" class="app app-content-full-height">
+		
+		<!-- BEGIN #header -->
+		<div id="header" class="app-header">
+			<!-- BEGIN mobile-toggler -->
+			<div class="mobile-toggler">
+				<button type="button" class="menu-toggler" data-toggle="sidebar-mobile">
+					<span class="bar"></span>
+					<span class="bar"></span>
+				</button>
+			</div>
+			<!-- END mobile-toggler -->
+			
+			<!-- BEGIN brand -->
+			<div class="brand">
+				<div class="desktop-toggler">
+					<button type="button" class="menu-toggler" data-toggle="sidebar-minify">
+						<span class="bar"></span>
+						<span class="bar"></span>
+					</button>
+				</div>
+				
+				<a href="index.html" class="brand-logo">
+					<img src="assets/img/logo.png" class="invert-dark" alt="" height="20">
+				</a>
+			</div>
+			<!-- END brand -->
+			
+			<!-- BEGIN menu -->
+			<div class="menu">
+				<form class="menu-search" method="POST" name="header_search_form">
+					<div class="menu-search-icon"><i class="fa fa-search"></i></div>
+					<div class="menu-search-input">
+						<input type="text" class="form-control" placeholder="Search menu...">
+					</div>
+				</form>
+				<div class="menu-item dropdown">
+					<a href="#" data-bs-toggle="dropdown" data-display="static" class="menu-link">
+						<div class="menu-icon"><i class="fa fa-bell nav-icon"></i></div>
+						<div class="menu-label">3</div>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end dropdown-notification">
+						<h6 class="dropdown-header text-body-emphasis mb-1">Notifications</h6>
+						<a href="#" class="dropdown-notification-item">
+							<div class="dropdown-notification-icon">
+								<i class="fa fa-receipt fa-lg fa-fw text-success"></i>
+							</div>
+							<div class="dropdown-notification-info">
+								<div class="title">Your store has a new order for 2 items totaling $1,299.00</div>
+								<div class="time">just now</div>
+							</div>
+							<div class="dropdown-notification-arrow">
+								<i class="fa fa-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="dropdown-notification-item">
+							<div class="dropdown-notification-icon">
+								<i class="far fa-user-circle fa-lg fa-fw text-muted"></i>
+							</div>
+							<div class="dropdown-notification-info">
+								<div class="title">3 new customer account is created</div>
+								<div class="time">2 minutes ago</div>
+							</div>
+							<div class="dropdown-notification-arrow">
+								<i class="fa fa-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="dropdown-notification-item">
+							<div class="dropdown-notification-icon">
+								<img src="assets/img/icon/android.svg" alt="" width="26">
+							</div>
+							<div class="dropdown-notification-info">
+								<div class="title">Your android application has been approved</div>
+								<div class="time">5 minutes ago</div>
+							</div>
+							<div class="dropdown-notification-arrow">
+								<i class="fa fa-chevron-right"></i>
+							</div>
+						</a>
+						<a href="#" class="dropdown-notification-item">
+							<div class="dropdown-notification-icon">
+								<img src="assets/img/icon/paypal.svg" alt="" width="26">
+							</div>
+							<div class="dropdown-notification-info">
+								<div class="title">Paypal payment method has been enabled for your store</div>
+								<div class="time">10 minutes ago</div>
+							</div>
+							<div class="dropdown-notification-arrow">
+								<i class="fa fa-chevron-right"></i>
+							</div>
+						</a>
+						<div class="p-2 text-center mb-n1">
+							<a href="#" class="text-body-emphasis text-opacity-50 text-decoration-none">See all</a>
+						</div>
+					</div>
+				</div>
+				<div class="menu-item dropdown">
+					<a href="#" data-bs-toggle="dropdown" data-display="static" class="menu-link">
+						<div class="menu-img online">
+							<img src="assets/img/user/user.jpg" alt="" class="ms-100 mh-100 rounded-circle">
+						</div>
+						<div class="menu-text">johnsmith@studio-asp.com</div>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end me-lg-3">
+						<a class="dropdown-item d-flex align-items-center" href="profile.html">Edit Profile <i class="fa fa-user-circle fa-fw ms-auto text-body text-opacity-50"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="email_inbox.html">Inbox <i class="fa fa-envelope fa-fw ms-auto text-body text-opacity-50"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="calendar.html">Calendar <i class="fa fa-calendar-alt fa-fw ms-auto text-body text-opacity-50"></i></a>
+						<a class="dropdown-item d-flex align-items-center" href="settings.html">Setting <i class="fa fa-wrench fa-fw ms-auto text-body text-opacity-50"></i></a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item d-flex align-items-center" href="page_login.html">Log Out <i class="fa fa-toggle-off fa-fw ms-auto text-body text-opacity-50"></i></a>
+					</div>
+				</div>
+			</div>
+			<!-- END menu -->
+		</div>
+		<!-- END #header -->
+		
+		<!-- BEGIN #sidebar -->
+		<div id="sidebar" class="app-sidebar">
+			<!-- BEGIN scrollbar -->
+			<div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
+				<!-- BEGIN menu -->
+				<div class="menu">
+					<div class="menu-header">Navigation</div>
+					<div class="menu-item">
+						<a href="index.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-laptop"></i></span>
+							<span class="menu-text">Dashboard</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="analytics.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-chart-pie"></i></span>
+							<span class="menu-text">Analytics</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon">
+								<i class="fa fa-envelope"></i>
+								<span class="menu-icon-label">6</span>
+							</span>
+							<span class="menu-text">Email</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="email_inbox.html" class="menu-link">
+									<span class="menu-text">Inbox</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="email_compose.html" class="menu-link">
+									<span class="menu-text">Compose</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="email_detail.html" class="menu-link">
+									<span class="menu-text">Detail</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-divider"></div>
+					<div class="menu-header">Components</div>
+					<div class="menu-item">
+						<a href="widgets.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-qrcode"></i></span>
+							<span class="menu-text">Widgets</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="javascript:;" class="menu-link">
+							<div class="menu-icon"><i class="fa fa-microchip"></i></div>
+							<div class="menu-text d-flex align-items-center">AI Studio</div> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="ai_chat.html" class="menu-link">
+									<div class="menu-text">AI Chat</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ai_image_generator.html" class="menu-link">
+									<div class="menu-text">AI Image Generator</div>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="javascript:;" class="menu-link">
+							<div class="menu-icon">
+								<i class="fa fa-wallet"></i>
+							</div>
+							<div class="menu-text d-flex align-items-center">POS System</div> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="pos_customer_order.html" target="_blank" class="menu-link">
+									<div class="menu-text">Customer Order</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_kitchen_order.html" target="_blank" class="menu-link">
+									<div class="menu-text">Kitchen Order</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_counter_checkout.html" target="_blank" class="menu-link">
+									<div class="menu-text">Counter Checkout</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_table_booking.html" target="_blank" class="menu-link">
+									<div class="menu-text">Table Booking</div>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="pos_menu_stock.html" target="_blank" class="menu-link">
+									<div class="menu-text">Menu Stock</div>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-heart"></i></span>
+							<span class="menu-text">UI Kits</span> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="ui_bootstrap.html" class="menu-link">
+									<span class="menu-text">Bootstrap</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_buttons.html" class="menu-link">
+									<span class="menu-text">Buttons</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_card.html" class="menu-link">
+									<span class="menu-text">Card</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_icons.html" class="menu-link">
+									<span class="menu-text">Icons</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_modal_notification.html" class="menu-link">
+									<span class="menu-text">Modal & Notification</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_typography.html" class="menu-link">
+									<span class="menu-text">Typography</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="ui_tabs_accordions.html" class="menu-link">
+									<span class="menu-text">Tabs & Accordions</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-file-alt"></i></span>
+							<span class="menu-text">Forms</span> 
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="form_elements.html" class="menu-link">
+									<span class="menu-text">Form Elements</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="form_plugins.html" class="menu-link">
+									<span class="menu-text">Form Plugins</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="form_wizards.html" class="menu-link">
+									<span class="menu-text">Wizards</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-table"></i></span>
+							<span class="menu-text">Tables</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="table_elements.html" class="menu-link">
+									<span class="menu-text">Table Elements</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="table_plugins.html" class="menu-link">
+									<span class="menu-text">Table Plugins</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-chart-bar"></i></span>
+							<span class="menu-text">Charts</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="chart_js.html" class="menu-link">
+									<span class="menu-text">Chart.js</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="chart_apex.html" class="menu-link">
+									<span class="menu-text">Apexcharts.js</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item">
+						<a href="map.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-map-marker-alt"></i></span>
+							<span class="menu-text">Map</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-code-branch"></i></span>
+							<span class="menu-text">Layout</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="layout_starter.html" class="menu-link">
+									<span class="menu-text">Starter Page</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_fixed_footer.html" class="menu-link">
+									<span class="menu-text">Fixed Footer</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_full_height.html" class="menu-link">
+									<span class="menu-text">Full Height</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_full_width.html" class="menu-link">
+									<span class="menu-text">Full Width</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_boxed_layout.html" class="menu-link">
+									<span class="menu-text">Boxed Layout</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_minified_sidebar.html" class="menu-link">
+									<span class="menu-text">Minified Sidebar</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_top_nav.html" class="menu-link">
+									<span class="menu-text">Top Nav</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_mixed_nav.html" class="menu-link">
+									<span class="menu-text">Mixed Nav</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="layout_mixed_nav_boxed_layout.html" class="menu-link">
+									<span class="menu-text">Mixed Nav Boxed Layout</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub active">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-globe"></i></span>
+							<span class="menu-text">Pages</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="page_scrum_board.html" class="menu-link">
+									<span class="menu-text">Scrum Board</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_products.html" class="menu-link">
+									<span class="menu-text">Products</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_product_details.html" class="menu-link">
+									<span class="menu-text">Product Details</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_orders.html" class="menu-link">
+									<span class="menu-text">Orders</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_order_details.html" class="menu-link">
+									<span class="menu-text">Order Details</span>
+								</a>
+							</div>
+							<div class="menu-item active">
+								<a href="page_gallery.html" class="menu-link">
+									<span class="menu-text">Gallery</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_search_results.html" class="menu-link">
+									<span class="menu-text">Search Results</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_coming_soon.html" class="menu-link">
+									<span class="menu-text">Coming Soon Page</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_404_error.html" class="menu-link">
+									<span class="menu-text">404 Error Page</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_login.html" class="menu-link">
+									<span class="menu-text">Login</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_register.html" class="menu-link">
+									<span class="menu-text">Register</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_messenger.html" class="menu-link">
+									<span class="menu-text">Messenger</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_data_management.html" class="menu-link">
+									<span class="menu-text">Data Management</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_file_manager.html" class="menu-link">
+									<span class="menu-text">File Manager</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="page_pricing.html" class="menu-link">
+									<span class="menu-text">Pricing Page</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item">
+						<a href="landing.html" target="_blank" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-crown"></i></span>
+							<span class="menu-text">Landing Page</span>
+						</a>
+					</div>
+					<div class="menu-divider"></div>
+					<div class="menu-header">Users</div>
+					<div class="menu-item">
+						<a href="profile.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-user-circle"></i></span>
+							<span class="menu-text">Profile</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="calendar.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-calendar"></i></span>
+							<span class="menu-text">Calendar</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="settings.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-cog"></i></span>
+							<span class="menu-text">Settings</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="helper.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-question-circle"></i></span>
+							<span class="menu-text">Helper</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a href="asp_identity.html" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-fingerprint"></i></span>
+							<span class="menu-text">ASP Identity</span>
+						</a>
+					</div>
+					<div class="p-3 px-4 mt-auto hide-on-minified">
+						<a href="https://seantheme.com/studio-asp/documentation/index.html" class="btn btn-secondary d-block w-100 fw-600 rounded-pill">
+							<i class="fa fa-code-branch me-1 ms-n1 opacity-5"></i> Documentation
+						</a>
+					</div>
+				</div>
+				<!-- END menu -->
+			</div>
+			<!-- END scrollbar -->
+			
+			<!-- BEGIN mobile-sidebar-backdrop -->
+			<button class="app-sidebar-mobile-backdrop" data-dismiss="sidebar-mobile"></button>
+			<!-- END mobile-sidebar-backdrop -->
+		</div>
+		<!-- END #sidebar -->
+		
+		<!-- BEGIN #content -->
+		<div id="content" class="app-content p-0">
+			<!-- BEGIN d-flex -->
+			<div class="d-block d-md-flex align-items-stretch h-100">
+				<!-- BEGIN gallery-menu-container -->
+				<div class="gallery-menu-container">
+					<!-- BEGIN scrollbar -->
+					<div data-scrollbar="true" data-height="100%" data-skip-mobile="true">
+						<!-- BEGIN gallery-menu -->
+						<div class="gallery-menu">
+							<div class="gallery-menu-header">Main</div>
+							<div class="gallery-menu-item"><a href="#" class="gallery-menu-link active"><i class="fa fa-fw fa-image me-1"></i> Photos</a></div>
+							<div class="gallery-menu-item"><a href="#" class="gallery-menu-link"><i class="fa fa-fw fa-heart me-1"></i> Memories</a></div>
+							<div class="gallery-menu-header">Shared</div>
+							<div class="gallery-menu-item"><a href="#" class="gallery-menu-link"><i class="fa fa-fw fa-cloud me-1"></i> Activity</a></div>
+							<div class="gallery-menu-header">Albums</div>
+							<div class="gallery-menu-item"><a href="#" class="gallery-menu-link"><i class="fa fa-fw fa-camera me-1"></i> All Photos</a></div>
+							<div class="gallery-menu-item"><a href="#" class="gallery-menu-link"><i class="fa fa-fw fa-user me-1"></i> People</a></div>
+							<div class="gallery-menu-item"><a href="#" class="gallery-menu-link"><i class="fa fa-fw fa-map-pin me-1"></i> Places</a></div>
+							<div class="gallery-menu-item"><a href="#" class="gallery-menu-link"><i class="fa fa-fw fa-camera-retro me-1"></i> Selfies</a></div>
+							<div class="gallery-menu-item"><a href="#" class="gallery-menu-link"><i class="fa fa-fw fa-video me-1"></i> Panaromas</a></div>
+							<div class="gallery-menu-item"><a href="#" class="gallery-menu-link"><i class="fa fa-fw fa-star me-1"></i> Depth Effect</a></div>
+							<div class="gallery-menu-item"><a href="#" class="gallery-menu-link"><i class="fa fa-fw fa-mobile me-1"></i> Screenshots</a></div>
+						</div>
+						<!-- END gallery-menu -->
+					</div>
+					<!-- end scrollbar -->
+				</div>
+				<!-- END gallery-menu-container -->
+				<!-- BEGIN gallery-content-container -->
+				<div class="gallery-content-container">
+					<!-- BEGIN scrollbar -->
+					<div data-scrollbar="true" data-height="100%">
+						<!-- BEGIN gallery-content -->
+						<div class="gallery-content">
+							<!-- BEGIN gallery -->
+							<div class="gallery">
+								<!-- BEGIN gallery-header -->
+								<div class="d-flex align-items-center mb-3">
+									<!-- BEGIN gallery-title -->
+									<div class="gallery-title mb-0">
+										<a href="#">
+										Wedding <i class="fa fa-chevron-right"></i> 
+										<small>May 11, 2025</small>
+										</a>
+									</div>
+									<!-- END gallery-title -->
+									
+									<!-- BEGIN btn-group -->
+									<div class="ms-auto btn-group">
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-play"></i></a>
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-plus"></i></a>
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-upload"></i></a>
+									</div>
+									<!-- END btn-group -->
+								</div>
+								<!-- END gallery-header -->
+								
+								<!-- BEGIN gallery-image -->
+								<div class="gallery-image">
+									<ul class="gallery-image-list">
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-42.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-42.jpg" alt="Wedding Image 1" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-43.jpg" data-pswp-width="752" data-pswp-height="442"><img src="assets/img/gallery/gallery-43.jpg" alt="Wedding Image 2" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-44.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-44.jpg" alt="Wedding Image 3" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-45.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-45.jpg" alt="Wedding Image 4" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-46.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-46.jpg" alt="Wedding Image 5" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-47.jpg" data-pswp-width="752" data-pswp-height="532"><img src="assets/img/gallery/gallery-47.jpg" alt="Wedding Image 6" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-48.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-48.jpg" alt="Wedding Image 7" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-49.jpg" data-pswp-width="752" data-pswp-height="1130"><img src="assets/img/gallery/gallery-49.jpg" alt="Wedding Image 8"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-50.jpg" data-pswp-width="752" data-pswp-height="1128"><img src="assets/img/gallery/gallery-50.jpg" alt="Wedding Image 9"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-51.jpg" data-pswp-width="752" data-pswp-height="866"><img src="assets/img/gallery/gallery-51.jpg" alt="Wedding Image 10"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-52.jpg" data-pswp-width="752" data-pswp-height="752"><img src="assets/img/gallery/gallery-52.jpg" alt="Wedding Image 11"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-53.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-53.jpg" alt="Wedding Image 12" class="img-portrait"></a></li>
+									</ul>
+								</div>
+								<!-- END gallery-image -->
+							</div>
+							<!-- END gallery -->
+							<!-- BEGIN gallery -->
+							<div class="gallery">
+								<!-- BEGIN gallery-header -->
+								<div class="d-flex align-items-center mb-3">
+									<!-- BEGIN gallery-title -->
+									<div class="gallery-title mb-0">
+										<a href="#">
+										Collections #339 <i class="fa fa-chevron-right"></i> 
+										<small>May 8, 2025</small>
+										</a>
+									</div>
+									<!-- END gallery-title -->
+									
+									<!-- BEGIN btn-group -->
+									<div class="ms-auto btn-group">
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-play"></i></a>
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-plus"></i></a>
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-upload"></i></a>
+									</div>
+									<!-- END btn-group -->
+								</div>
+								<!-- END gallery-header -->
+								
+								<!-- BEGIN gallery-image -->
+								<div class="gallery-image">
+									<ul class="gallery-image-list">
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-21.jpg" data-pswp-width="752" data-pswp-height="564"><img src="assets/img/gallery/gallery-21.jpg" alt="Collection #145 Image 1"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-22.jpg" data-pswp-width="752" data-pswp-height="564"><img src="assets/img/gallery/gallery-22.jpg" alt="Collection #145 Image 2"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-23.jpg" data-pswp-width="752" data-pswp-height="486"><img src="assets/img/gallery/gallery-23.jpg" alt="Collection #145 Image 3" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-24.jpg" data-pswp-width="752" data-pswp-height="564"><img src="assets/img/gallery/gallery-24.jpg" alt="Collection #145 Image 4"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-25.jpg" data-pswp-width="752" data-pswp-height="1128"><img src="assets/img/gallery/gallery-25.jpg" alt="Collection #145 Image 5"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-26.jpg" data-pswp-width="752" data-pswp-height="564"><img src="assets/img/gallery/gallery-26.jpg" alt="Collection #145 Image 6"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-27.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-27.jpg" alt="Collection #145 Image 7" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-28.jpg" data-pswp-width="752" data-pswp-height="564"><img src="assets/img/gallery/gallery-28.jpg" alt="Collection #145 Image 8"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-29.jpg" data-pswp-width="752" data-pswp-height="1128"><img src="assets/img/gallery/gallery-29.jpg" alt="Collection #145 Image 9"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-30.jpg" data-pswp-width="752" data-pswp-height="940"><img src="assets/img/gallery/gallery-30.jpg" alt="Collection #145 Image 10"></a></li>
+									</ul>
+								</div>
+								<!-- END gallery-image -->
+							</div>
+							<!-- END gallery -->
+							<!-- BEGIN gallery -->
+							<div class="gallery">
+								<!-- BEGIN gallery-header -->
+								<div class="d-flex align-items-center mb-3">
+									<!-- BEGIN gallery-title -->
+									<div class="gallery-title mb-0">
+										<a href="#">
+										Collections #144 <i class="fa fa-chevron-right"></i> 
+										<small>May 4, 2025</small>
+										</a>
+									</div>
+									<!-- END gallery-title -->
+									
+									<!-- BEGIN btn-group -->
+									<div class="ms-auto btn-group">
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-play"></i></a>
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-plus"></i></a>
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-upload"></i></a>
+									</div>
+									<!-- END btn-group -->
+								</div>
+								<!-- END gallery-header -->
+								
+								<!-- BEGIN gallery-image -->
+								<div class="gallery-image">
+									<ul class="gallery-image-list">
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-31.jpg" data-pswp-width="752" data-pswp-height="752"><img src="assets/img/gallery/gallery-31.jpg" alt="Collection #144 Image 1"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-32.jpg" data-pswp-width="752" data-pswp-height="1128"><img src="assets/img/gallery/gallery-32.jpg" class="img-portrait" alt="Collection #144 Image 2"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-33.jpg" data-pswp-width="752" data-pswp-height="564"><img src="assets/img/gallery/gallery-33.jpg" alt="Collection #144 Image 3"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-34.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-34.jpg" alt="Collection #144 Image 4" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-35.jpg" data-pswp-width="752" data-pswp-height="1136"><img src="assets/img/gallery/gallery-35.jpg" alt="Collection #144 Image 5"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-36.jpg" data-pswp-width="752" data-pswp-height="1128"><img src="assets/img/gallery/gallery-36.jpg" alt="Collection #144 Image 6"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-37.jpg" data-pswp-width="752" data-pswp-height="480"><img src="assets/img/gallery/gallery-37.jpg" alt="Collection #144 Image 7" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-38.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-38.jpg" alt="Collection #144 Image 8" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-39.jpg" data-pswp-width="752" data-pswp-height="422"><img src="assets/img/gallery/gallery-39.jpg" alt="Collection #144 Image 9" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-40.jpg" data-pswp-width="752" data-pswp-height="464"><img src="assets/img/gallery/gallery-40.jpg" alt="Collection #144 Image 10" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-41.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-41.jpg" alt="Collection #144 Image 11" class="img-portrait"></a></li>
+									</ul>
+								</div>
+								<!-- END gallery-image -->
+							</div>
+							<!-- END gallery -->
+							<!-- BEGIN gallery -->
+							<div class="gallery">
+								<!-- BEGIN gallery-header -->
+								<div class="d-flex align-items-center mb-3">
+									<!-- BEGIN gallery-title -->
+									<div class="gallery-title mb-0">
+										<a href="#">
+										Collection #143 <i class="fa fa-chevron-right"></i> 
+										<small>May 3, 2025</small>
+										</a>
+									</div>
+									<!-- END gallery-title -->
+									
+									<!-- BEGIN btn-group -->
+									<div class="ms-auto btn-group">
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-play"></i></a>
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-plus"></i></a>
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-upload"></i></a>
+									</div>
+									<!-- END btn-group -->
+								</div>
+								<!-- END gallery-header -->
+								
+								<!-- BEGIN gallery-image -->
+								<div class="gallery-image">
+									<ul class="gallery-image-list">
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-1.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-1.jpg" alt="Collection #143 Image 1" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-2.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-2.jpg" alt="Collection #143 Image 2" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-3.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-3.jpg" alt="Collection #143 Image 3" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-4.jpg" data-pswp-width="752" data-pswp-height="564"><img src="assets/img/gallery/gallery-4.jpg" alt="Collection #143 Image 4"></a></li>
+									</ul>
+								</div>
+								<!-- END gallery-image -->
+							</div>
+							<!-- END gallery -->
+							<!-- BEGIN gallery -->
+							<div class="gallery">
+								<!-- BEGIN gallery-header -->
+								<div class="d-flex align-items-center mb-3">
+									<!-- BEGIN gallery-title -->
+									<div class="gallery-title mb-0">
+										<a href="#">
+											Random <i class="fa fa-chevron-right"></i> 
+											<small>May 1, 2025</small>
+										</a>
+									</div>
+									<!-- END gallery-title -->
+									
+									<!-- BEGIN btn-group -->
+									<div class="ms-auto btn-group">
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-play"></i></a>
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-plus"></i></a>
+										<a href="#" class="btn btn-outline-default btn-sm"><i class="fa fa-upload"></i></a>
+									</div>
+									<!-- END btn-group -->
+								</div>
+								<!-- END gallery-header -->
+								
+								<!-- BEGIN gallery-image -->
+								<div class="gallery-image">
+									<ul class="gallery-image-list">
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-5.jpg" data-pswp-width="752" data-pswp-height="500"><img src="assets/img/gallery/gallery-5.jpg" alt="Random Image 1" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-6.jpg" data-pswp-width="752" data-pswp-height="564"><img src="assets/img/gallery/gallery-6.jpg" alt="Random Image 2"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-7.jpg" data-pswp-width="752" data-pswp-height="476"><img src="assets/img/gallery/gallery-7.jpg" alt="Random Image 3" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-8.jpg" data-pswp-width="752" data-pswp-height="472"><img src="assets/img/gallery/gallery-8.jpg" alt="Random Image 4" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-9.jpg" data-pswp-width="752" data-pswp-height="504"><img src="assets/img/gallery/gallery-9.jpg" alt="Random Image 5" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-10.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-10.jpg" alt="Random Image 6" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-11.jpg" data-pswp-width="752" data-pswp-height="564"><img src="assets/img/gallery/gallery-11.jpg" alt="Random Image 7"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-12.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-12.jpg" alt="Random Image 8" class="img-portrait"></a></li>
+										<li><a href="javascript:;" data-pswp-src="assets/img/gallery/gallery-13.jpg" data-pswp-width="752" data-pswp-height="502"><img src="assets/img/gallery/gallery-13.jpg" alt="Random Image 9" class="img-portrait"></a></li>
+									</ul>
+								</div>
+								<!-- END gallery-image -->
+							</div>
+							<!-- END gallery -->
+						</div>
+						<!-- END gallery-content -->
+					</div>
+					<!-- END scrollbar -->
+				</div>
+				<!-- END gallery-content-container -->
+			</div>
+			<!-- END d-flex -->
+		</div>
+		<!-- END #content -->
+		
+		<!-- BEGIN btn-scroll-top -->
+		<a href="#" data-click="scroll-top" class="btn-scroll-top fade"><i class="fa fa-arrow-up"></i></a>
+		<!-- END btn-scroll-top -->
+		<!-- BEGIN theme-panel -->
+	<div class="theme-panel">
+		<a href="javascript:;" data-click="theme-panel-expand" class="theme-collapse-btn"><i class="fa fa-cog"></i></a>
+		<div class="theme-panel-content">
+			<ul class="theme-list clearfix">
+				<li><a href="javascript:;" class="bg-red" data-theme="theme-red" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Red" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-pink" data-theme="theme-pink" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Pink" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-orange" data-theme="theme-orange" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Orange" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-yellow" data-theme="theme-yellow" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Yellow" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-lime" data-theme="theme-lime" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Lime" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-green" data-theme="theme-green" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Green" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-teal" data-theme="theme-teal" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Teal" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-cyan" data-theme="theme-cyan" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Aqua" data-original-title="" title="">&nbsp;</a></li>
+				<li class="active"><a href="javascript:;" class="bg-blue" data-theme="" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Default" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-purple" data-theme="theme-purple" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Purple" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-indigo" data-theme="theme-indigo" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Indigo" data-original-title="" title="">&nbsp;</a></li>
+				<li><a href="javascript:;" class="bg-gray-600" data-theme="theme-gray-600" data-click="theme-selector" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-container="body" data-bs-title="Gray" data-original-title="" title="">&nbsp;</a></li>
+			</ul>
+			<hr class="mb-0">
+			<div class="row mt-10px pt-3px">
+				<div class="col-9 control-label text-body-emphasis fw-bold">
+					<div class="d-flex">Dark Mode <span class="badge bg-theme text-theme-color ms-1 position-relative py-4px px-6px d-flex align-items-center">NEW</span></div>
+					<div class="lh-sm fs-13px fw-semibold">
+						<small class="text-body-emphasis opacity-50">
+							Adjust the appearance to reduce glare and give your eyes a break.
+						</small>
+					</div>
+				</div>
+				<div class="col-3 d-flex">
+					<div class="form-check form-switch ms-auto mb-0">
+						<input type="checkbox" class="form-check-input" name="app-theme-dark-mode" id="appThemeDarkMode" value="1">
+						<label class="form-check-label" for="appThemeDarkMode"></label>
+					</div>
+				</div>
+			</div>
+			<hr class="mb-0">
+			<div class="row mt-10px pt-3px">
+				<div class="col-9">
+					<div class="fw-bold text-body d-flex">
+						RTL Support <span class="badge bg-theme text-theme-color ms-1 position-relative py-4px px-6px d-flex align-items-center">NEW</span>
+					</div>
+					<div class="lh-sm fs-13px fw-semibold">
+						<small class="text-body-emphasis opacity-50">Easily switch to right-to-left layout for Arabic, Hebrew, and other RTL languages.</small>
+					</div>
+				</div>
+				<div class="col-3 d-flex">
+					<div class="form-check form-switch ms-auto mb-0">
+						<input type="checkbox" class="form-check-input" name="app-theme-rtl-mode" id="appThemeRtl" value="1" />
+						<label class="form-check-label" for="appThemeRtlMode"></label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END theme-panel -->
+	</div>
+	<!-- END #app -->
+	
+	<!-- ================== BEGIN core-js ================== -->
+	<script src="assets/js/vendor.min.js"></script>
+	<script src="assets/js/app.min.js"></script>
+	<!-- ================== END core-js ================== -->
+	
+	
+	<!-- ================== BEGIN page-module-js ================== -->
+	<script type="module" src="assets/js/demo/page-gallery.demo.js"></script>
+	<!-- ================== END page-module-js ================== -->
+</body>
+</html>

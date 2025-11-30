@@ -1,0 +1,112 @@
+@{ 
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-xxl px-3 px-lg-5">
+    <h1 class="page-header mb-3">
+        Admin Dashboard
+        <small class="d-block d-sm-inline ms-sm-2">Sistem genel istatistikleri</small>
+    </h1>
+
+    <div class="row">
+        <div class="col-xl-6 mb-3">
+            <div class="card h-100 overflow-hidden">
+                <div class="card-img-overlay d-block d-lg-none bg-blue rounded"></div>
+                <div class="card-img-overlay d-none d-md-block bg-blue rounded mb-n1 mx-n1" style="background-image: url(/dist/assets/img/bg/wave-bg.png); background-position: right bottom; background-repeat: no-repeat; background-size: 100%;"></div>
+                <div class="card-body position-relative text-white text-opacity-70">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="d-flex">
+                                <div class="me-auto">
+                                    <h5 class="text-white text-opacity-80 mb-2">Genel Durum</h5>
+                                    <h3 class="text-white mt-n1 mb-1">@ViewBag.TotalRequests Talep</h3>
+                                    <p class="mb-1 text-white text-opacity-60">
+                                        Tamamlanan: <b>@ViewBag.CompletedRequests</b> · İptal: <b>@ViewBag.CancelledRequests</b>
+                                    </p>
+                                    <p class="mb-1 text-white text-opacity-60">
+                                        Tamamlama Oranı: @((double)ViewBag.CancelRate * 100d).ToString("0.0")%
+                                    </p>
+                                </div>
+                            </div>
+
+                            <hr class="bg-white bg-opacity-75 mt-3 mb-3" />
+
+                            <div class="row">
+                                <div class="col-6 col-lg-5">
+                                    <div class="mt-1">
+                                        <i class="fa fa-users fs-28px text-black text-opacity-50"></i>
+                                    </div>
+                                    <div class="mt-1">
+                                        <div>Toplam Kullanıcı</div>
+                                        <div class="fw-600 text-white">@ViewBag.TotalUsers</div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-5">
+                                    <div class="mt-1">
+                                        <i class="fa fa-truck fs-28px text-black text-opacity-50"></i>
+                                    </div>
+                                    <div class="mt-1">
+                                        <div>Toplam Nakliyeci</div>
+                                        <div class="fw-600 text-white">@ViewBag.TotalCarriers</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="bg-white bg-opacity-75 mt-3 mb-3" />
+
+                            <div class="mt-2 mb-2">
+                                <div class="text-white text-opacity-80">Bugünkü Gelir (Kapora)</div>
+                                <h4 class="text-white mb-0">@ViewBag.TodayRevenue?.ToString("N0") TL</h4>
+                            </div>
+                            <div class="fs-12px text-white text-opacity-60">
+                                Bu ayki gelir (kapora): <b>@ViewBag.MonthRevenue?.ToString("N0") TL</b>
+                            </div>
+                        </div>
+                        <div class="col-md-4 d-none d-md-block" style="min-height: 260px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="card mb-3 overflow-hidden fs-13px border-0 bg-gradient-custom-orange" style="min-height: 199px;">
+                        <div class="card-body position-relative">
+                            <h5 class="text-white text-opacity-80 mb-2 fs-16px">Son 7 Günde Yeni Talepler</h5>
+                            <h3 class="text-white mt-n1">@ViewBag.NewRequestsWeek</h3>
+                            <div class="text-white text-opacity-80 mb-3">Sisteme eklenen yeni taşıma talepleri</div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3 overflow-hidden fs-13px border-0 bg-gradient-custom-teal" style="min-height: 199px;">
+                        <div class="card-body position-relative">
+                            <h5 class="text-white text-opacity-80 mb-2 fs-16px">Son 7 Günde Yeni Kullanıcılar</h5>
+                            <h3 class="text-white mt-n1">@ViewBag.NewUsersWeek</h3>
+                            <div class="text-white text-opacity-80 mb-3">Kayıt olan yeni kullanıcı sayısı</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="card mb-3 overflow-hidden fs-13px border-0 bg-gradient-custom-pink" style="min-height: 199px;">
+                        <div class="card-body position-relative">
+                            <h5 class="text-white text-opacity-80 mb-2 fs-16px">Açık Teklifler</h5>
+                            <h3 class="text-white mt-n1">@ViewBag.OpenOffers</h3>
+                            <div class="text-white text-opacity-80 mb-3">Aktif rezervasyon: @ViewBag.ActiveReservations</div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3 overflow-hidden fs-13px border-0 bg-gradient-custom-indigo" style="min-height: 199px;">
+                        <div class="card-body position-relative">
+                            <h5 class="text-white text-opacity-80 mb-2 fs-16px">Bekleyen Firma Onayı</h5>
+                            <h3 class="text-white mt-n1">@ViewBag.PendingCarrierApprovals</h3>
+                            <div class="text-white text-opacity-80 mb-1">Ort. Puan: @(((double)ViewBag.AverageCarrierRating).ToString("0.0"))</div>
+                            <div class="text-white text-opacity-70">Son 7 günde kapora ödemeleri: @ViewBag.WeeklyDepositAmount?.ToString("N0") TL · @ViewBag.WeeklyDepositCount ödeme</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

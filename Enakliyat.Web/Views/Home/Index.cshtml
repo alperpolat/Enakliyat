@@ -1,0 +1,494 @@
+﻿@model Enakliyat.Web.Models.MoveRequestViewModel
+
+@{
+    ViewData["Title"] = "Evden Eve Nakliyat Teklif Al";
+}
+
+<!-- HERO -->
+<div class="py-5 border-bottom mb-4" style="background-color:#f5f7fb;">
+    <div class="container-xxl p-3 p-lg-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h1 class="display-4 fw-bolder mb-3 text-body-emphasis" style="letter-spacing:-0.02em;">
+                    <span class="d-block">
+                        <span style="color:#1a73e8;">Evden</span>
+                        <span style="color:#34a853;">eve</span>
+                        <span style="color:#fbbc05;">nakliyat</span>
+                        <span style="color:#ea4335;">için</span>
+                    </span>
+                    <span class="d-block text-primary">
+                        <span style="color:#34a853;">tek</span>
+                        <span style="color:#1a73e8;">form,</span>
+                        <span style="color:#ea4335;">onlarca</span>
+                        <span style="color:#fbbc05;">teklif.</span>
+                    </span>
+                </h1>
+                <p class="fs-5 text-body-secondary mb-4">
+                    Türkiye genelindeki onaylı nakliyecilerden dakikalar içinde fiyat teklifi al.
+                    Taşınma detaylarını gir, firmaları puan ve yorumlarına göre karşılaştır, en uygununu seç.
+                </p>
+                <ul class="list-unstyled mb-4 text-body-secondary">
+                    <li class="mb-2"><i class="fa fa-check text-theme me-2"></i> Onaylı ve puanlı firmalar</li>
+                    <li class="mb-2"><i class="fa fa-check text-theme me-2"></i> Fotoğraflı talep oluşturma</li>
+                    <li class="mb-2"><i class="fa fa-check text-theme me-2"></i> %10 kapora ile güvenli rezervasyon</li>
+                </ul>
+                <a href="#quote-form" class="btn btn-theme fw-semibold px-4 py-2">
+                    Hemen ücretsiz teklif al
+                </a>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center">
+                <img src="~/img/3.jpg" alt="Evden eve nakliyat" class="img-fluid rounded-4 shadow" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QUOTE FORM -->
+<div id="quote-form" class="py-5" style="background-color:#ffffff;">
+    <div class="container-xxl p-3 p-lg-5">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-header bg-body border-0 pb-0">
+                        <h4 class="card-title mb-1 fs-4 fw-semibold">
+                            Tek form ile <span class="text-primary">tüm nakliyecilerden</span> teklif al
+                        </h4>
+                        <p class="text-body-secondary mb-0">Taşınma tipini seç, adresleri doldur, geri kalanını biz halledelim.</p>
+                    </div>
+                    <div class="card-body px-4 px-lg-5 py-4">
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs mb-4 border-bottom-0" id="offerTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-semibold" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
+                                Ev Taşıma
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold" id="partial-tab" data-bs-toggle="tab" data-bs-target="#partial" type="button" role="tab" aria-controls="partial" aria-selected="false">
+                                Parça Eşya
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold" id="office-tab" data-bs-toggle="tab" data-bs-target="#office" type="button" role="tab" aria-controls="office" aria-selected="false">
+                                Ofis Taşıma
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold" id="storage-tab" data-bs-toggle="tab" data-bs-target="#storage" type="button" role="tab" aria-controls="storage" aria-selected="false">
+                                Depolama
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="offerTabsContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <form asp-action="Index" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="MoveType" value="Home" />
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereden</label>
+                                        <input type="text" class="form-control form-control-lg" id="fromLocationText" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="FromCityId" id="fromCityId" />
+                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictId" />
+                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodId" />
+                                        <div id="fromLocationSuggestions" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereye</label>
+                                        <input type="text" class="form-control form-control-lg" id="toLocationText" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="ToCityId" id="toCityId" />
+                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictId" />
+                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodId" />
+                                        <div id="toLocationSuggestions" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                    <div class="col-md-2 d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
+                                            Teklif Al
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="tab-pane fade" id="partial" role="tabpanel" aria-labelledby="partial-tab">
+                            <form asp-action="Index" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="MoveType" value="Partial" />
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereden</label>
+                                        <input type="text" class="form-control form-control-lg" id="fromLocationTextPartial" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="FromCityId" id="fromCityIdPartial" />
+                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictIdPartial" />
+                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodIdPartial" />
+                                        <div id="fromLocationSuggestionsPartial" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereye</label>
+                                        <input type="text" class="form-control form-control-lg" id="toLocationTextPartial" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="ToCityId" id="toCityIdPartial" />
+                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictIdPartial" />
+                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodIdPartial" />
+                                        <div id="toLocationSuggestionsPartial" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                    <div class="col-md-2 d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
+                                            Teklif Al
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="tab-pane fade" id="office" role="tabpanel" aria-labelledby="office-tab">
+                            <form asp-action="Index" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="MoveType" value="Office" />
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereden</label>
+                                        <input type="text" class="form-control form-control-lg" id="fromLocationTextOffice" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="FromCityId" id="fromCityIdOffice" />
+                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictIdOffice" />
+                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodIdOffice" />
+                                        <div id="fromLocationSuggestionsOffice" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereye</label>
+                                        <input type="text" class="form-control form-control-lg" id="toLocationTextOffice" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="ToCityId" id="toCityIdOffice" />
+                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictIdOffice" />
+                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodIdOffice" />
+                                        <div id="toLocationSuggestionsOffice" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                    <div class="col-md-2 d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
+                                            Teklif Al
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="tab-pane fade" id="storage" role="tabpanel" aria-labelledby="storage-tab">
+                            <form asp-action="Index" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="MoveType" value="Storage" />
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereden</label>
+                                        <input type="text" class="form-control form-control-lg" id="fromLocationTextStorage" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="FromCityId" id="fromCityIdStorage" />
+                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictIdStorage" />
+                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodIdStorage" />
+                                        <div id="fromLocationSuggestionsStorage" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereye</label>
+                                        <input type="text" class="form-control form-control-lg" id="toLocationTextStorage" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="ToCityId" id="toCityIdStorage" />
+                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictIdStorage" />
+                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodIdStorage" />
+                                        <div id="toLocationSuggestionsStorage" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                    <div class="col-md-2 d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
+                                            Teklif Al
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- STEPS / ADVANTAGES -->
+<div class="py-5" style="background-color:#f5f7fb;">
+    <div class="container-xxl p-3 p-lg-5">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title fw-semibold mb-2">1. Talebini oluştur</h5>
+                        <p class="card-text text-body-secondary mb-0">
+                            Nereden nereye taşınacağını, kat bilgisini ve varsa özel isteklerini forma gir.
+                            Dilersen eşyalarının fotoğraflarını ekle.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title fw-semibold mb-2">2. Teklifleri karşılaştır</h5>
+                        <p class="card-text text-body-secondary mb-0">
+                            Onaylı nakliyecilerden gelen fiyatları gör, puan ve yorumlara göre firmaları kıyasla.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title fw-semibold mb-2">3. Rezervasyon yap</h5>
+                        <p class="card-text text-body-secondary mb-0">
+                            Seçtiğin firmayı %10 kapora ile rezerve et.
+                            Taşınma günü ekibini ve saatini panelden takip et.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="py-5" style="background-color:#ffffff;">
+    <div class="container-xxl p-3 p-lg-5">
+        <div class="text-center mb-5">
+            <h1 class="mb-3 text-center">Müşterilerimiz Ne Diyor</h1>
+            <p class="fs-6 text-body text-opacity-75 text-center mb-0">
+                Nakliye360 üzerinden taşınan gerçek kullanıcıların yorumları. <br />
+                Fiyat şeffaflığı, zamanında teslim ve profesyonel ekip deneyimlerini kendi cümleleriyle dinle.
+            </p>
+        </div>
+        <div class="row g-3 g-lg-4 mb-4">
+            <div class="col-xl-4 col-md-6">
+                <div class="card p-4 border-0 h-100 rounded-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center me-3" style="width:50px;height:50px;">
+                            <span class="fw-bold text-primary">AK</span>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Ayşe K.</h5>
+                            <small class="text-muted">İstanbul &rarr; Ankara taşınması</small>
+                        </div>
+                    </div>
+                    <div class="mb-3 d-flex">
+                        <i class="fa fa-quote-left fa-2x text-body text-opacity-15"></i>
+                        <div class="p-3">
+                            <div class="text-warning d-flex mb-2">
+                                <i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star"></i>
+                            </div>
+                            Tek form doldurarak 5 farklı firmadan teklif aldım. Fiyat ve yorumları kolayca kıyasladım,
+                            ekip tam saatinde geldi, hiçbir eşyam zarar görmedi.
+                        </div>
+                        <div class="d-flex align-items-end">
+                            <i class="fa fa-quote-right fa-2x text-body text-opacity-15"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6">
+                <div class="card p-4 border-0 h-100 rounded-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center me-3" style="width:50px;height:50px;">
+                            <span class="fw-bold text-primary">MB</span>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Mehmet B.</h5>
+                            <small class="text-muted">Ofis taşıma, İzmir</small>
+                        </div>
+                    </div>
+                    <div class="mb-3 d-flex">
+                        <i class="fa fa-quote-left fa-2x text-body text-opacity-15"></i>
+                        <div class="p-3">
+                            <div class="text-warning d-flex mb-2">
+                                <i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star"></i>
+                            </div>
+                            Ofis ekipmanlarımız için sigortalı taşıma arıyorduk. eTaşın üzerinden
+                            kurumsal referanslı bir firma bulduk, hafta sonu taşınma kusursuz tamamlandı.
+                        </div>
+                        <div class="d-flex align-items-end">
+                            <i class="fa fa-quote-right fa-2x text-body text-opacity-15"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6">
+                <div class="card p-4 border-0 h-100 rounded-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center me-3" style="width:50px;height:50px;">
+                            <span class="fw-bold text-primary">DY</span>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Deniz Y.</h5>
+                            <small class="text-muted">Parça eşya, Bursa</small>
+                        </div>
+                    </div>
+                    <div class="mb-3 d-flex">
+                        <i class="fa fa-quote-left fa-2x text-body text-opacity-15"></i>
+                        <div class="p-3">
+                            <div class="text-warning d-flex mb-2">
+                                <i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star"></i>
+                            </div>
+                            Sadece birkaç parça eşyamı gönderecektim, klasik firmalar ilgilenmiyordu.
+                            eTaşın üzerinden uygun fiyatlı parça eşya taşıma buldum, aynı gün teslim ettiler.
+                        </div>
+                        <div class="d-flex align-items-end">
+                            <i class="fa fa-quote-right fa-2x text-body text-opacity-15"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- NEWS / BLOG -->
+<div class="py-5" style="background-color:#f5f7fb;">
+    <div class="container-xxl p-3 p-lg-5">
+        <div class="text-center mb-5">
+            <h1 class="mb-3 text-center">Haberler</h1>
+            <p class="fs-6 text-body text-opacity-75 text-center mb-0">
+                Taşınma sürecini kolaylaştıracak ipuçları, trendler ve güncel içerikler. <br />
+                Evden eve nakliyat, parça eşya ve depolama hakkında bilmen gerekenleri burada topladık.
+            </p>
+        </div>
+        <div class="row g-3 g-xl-4 mb-4">
+            <div class="col-xl-3 col-lg-4 col-sm-6">
+                <div class="d-flex flex-column h-100 rounded-4 overflow-hidden shadow-sm mb-4 bg-white">
+                    <div class="ratio ratio-16x9 bg-light">
+                        <img src="~/img/1.jpg" alt="Taşınma hazırlıkları" class="w-100 h-100 object-fit-cover" />
+                    </div>
+                    <div class="flex-1 p-3 pb-0">
+                        <div class="mb-2">
+                            <span class="bg-theme bg-opacity-15 text-theme px-2 py-1 rounded small fw-bold">Ev Taşıma</span>
+                        </div>
+                        <h5>Taşınmadan Önce Yapılması Gereken 10 Hazırlık</h5>
+                        <p class="mb-0">Taşınma günü stresini azaltmak için paketleme, adres bildirimi ve nakliyeci seçimi adımlarını önden planla.</p>
+                    </div>
+                    <div class="p-3 pt-0 text-body text-opacity-50">Kasım 2025</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-sm-6">
+                <div class="d-flex flex-column h-100 rounded-4 overflow-hidden shadow-sm mb-4 bg-white">
+                    <div class="ratio ratio-16x9 bg-light">
+                        <img src="~/img/2.jpg" alt="Parça eşya gönderme" class="w-100 h-100 object-fit-cover" />
+                    </div>
+                    <div class="flex-1 p-3 pb-0">
+                        <div class="mb-2">
+                            <span class="bg-theme bg-opacity-15 text-theme px-2 py-1 rounded small fw-bold">Parça Eşya</span>
+                        </div>
+                        <h5>Uygun Fiyatlı Parça Eşya Gönderme Rehberi</h5>
+                        <p class="mb-0">Tek koliden ofis mobilyasına kadar, en uygun parça eşya seçeneklerini nasıl bulacağını keşfet.</p>
+                    </div>
+                    <div class="p-3 pt-0 text-body text-opacity-50">Kasım 2025</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-sm-6">
+                <div class="d-flex flex-column h-100 rounded-4 overflow-hidden shadow-sm mb-4 bg-white">
+                    <div class="ratio ratio-16x9 bg-light">
+                        <img src="~/img/3.jpg" alt="Depolama" class="w-100 h-100 object-fit-cover" />
+                    </div>
+                    <div class="flex-1 p-3 pb-0">
+                        <div class="mb-2">
+                            <span class="bg-theme bg-opacity-15 text-theme px-2 py-1 rounded small fw-bold">Depolama</span>
+                        </div>
+                        <h5>Eşyalarınızı Depolarken Dikkat Etmeniz Gerekenler</h5>
+                        <p class="mb-0">Nem, sigorta ve güvenlik konularına dikkat ederek eşyalarınızı uzun süre güvenle saklayın.</p>
+                    </div>
+                    <div class="p-3 pt-0 text-body text-opacity-50">Ekim 2025</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-sm-6">
+                <div class="d-flex flex-column h-100 rounded-4 overflow-hidden shadow-sm mb-4 bg-white">
+                    <div class="ratio ratio-16x9 bg-light">
+                        <img src="~/img/4.jpg" alt="Nakliyeci seçimi" class="w-100 h-100 object-fit-cover" />
+                    </div>
+                    <div class="flex-1 p-3 pb-0">
+                        <div class="mb-2">
+                            <span class="bg-theme bg-opacity-15 text-theme px-2 py-1 rounded small fw-bold">Nakliyeci Seçimi</span>
+                        </div>
+                        <h5>Güvenilir Nakliyeci Nasıl Seçilir?</h5>
+                        <p class="mb-0">Puan, yorum ve evrak kontrolleriyle en doğru firmayı seçmek için nelere bakmalısın?</p>
+                    </div>
+                    <div class="p-3 pt-0 text-body text-opacity-50">Eylül 2025</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function searchLocation(term) {
+            const response = await fetch(`/Home/SearchLocation?term=${encodeURIComponent(term)}`);
+            if (!response.ok) return [];
+            return await response.json();
+        }
+
+        function setupLocationAutocomplete(inputId, suggestionsId, cityHiddenId, districtHiddenId, neighborhoodHiddenId) {
+            const input = document.getElementById(inputId);
+            const suggestions = document.getElementById(suggestionsId);
+            const cityInput = document.getElementById(cityHiddenId);
+            const districtInput = document.getElementById(districtHiddenId);
+            const neighborhoodInput = document.getElementById(neighborhoodHiddenId);
+
+            if (!input || !suggestions || !cityInput || !districtInput || !neighborhoodInput) return;
+
+            let currentTimeout = null;
+
+            input.addEventListener('input', function () {
+                const term = input.value.trim();
+                cityInput.value = '';
+                districtInput.value = '';
+                neighborhoodInput.value = '';
+                suggestions.innerHTML = '';
+
+                if (term.length < 2) {
+                    return;
+                }
+
+                if (currentTimeout) {
+                    clearTimeout(currentTimeout);
+                }
+
+                currentTimeout = setTimeout(async () => {
+                    const results = await searchLocation(term);
+                    suggestions.innerHTML = '';
+
+                    results.forEach(r => {
+                        const item = document.createElement('button');
+                        item.type = 'button';
+                        item.className = 'list-group-item list-group-item-action';
+                        item.textContent = r.display ?? r.Display;
+                        item.addEventListener('click', function () {
+                            input.value = item.textContent;
+                            cityInput.value = r.cityId ?? r.CityId;
+                            districtInput.value = r.districtId ?? r.DistrictId;
+                            neighborhoodInput.value = r.neighborhoodId ?? r.NeighborhoodId;
+                            suggestions.innerHTML = '';
+                        });
+                        suggestions.appendChild(item);
+                    });
+                }, 250);
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!suggestions.contains(e.target) && e.target !== input) {
+                    suggestions.innerHTML = '';
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            setupLocationAutocomplete('fromLocationText', 'fromLocationSuggestions', 'fromCityId', 'fromDistrictId', 'fromNeighborhoodId');
+            setupLocationAutocomplete('toLocationText', 'toLocationSuggestions', 'toCityId', 'toDistrictId', 'toNeighborhoodId');
+            setupLocationAutocomplete('fromLocationTextPartial', 'fromLocationSuggestionsPartial', 'fromCityIdPartial', 'fromDistrictIdPartial', 'fromNeighborhoodIdPartial');
+            setupLocationAutocomplete('toLocationTextPartial', 'toLocationSuggestionsPartial', 'toCityIdPartial', 'toDistrictIdPartial', 'toNeighborhoodIdPartial');
+            setupLocationAutocomplete('fromLocationTextOffice', 'fromLocationSuggestionsOffice', 'fromCityIdOffice', 'fromDistrictIdOffice', 'fromNeighborhoodIdOffice');
+            setupLocationAutocomplete('toLocationTextOffice', 'toLocationSuggestionsOffice', 'toCityIdOffice', 'toDistrictIdOffice', 'toNeighborhoodIdOffice');
+            setupLocationAutocomplete('fromLocationTextStorage', 'fromLocationSuggestionsStorage', 'fromCityIdStorage', 'fromDistrictIdStorage', 'fromNeighborhoodIdStorage');
+            setupLocationAutocomplete('toLocationTextStorage', 'toLocationSuggestionsStorage', 'toCityIdStorage', 'toDistrictIdStorage', 'toNeighborhoodIdStorage');
+            setupLocationAutocomplete('fromLocationTextInternational', 'fromLocationSuggestionsInternational', 'fromCityIdInternational', 'fromDistrictIdInternational', 'fromNeighborhoodIdInternational');
+            setupLocationAutocomplete('toLocationTextInternational', 'toLocationSuggestionsInternational', 'toCityIdInternational', 'toDistrictIdInternational', 'toNeighborhoodIdInternational');
+        });
+    </script>
+}

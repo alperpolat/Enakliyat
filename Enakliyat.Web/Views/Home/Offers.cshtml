@@ -1,0 +1,170 @@
+@model Enakliyat.Web.Models.OfferDetailsViewModel
+
+@{
+    ViewData["Title"] = "Teklif Formu";
+}
+
+<div class="container py-4" data-move-type="@Model.MoveType">
+    <h3 class="mb-3">Teklif Formu</h3>
+
+    <div class="mb-3">
+        <strong>Nereden:</strong> @Model.FromAddress<br />
+        <strong>Nereye:</strong> @Model.ToAddress<br />
+        <strong>Taşıma Tipi:</strong> @Model.MoveType
+    </div>
+
+    <form asp-action="Offers" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="MoveRequestId" />
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="CustomerName" class="form-label">İsminiz</label>
+                <input asp-for="CustomerName" class="form-control" />
+                <span asp-validation-for="CustomerName" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="PhoneNumber" class="form-label">Telefon numaranız (5xx xxx xx xx)</label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Email" class="form-label">E-posta adresinizi girin</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="MoveDate" class="form-label">Taşınma tarihini seçin</label>
+                <input asp-for="MoveDate" type="date" class="form-control" />
+                <span asp-validation-for="MoveDate" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="RoomType" class="form-label" id="roomTypeLabel">Oda tipi seçin</label>
+                <select asp-for="RoomType" class="form-select" id="roomTypeSelect">
+                    <option value="">Seçiniz</option>
+                    <option>1+1</option>
+                    <option>2+1</option>
+                    <option>3+1</option>
+                    <option>4+1 ve üzeri</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label asp-for="FromFloor" class="form-label">Çıkış Katı</label>
+                <input asp-for="FromFloor" type="number" class="form-control" min="0" />
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <div class="form-check mt-3">
+                    <input class="form-check-input" asp-for="FromHasElevator" />
+                    <label class="form-check-label" asp-for="FromHasElevator">Çıkış adresinde asansör var</label>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="ToFloor" class="form-label">Varış Katı</label>
+                <input asp-for="ToFloor" type="number" class="form-control" min="0" />
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <div class="form-check mt-3">
+                    <input class="form-check-input" asp-for="ToHasElevator" />
+                    <label class="form-check-label" asp-for="ToHasElevator">Varış adresinde asansör var</label>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="Notes" class="form-label" id="notesLabel">Taşınma detaylarını girin</label>
+                <textarea asp-for="Notes" class="form-control" rows="4" id="notesTextarea" placeholder="Eşyaların tarifleri, asansör ihtiyacı, araç yanaşabilme imkanı vb."></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Eşyalarınızın Fotoğrafları (isteğe bağlı)</label>
+                <input asp-for="Photos" type="file" class="form-control" multiple />
+            </div>
+
+            <div class="col-12">
+                <div class="form-check">
+                    <input class="form-check-input" asp-for="KvkkAccepted" />
+                    <label class="form-check-label" asp-for="KvkkAccepted">
+                        Gizlilik Politikası, Kişisel Veri Koruma Kanunu ve Kullanıcı Sözleşmesi'ni okudum, anladım ve onaylıyorum.
+                    </label>
+                </div>
+            </div>
+
+            @if (ViewBag.AddOnServices != null)
+            {
+                <div class="col-12">
+                    <hr />
+                    <h5>Ek Hizmetler</h5>
+                    <div class="row g-2 mt-1">
+                        @foreach (var s in (IEnumerable<Enakliyat.Domain.AddOnService>)ViewBag.AddOnServices)
+                        {
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="SelectedAddOnIds" value="@s.Id" id="addon_@s.Id" />
+                                    <label class="form-check-label" for="addon_@s.Id">
+                                        @s.Name
+                                        @if (s.DefaultPrice.HasValue)
+                                        {
+                                            <span class="text-muted">(@s.DefaultPrice.Value.ToString("N2") TL)</span>
+                                        }
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Teklifleri Al</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const container = document.querySelector('[data-move-type]');
+            if (!container) return;
+
+            const moveType = (container.getAttribute('data-move-type') || '').toLowerCase();
+            const roomLabel = document.getElementById('roomTypeLabel');
+            const roomSelect = document.getElementById('roomTypeSelect');
+            const notesLabel = document.getElementById('notesLabel');
+            const notesTextarea = document.getElementById('notesTextarea');
+
+            if (!roomLabel || !roomSelect || !notesLabel || !notesTextarea) return;
+
+            // Varsayılan: Ev taşıma
+            let roomText = 'Oda tipi seçin';
+            let notesText = 'Taşınma detaylarını girin';
+            let notesPlaceholder = 'Eşyaların tarifleri, asansör ihtiyacı, araç yanaşabilme imkanı vb.';
+
+            if (moveType === 'office') {
+                roomText = 'Ofis büyüklüğü (m²)';
+                notesText = 'Ofis taşınma detaylarını girin';
+                notesPlaceholder = 'Çalışan sayısı, oda sayısı, özel ekipman vb.';
+            } else if (moveType === 'storage') {
+                roomText = 'Depolama süresi';
+                notesText = 'Depolanacak eşyalar ve süre';
+                notesPlaceholder = 'Hangi eşyalar, yaklaşık hacim ve ne kadar süreyle depolanacağı.';
+            } else if (moveType === 'international') {
+                roomText = 'Gönderi tipi';
+                notesText = 'Uluslararası taşınma detaylarını girin';
+                notesPlaceholder = 'Hedef ülke detayları, gümrük bilgileri, özel istekler vb.';
+            } else if (moveType === 'partial') {
+                roomText = 'Parça eşya türü';
+                notesText = 'Eşyaların detaylarını girin';
+                notesPlaceholder = 'Koli sayısı, büyük eşyalar (beyaz eşya, mobilya) vb.';
+            }
+
+            roomLabel.textContent = roomText;
+            notesLabel.textContent = notesText;
+            notesTextarea.setAttribute('placeholder', notesPlaceholder);
+        })();
+    </script>
+}

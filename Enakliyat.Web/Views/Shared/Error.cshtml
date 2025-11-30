@@ -1,0 +1,25 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Bir Hata Oluştu";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Bir hata oluştu.</h4>
+                <p>İşleminiz sırasında beklenmeyen bir hata meydana geldi. Lütfen daha sonra tekrar deneyin.</p>
+
+                @if (Model.ShowRequestId)
+                {
+                    <hr />
+                    <p class="mb-0 small text-muted">
+                        <strong>Takip Kodu:</strong> <code>@Model.RequestId</code>
+                    </p>
+                }
+            </div>
+
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Ana sayfaya dön</a>
+        </div>
+    </div>
+</div>

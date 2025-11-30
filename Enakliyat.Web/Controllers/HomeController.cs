@@ -1,0 +1,738 @@
+using System.Diagnostics;
+using Enakliyat.Domain;
+using Enakliyat.Infrastructure;
+using Enakliyat.Web.Models;
+using Enakliyat.Web.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace Enakliyat.Web.Controllers;
+
+public class HomeController : Controller
+{
+    private readonly ILogger<HomeController> _logger;
+    private readonly EnakliyatDbContext _context;
+    private readonly IReservationNotificationService _notificationService;
+    private readonly IWebHostEnvironment _env;
+
+    public HomeController(ILogger<HomeController> logger, EnakliyatDbContext context, IReservationNotificationService notificationService, IWebHostEnvironment env)
+    {
+        _logger = logger;
+        _context = context;
+        _notificationService = notificationService;
+        _env = env;
+    }
+
+    [HttpGet]
+    public IActionResult Index()
+    {
+        var cities = _context.Cities
+            .OrderBy(c => c.Name)
+            .ToList();
+
+        ViewBag.Cities = cities;
+
+        return View(new MoveRequestViewModel());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Index(MoveRequestViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Cities = _context.Cities.OrderBy(c => c.Name).ToList();
+            return View(model);
+        }
+
+        // Adresleri seçilen il/ilçe/mahallelerden oluştur
+        string fromAddress = BuildAddress(model.FromCityId, model.FromDistrictId, model.FromNeighborhoodId);
+        string toAddress = BuildAddress(model.ToCityId, model.ToDistrictId, model.ToNeighborhoodId);
+
+        var userIdClaim = User.FindFirst("UserId");
+        int? userId = null;
+        if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var parsedId))
+        {
+            userId = parsedId;
+        }
+
+        string customerName = string.Empty;
+        string phoneNumber = string.Empty;
+        string email = string.Empty;
+
+        if (userId.HasValue)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId.Value);
+            if (user != null)
+            {
+                customerName = user.Name ?? string.Empty;
+                phoneNumber = user.PhoneNumber ?? string.Empty;
+                email = user.Email;
+            }
+        }
+
+        var moveRequest = new MoveRequest
+        {
+            FromAddress = fromAddress,
+            ToAddress = toAddress,
+            FromCityId = model.FromCityId,
+            FromDistrictId = model.FromDistrictId,
+            FromNeighborhoodId = model.FromNeighborhoodId,
+            ToCityId = model.ToCityId,
+            ToDistrictId = model.ToDistrictId,
+            ToNeighborhoodId = model.ToNeighborhoodId,
+            MoveDate = DateTime.UtcNow,
+            CustomerName = customerName,
+            PhoneNumber = phoneNumber,
+            Email = email,
+            MoveType = model.MoveType.ToString(),
+            UserId = userId
+        };
+
+        await _context.MoveRequests.AddAsync(moveRequest);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Offers), new { id = moveRequest.Id });
+    }
+
+    [Authorize]
+    public IActionResult Offers(int id)
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var request = _context.MoveRequests.FirstOrDefault(x => x.Id == id && x.UserId == userId);
+        if (request == null)
+        {
+            return NotFound();
+        }
+
+        var vm = new OfferDetailsViewModel
+        {
+            MoveRequestId = request.Id,
+            FromAddress = request.FromAddress,
+            ToAddress = request.ToAddress,
+            MoveType = request.MoveType,
+            CustomerName = request.CustomerName,
+            PhoneNumber = request.PhoneNumber,
+            Email = request.Email,
+            MoveDate = request.MoveDate == default ? DateTime.Today.AddDays(1) : request.MoveDate,
+            RoomType = request.RoomType,
+            FromFloor = request.FromFloor,
+            FromHasElevator = request.FromHasElevator,
+            ToFloor = request.ToFloor,
+            ToHasElevator = request.ToHasElevator,
+            Notes = request.Notes
+        };
+        ViewBag.AddOnServices = _context.AddOnServices
+            .Where(s => s.IsActive)
+            .OrderBy(s => s.Name)
+            .ToList();
+
+        return View(vm);
+    }
+
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Offers(OfferDetailsViewModel model)
+    {
+        if (!ModelState.IsValid || !model.KvkkAccepted)
+        {
+            if (!model.KvkkAccepted)
+            {
+                ModelState.AddModelError(string.Empty, "Lütfen KVKK ve sözleşmeleri onaylayın.");
+            }
+            ViewBag.AddOnServices = _context.AddOnServices
+                .Where(s => s.IsActive)
+                .OrderBy(s => s.Name)
+                .ToList();
+            return View(model);
+        }
+
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var request = await _context.MoveRequests.FirstOrDefaultAsync(x => x.Id == model.MoveRequestId && x.UserId == userId);
+        if (request == null)
+        {
+            return NotFound();
+        }
+
+        request.CustomerName = model.CustomerName;
+        request.PhoneNumber = model.PhoneNumber;
+        request.Email = model.Email;
+        request.MoveDate = model.MoveDate;
+        request.RoomType = model.RoomType;
+        request.FromFloor = model.FromFloor;
+        request.FromHasElevator = model.FromHasElevator;
+        request.ToFloor = model.ToFloor;
+        request.ToHasElevator = model.ToHasElevator;
+        request.Notes = model.Notes;
+        request.Status = "Teklif Bekliyor";
+
+        // Update selected add-ons
+        var selectedIds = HttpContext.Request.Form["SelectedAddOnIds"].ToList();
+        var intIds = selectedIds
+            .Select(x => int.TryParse(x, out var id) ? id : (int?)null)
+            .Where(id => id.HasValue)
+            .Select(id => id!.Value)
+            .ToList();
+
+        var existingAddOns = _context.MoveRequestAddOns
+            .Where(a => a.MoveRequestId == request.Id)
+            .ToList();
+
+        _context.MoveRequestAddOns.RemoveRange(existingAddOns);
+
+        foreach (var addOnId in intIds.Distinct())
+        {
+            var addOn = new MoveRequestAddOn
+            {
+                MoveRequestId = request.Id,
+                AddOnServiceId = addOnId
+            };
+            await _context.MoveRequestAddOns.AddAsync(addOn);
+        }
+
+        await _context.SaveChangesAsync();
+
+        // Save uploaded photos
+        if (model.Photos != null && model.Photos.Length > 0)
+        {
+            var uploadRoot = Path.Combine(_env.WebRootPath, "uploads", "requests", request.Id.ToString());
+            Directory.CreateDirectory(uploadRoot);
+
+            foreach (var file in model.Photos)
+            {
+                if (file == null || file.Length == 0) continue;
+
+                var safeFileName = Path.GetFileNameWithoutExtension(file.FileName);
+                var ext = Path.GetExtension(file.FileName);
+                var uniqueName = $"{safeFileName}_{Guid.NewGuid():N}{ext}";
+                var physicalPath = Path.Combine(uploadRoot, uniqueName);
+
+                using (var stream = new FileStream(physicalPath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                var relativePath = $"/uploads/requests/{request.Id}/{uniqueName}";
+                var photo = new MoveRequestPhoto
+                {
+                    MoveRequestId = request.Id,
+                    FilePath = relativePath
+                };
+                await _context.MoveRequestPhotos.AddAsync(photo);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        TempData["Success"] = "Talebiniz başarıyla güncellendi.";
+        return RedirectToAction(nameof(Requests));
+    }
+    [Authorize]
+    public IActionResult Requests()
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var requests = _context.MoveRequests
+            .Where(x => x.UserId == userId)
+            .OrderByDescending(x => x.CreatedAt)
+            .ToList();
+
+        ViewBag.PendingOfferCount = requests.Count(r => r.Status == "Teklif Bekliyor");
+        ViewBag.AcceptedReservationCount = requests.Count(r => r.Status == "Teklif Kabul Edildi");
+
+        return View(requests);
+    }
+
+    [Authorize]
+    public IActionResult Details(int id)
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var request = _context.MoveRequests.FirstOrDefault(x => x.Id == id && x.UserId == userId);
+        if (request == null)
+        {
+            return NotFound();
+        }
+
+        var offers = _context.Offers
+            .Include(o => o.Carrier)
+            .Where(o => o.MoveRequestId == id)
+            .OrderByDescending(o => o.CreatedAt)
+            .ToList();
+
+        var photos = _context.MoveRequestPhotos
+            .Where(p => p.MoveRequestId == id)
+            .OrderBy(p => p.CreatedAt)
+            .ToList();
+
+        int? acceptedCarrierId = null;
+        Review? existingReview = null;
+
+        if (request.AcceptedOfferId.HasValue)
+        {
+            var acceptedOffer = offers.FirstOrDefault(o => o.Id == request.AcceptedOfferId.Value);
+            if (acceptedOffer != null)
+            {
+                acceptedCarrierId = acceptedOffer.CarrierId;
+                existingReview = _context.Reviews
+                    .FirstOrDefault(r => r.MoveRequestId == id && r.CarrierId == acceptedOffer.CarrierId && r.UserId == userId);
+            }
+        }
+
+        var canReview = request.Status == "Taşınma Tamamlandı" && acceptedCarrierId.HasValue && existingReview == null;
+
+        var vm = new UserRequestDetailsViewModel
+        {
+            Request = request,
+            Offers = offers,
+            Photos = photos,
+            CanReview = canReview,
+            AcceptedCarrierId = acceptedCarrierId,
+            ReviewRating = existingReview?.Rating,
+            ReviewComment = existingReview?.Comment
+        };
+
+        return View(vm);
+    }
+
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Details(int id, string status)
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var request = await _context.MoveRequests.FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
+        if (request == null)
+        {
+            return NotFound();
+        }
+
+        request.Status = status;
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Durum güncellendi.";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AcceptOffer(int offerId, int moveRequestId)
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var request = await _context.MoveRequests
+            .FirstOrDefaultAsync(r => r.Id == moveRequestId && r.UserId == userId);
+        if (request == null)
+        {
+            return NotFound();
+        }
+
+        var offers = await _context.Offers
+            .Where(o => o.MoveRequestId == moveRequestId)
+            .ToListAsync();
+
+        var selected = offers.FirstOrDefault(o => o.Id == offerId);
+        if (selected == null)
+        {
+            return NotFound();
+        }
+
+        foreach (var offer in offers)
+        {
+            if (offer.Id == offerId)
+            {
+                offer.Status = "Kabul Edildi";
+            }
+            else if (offer.Status == "Beklemede")
+            {
+                offer.Status = "Reddedildi";
+            }
+        }
+
+        request.Status = "Teklif Kabul Edildi";
+        request.AcceptedOfferId = offerId;
+        await _context.SaveChangesAsync();
+
+        // Create contract if not exists
+        var existingContract = await _context.Contracts
+            .FirstOrDefaultAsync(c => c.MoveRequestId == request.Id && c.OfferId == offerId);
+
+        if (existingContract == null)
+        {
+            var contractNumber = $"ET-{DateTime.UtcNow:yyyy}-{request.Id}";
+
+            var contract = new Contract
+            {
+                MoveRequestId = request.Id,
+                OfferId = offerId,
+                ContractNumber = contractNumber,
+                IsInsuranceIncluded = false
+            };
+
+            await _context.Contracts.AddAsync(contract);
+            await _context.SaveChangesAsync();
+        }
+
+        TempData["Success"] = "Seçtiğiniz teklif kabul edildi.";
+        return RedirectToAction(nameof(Reservation), new { id = moveRequestId });
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> Reservation(int id)
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var request = await _context.MoveRequests
+            .FirstOrDefaultAsync(r => r.Id == id && r.UserId == userId);
+        if (request == null)
+        {
+            return NotFound();
+        }
+
+        Offer? acceptedOffer = null;
+        Contract? contract = null;
+        Payment? payment = null;
+        if (request.AcceptedOfferId.HasValue)
+        {
+            acceptedOffer = await _context.Offers
+                .Include(o => o.Carrier)
+                .FirstOrDefaultAsync(o => o.Id == request.AcceptedOfferId.Value);
+
+            if (acceptedOffer != null)
+            {
+                contract = await _context.Contracts
+                    .FirstOrDefaultAsync(c => c.MoveRequestId == request.Id && c.OfferId == acceptedOffer.Id);
+                if (contract != null)
+                {
+                    payment = await _context.Payments.FirstOrDefaultAsync(p => p.ContractId == contract.Id);
+                }
+            }
+        }
+
+        var vm = new ReservationViewModel
+        {
+            Request = request,
+            AcceptedOffer = acceptedOffer,
+            Contract = contract,
+            Payment = payment
+        };
+
+        // E-posta bildirimi (konfigürasyon varsa çalışacak).
+        _ = _notificationService.SendReservationConfirmationAsync(request, acceptedOffer);
+
+        return View(vm);
+    }
+
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Pay(int moveRequestId, string cardHolder, string cardNumber, string expiry, string cvv)
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var request = await _context.MoveRequests
+            .FirstOrDefaultAsync(r => r.Id == moveRequestId && r.UserId == userId);
+        if (request == null || !request.AcceptedOfferId.HasValue)
+        {
+            return NotFound();
+        }
+
+        var offer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == request.AcceptedOfferId.Value);
+        if (offer == null)
+        {
+            return NotFound();
+        }
+
+        var contract = await _context.Contracts
+            .FirstOrDefaultAsync(c => c.MoveRequestId == request.Id && c.OfferId == offer.Id);
+        if (contract == null)
+        {
+            return NotFound();
+        }
+
+        var existingPayment = await _context.Payments.FirstOrDefaultAsync(p => p.ContractId == contract.Id);
+        if (existingPayment != null && existingPayment.Status == PaymentStatus.Paid)
+        {
+            TempData["Success"] = "Ödeme zaten tamamlanmış.";
+            return RedirectToAction(nameof(Reservation), new { id = moveRequestId });
+        }
+
+        // Fake validation; gerçek sistemde kart doğrulaması yapılmalı.
+        var depositAmount = Math.Round(offer.Price * 0.10m, 2);
+
+        var payment = existingPayment ?? new Payment
+        {
+            ContractId = contract.Id,
+            Amount = depositAmount,
+            Currency = "TRY",
+            Method = PaymentMethod.Card,
+        };
+
+        payment.Status = PaymentStatus.Paid;
+        payment.ExternalReference = $"FAKE-{DateTime.UtcNow:yyyyMMddHHmmss}";
+
+        if (existingPayment == null)
+        {
+            await _context.Payments.AddAsync(payment);
+        }
+
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Ödeme başarıyla alındı (test).";
+        return RedirectToAction(nameof(Reservation), new { id = moveRequestId });
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> Payments()
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var items = await _context.Payments
+            .Include(p => p.Contract)
+            .ThenInclude(c => c.Offer)
+            .ThenInclude(o => o.MoveRequest)
+            .Where(p => p.Contract.Offer.MoveRequest.UserId == userId)
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync();
+
+        return View(items);
+    }
+
+    public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> CarrierProfile(int id)
+    {
+        var carrier = await _context.Carriers.FirstOrDefaultAsync(c => c.Id == id);
+        if (carrier == null)
+        {
+            return NotFound();
+        }
+
+        var reviews = await _context.Reviews
+            .Include(r => r.User)
+            .Where(r => r.CarrierId == id)
+            .OrderByDescending(r => r.CreatedAt)
+            .ToListAsync();
+
+        var vm = new HomeCarrierProfileViewModel
+        {
+            Carrier = carrier,
+            Reviews = reviews
+        };
+
+        return View(vm);
+    }
+
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddReview(ReviewViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction(nameof(Details), new { id = model.MoveRequestId });
+        }
+
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var request = await _context.MoveRequests.FirstOrDefaultAsync(r => r.Id == model.MoveRequestId && r.UserId == userId);
+        if (request == null)
+        {
+            return NotFound();
+        }
+
+        if (request.Status != "Taşınma Tamamlandı" || !request.AcceptedOfferId.HasValue)
+        {
+            return BadRequest();
+        }
+
+        var acceptedOffer = await _context.Offers.FirstOrDefaultAsync(o => o.Id == request.AcceptedOfferId.Value);
+        if (acceptedOffer == null || acceptedOffer.CarrierId != model.CarrierId)
+        {
+            return BadRequest();
+        }
+
+        var existing = await _context.Reviews
+            .FirstOrDefaultAsync(r => r.MoveRequestId == model.MoveRequestId && r.CarrierId == model.CarrierId && r.UserId == userId);
+
+        if (existing == null)
+        {
+            var review = new Review
+            {
+                MoveRequestId = model.MoveRequestId,
+                CarrierId = model.CarrierId,
+                UserId = userId,
+                Rating = model.Rating,
+                Comment = model.Comment
+            };
+            await _context.Reviews.AddAsync(review);
+        }
+        else
+        {
+            existing.Rating = model.Rating;
+            existing.Comment = model.Comment;
+        }
+
+        await _context.SaveChangesAsync();
+
+        // Update carrier rating
+        var carrier = await _context.Carriers.FirstOrDefaultAsync(c => c.Id == model.CarrierId);
+        if (carrier != null)
+        {
+            var reviews = await _context.Reviews
+                .Where(r => r.CarrierId == model.CarrierId)
+                .ToListAsync();
+
+            carrier.ReviewCount = reviews.Count;
+            carrier.AverageRating = reviews.Count > 0 ? reviews.Average(r => r.Rating) : 0;
+
+            await _context.SaveChangesAsync();
+        }
+
+        TempData["Success"] = "Değerlendirmeniz kaydedildi.";
+        return RedirectToAction(nameof(Details), new { id = model.MoveRequestId });
+    }
+
+    private string BuildAddress(int? cityId, int? districtId, int? neighborhoodId)
+    {
+        if (cityId == null)
+            return string.Empty;
+
+        var parts = new List<string>();
+
+        if (neighborhoodId.HasValue)
+        {
+            var n = _context.Neighborhoods.FirstOrDefault(x => x.Id == neighborhoodId.Value);
+            if (n != null)
+            {
+                parts.Add(n.Name);
+            }
+        }
+
+        if (districtId.HasValue)
+        {
+            var d = _context.Districts.FirstOrDefault(x => x.Id == districtId.Value);
+            if (d != null)
+            {
+                parts.Add(d.Name);
+            }
+        }
+
+        var city = _context.Cities.FirstOrDefault(x => x.Id == cityId.Value);
+        if (city != null)
+        {
+            parts.Add(city.Name);
+        }
+
+        return string.Join(" / ", parts);
+    }
+
+    [HttpGet]
+    public IActionResult GetDistricts(int cityId)
+    {
+        var districts = _context.Districts
+            .Where(d => d.CityId == cityId)
+            .OrderBy(d => d.Name)
+            .Select(d => new { d.Id, d.Name })
+            .ToList();
+
+        return Json(districts);
+    }
+
+    [HttpGet]
+    public IActionResult GetNeighborhoods(int districtId)
+    {
+        var neighborhoods = _context.Neighborhoods
+            .Where(n => n.DistrictId == districtId)
+            .OrderBy(n => n.Name)
+            .Select(n => new { n.Id, n.Name })
+            .ToList();
+
+        return Json(neighborhoods);
+    }
+
+    [HttpGet]
+    public IActionResult SearchLocation(string term)
+    {
+        if (string.IsNullOrWhiteSpace(term))
+        {
+            return Json(Enumerable.Empty<object>());
+        }
+
+        term = term.Trim();
+
+        var query = from n in _context.Neighborhoods
+                    join d in _context.Districts on n.DistrictId equals d.Id
+                    join c in _context.Cities on d.CityId equals c.Id
+                    where n.Name.Contains(term) || d.Name.Contains(term) || c.Name.Contains(term)
+                    orderby c.Name, d.Name, n.Name
+                    select new
+                    {
+                        CityId = c.Id,
+                        DistrictId = d.Id,
+                        NeighborhoodId = n.Id,
+                        Display = n.Name + ", " + d.Name + "/" + c.Name + ", Türkiye"
+                    };
+
+        var results = query.Take(10).ToList();
+        return Json(results);
+    }
+}

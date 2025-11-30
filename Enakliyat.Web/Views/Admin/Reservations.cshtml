@@ -1,0 +1,62 @@
+@model IEnumerable<Enakliyat.Domain.MoveRequest>
+
+@{
+    ViewData["Title"] = "Admin - Rezervasyonlar";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Kabul Edilmiş Rezervasyonlar</h3>
+
+    <table class="table table-striped table-hover table-sm align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Talep No</th>
+                <th>Kullanıcı</th>
+                <th>Taşıma Tipi</th>
+                <th>Nereden</th>
+                <th>Nereye</th>
+                <th>Taşınma Tarihi</th>
+                <th>Durum</th>
+                <th>Sözleşme No</th>
+                <th>Sigorta</th>
+                <th>Ekip</th>
+                <th>Tahmini Varış</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="10" class="text-center">Henüz kabul edilmiş rezervasyon yok.</td>
+            </tr>
+        }
+        else
+        {
+            var index = 1;
+            foreach (var r in Model)
+            {
+                var db = (Enakliyat.Infrastructure.EnakliyatDbContext)Context.RequestServices.GetService(typeof(Enakliyat.Infrastructure.EnakliyatDbContext));
+                var contract = r.AcceptedOfferId.HasValue
+                    ? db.Contracts.FirstOrDefault(c => c.MoveRequestId == r.Id && c.OfferId == r.AcceptedOfferId.Value)
+                    : null;
+                <tr>
+                    <td>@index</td>
+                    <td>@r.Id</td>
+                    <td>@(r.User?.Email ?? "-")</td>
+                    <td>@r.MoveType</td>
+                    <td>@r.FromAddress</td>
+                    <td>@r.ToAddress</td>
+                    <td>@r.MoveDate.ToLocalTime().ToString("g")</td>
+                    <td>@r.Status</td>
+                    <td>@(contract?.ContractNumber ?? "-")</td>
+                    <td>@(contract?.IsInsuranceIncluded == true ? "Sigortalı" : "-")</td>
+                    <td>@(r.AssignedTeam ?? "-")</td>
+                    <td>@(r.EstimatedArrivalTime.HasValue ? r.EstimatedArrivalTime.Value.ToLocalTime().ToString("g") : "-")</td>
+                </tr>
+                index++;
+            }
+        }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,49 @@
+@{
+    ViewData["Title"] = "Nakliyeci - Ödemeler";
+    var items = (IEnumerable<(Enakliyat.Domain.Payment payment, Enakliyat.Domain.Contract contract, Enakliyat.Domain.Offer offer, Enakliyat.Domain.MoveRequest request)>)ViewBag.Items;
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Ödemeler</h3>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Talep #</th>
+                            <th>Tarih</th>
+                            <th>Tutar</th>
+                            <th>Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (!items.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-3 small">Bu nakliyeci için henüz ödeme kaydı yok.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        var index = 1;
+                        foreach (var x in items)
+                        {
+                            <tr>
+                                <td>@index</td>
+                                <td>@x.request.Id</td>
+                                <td>@x.payment.CreatedAt.ToLocalTime().ToString("g")</td>
+                                <td>@x.payment.Amount.ToString("N0") TL</td>
+                                <td>@x.payment.Status</td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

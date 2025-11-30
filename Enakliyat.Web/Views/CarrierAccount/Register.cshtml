@@ -1,0 +1,59 @@
+@{
+    ViewData["Title"] = "Nakliyeci Başvuru";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3 class="mb-3 text-center">Nakliyeci Başvuru</h3>
+            <form asp-action="Register" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="mb-3">
+                    <label class="form-label">Firma Adı</label>
+                    <input name="companyName" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Yetkili Kişi</label>
+                    <input name="name" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Telefon</label>
+                    <input name="phoneNumber" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">E-posta (giriş için kullanılacak)</label>
+                    <input type="email" name="email" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Şifre</label>
+                    <input type="password" name="password" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Yetki/Belge No</label>
+                    <input name="licenseNumber" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Araç / Kapasite</label>
+                    <input name="vehicleInfo" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Hizmet Verilen Bölgeler</label>
+                    <input name="serviceAreas" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Kısa Açıklama</label>
+                    <textarea name="description" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Yetki Belgeleri / Sigorta Evrakları (PDF, JPG vb.)</label>
+                    <input type="file" name="documents" class="form-control" multiple />
+                    <small class="text-muted">Birden fazla dosya seçebilirsiniz.</small>
+                </div>
+                <div class="text-danger mb-2">
+                    @Html.ValidationSummary()
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Başvuruyu Gönder</button>
+            </form>
+        </div>
+    </div>
+</div>

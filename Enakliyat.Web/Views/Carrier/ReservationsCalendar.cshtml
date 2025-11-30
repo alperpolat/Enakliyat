@@ -1,0 +1,76 @@
+@{
+    ViewData["Title"] = "Nakliyeci - Rezervasyon Takvimi";
+    var year = (int)ViewBag.Year;
+    var month = (int)ViewBag.Month;
+    var firstDay = (DateTime)ViewBag.FirstDay;
+    var reservations = (IEnumerable<Enakliyat.Domain.MoveRequest>)ViewBag.Reservations;
+
+    int daysInMonth = DateTime.DaysInMonth(year, month);
+    int startOffset = (int)firstDay.DayOfWeek; // 0=Sunday
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Rezervasyon Takvimi - @firstDay.ToString("MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("tr-TR"))</h3>
+        <div>
+            <a asp-action="ReservationsCalendar" asp-route-year="@firstDay.AddMonths(-1).Year" asp-route-month="@firstDay.AddMonths(-1).Month" class="btn btn-sm btn-outline-secondary me-1">← Önceki</a>
+            <a asp-action="ReservationsCalendar" asp-route-year="@firstDay.AddMonths(1).Year" asp-route-month="@firstDay.AddMonths(1).Month" class="btn btn-sm btn-outline-secondary">Sonraki →</a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm mb-0 text-center align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Paz</th>
+                            <th>Pts</th>
+                            <th>Sal</th>
+                            <th>Çar</th>
+                            <th>Per</th>
+                            <th>Cum</th>
+                            <th>Cts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @{
+                        int day = 1;
+                        int cellIndex = 0;
+                    }
+                    @while (day <= daysInMonth)
+                    {
+                        <tr>
+                            @for (int dow = 0; dow < 7; dow++, cellIndex++)
+                            {
+                                if (cellIndex < startOffset || day > daysInMonth)
+                                {
+                                    <td class="bg-light"></td>
+                                }
+                                else
+                                {
+                                    var date = new DateTime(year, month, day);
+                                    var dayReservations = reservations.Where(r => r.MoveDate.Date == date.Date).ToList();
+                                    <td class="text-start" style="min-width: 120px;">
+                                        <div class="fw-bold small mb-1">@day</div>
+                                        @if (dayReservations.Any())
+                                        {
+                                            foreach (var r in dayReservations)
+                                            {
+                                                <div class="badge bg-primary bg-opacity-75 text-wrap mb-1 w-100" title="@r.FromAddress → @r.ToAddress">
+                                                    @r.User?.Name ?? @r.CustomerName
+                                                </div>
+                                            }
+                                        }
+                                    </td>
+                                    day++;
+                                }
+                            }
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

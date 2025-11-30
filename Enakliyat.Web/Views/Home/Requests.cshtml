@@ -1,0 +1,64 @@
+@model IEnumerable<Enakliyat.Domain.MoveRequest>
+
+@{
+    ViewData["Title"] = "Taleplerim";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Taleplerim</h3>
+
+    @if (ViewBag.PendingOfferCount != null && ViewBag.PendingOfferCount > 0)
+    {
+        <div class="alert alert-info py-2">
+            <strong>@ViewBag.PendingOfferCount</strong> talebiniz için teklifler bekleniyor.
+        </div>
+    }
+
+    @if (ViewBag.AcceptedReservationCount != null && ViewBag.AcceptedReservationCount > 0)
+    {
+        <div class="alert alert-success py-2">
+            <strong>@ViewBag.AcceptedReservationCount</strong> talebiniz için kabul edilmiş rezervasyonunuz var.
+        </div>
+    }
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Oluşturma Tarihi</th>
+                <th>Taşıma Tipi</th>
+                <th>Nereden</th>
+                <th>Nereye</th>
+                <th>Durum</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="7" class="text-center">Henüz kayıtlı talep yok.</td>
+            </tr>
+        }
+        else
+        {
+            var index = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
+                    <td>@item.MoveType</td>
+                    <td>@item.FromAddress</td>
+                    <td>@item.ToAddress</td>
+                    <td>@item.Status</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@item.Id">Detay</a>
+                    </td>
+                </tr>
+                index++;
+            }
+        }
+        </tbody>
+    </table>
+</div>

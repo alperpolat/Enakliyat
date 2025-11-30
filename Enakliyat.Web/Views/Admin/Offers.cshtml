@@ -1,0 +1,91 @@
+@model Enakliyat.Web.Models.AdminOffersViewModel
+
+@{
+    ViewData["Title"] = "Admin - Teklifler";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Teklifler - Talep #@Model.Request.Id</h3>
+
+    <div class="mb-3">
+        <strong>Kullanıcı:</strong> @(Model.Request.User?.Email ?? "-")<br />
+        <strong>Nereden:</strong> @Model.Request.FromAddress<br />
+        <strong>Nereye:</strong> @Model.Request.ToAddress<br />
+        <strong>Taşıma Tipi:</strong> @Model.Request.MoveType<br />
+        <strong>Durum:</strong> @Model.Request.Status
+    </div>
+
+    <h5>Mevcut Teklifler</h5>
+    <table class="table table-striped table-hover table-sm align-middle mb-4">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nakliyeci</th>
+                <th>Fiyat</th>
+                <th>Durum</th>
+                <th>Not</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Offers.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center">Henüz teklif yok.</td>
+            </tr>
+        }
+        else
+        {
+            var index = 1;
+            foreach (var o in Model.Offers)
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@(o.Carrier?.Name ?? "-")</td>
+                    <td>@o.Price.ToString("N2") TL</td>
+                    <td>@o.Status</td>
+                    <td>@o.Note</td>
+                    <td class="text-end">
+                        <form asp-action="UpdateOfferStatus" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@o.Id" />
+                            <input type="hidden" name="moveRequestId" value="@Model.Request.Id" />
+                            <button type="submit" name="status" value="Kabul Edildi" class="btn btn-sm btn-success me-1">Kabul</button>
+                            <button type="submit" name="status" value="Reddedildi" class="btn btn-sm btn-danger">Reddet</button>
+                        </form>
+                    </td>
+                </tr>
+                index++;
+            }
+        }
+        </tbody>
+    </table>
+
+    <h5>Yeni Teklif Ekle</h5>
+    <form asp-action="Offers" method="post" class="row g-3">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="NewOffer.MoveRequestId" />
+
+        <div class="col-md-4">
+            <label class="form-label" for="carrierSelect">Nakliyeci</label>
+            <select asp-for="NewOffer.CarrierId" asp-items="Model.CarrierOptions" class="form-select" id="carrierSelect">
+                <option value="">Seçiniz</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label" asp-for="NewOffer.Price">Fiyat</label>
+            <input asp-for="NewOffer.Price" class="form-control" />
+        </div>
+
+        <div class="col-12">
+            <label class="form-label" asp-for="NewOffer.Note">Not</label>
+            <textarea asp-for="NewOffer.Note" class="form-control" rows="2"></textarea>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Teklif Ekle</button>
+            <a asp-action="Requests" class="btn btn-secondary ms-2">Taleplere Dön</a>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,6 @@
+@Enakliyat.WebApi_HostAddress = http://localhost:5269
+
+GET {{Enakliyat.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

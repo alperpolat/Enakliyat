@@ -1,0 +1,90 @@
+@model IEnumerable<Enakliyat.Domain.MoveRequest>
+
+@{
+    ViewData["Title"] = "Nakliyeci - Talepler (Leads)";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Talepler (Leads)</h3>
+
+    <form asp-action="Leads" method="get" class="row g-2 mb-3">
+        <div class="col-md-3">
+            <select name="cityId" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">Şehir (Hepsi)</option>
+                @foreach (var city in (IEnumerable<Enakliyat.Domain.City>)ViewBag.Cities)
+                {
+                    var selected = ViewBag.CityId != null && (int)ViewBag.CityId == city.Id;
+                    <option value="@city.Id" selected="@(selected ? "selected" : null)">@city.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="fromDate" value="@ViewBag.FromDate" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="toDate" value="@ViewBag.ToDate" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-3">
+            <select name="offerFilter" class="form-select form-select-sm">
+                <option value="All" selected="@(ViewBag.OfferFilter == null || ViewBag.OfferFilter == "All" ? "selected" : null)">Teklif Durumu (Hepsi)</option>
+                <option value="NoOffer" selected="@(ViewBag.OfferFilter == "NoOffer" ? "selected" : null)">Henüz teklif vermediğim</option>
+                <option value="HasOffer" selected="@(ViewBag.OfferFilter == "HasOffer" ? "selected" : null)">Teklif verdiğim</option>
+            </select>
+        </div>
+        <div class="col-md-1 d-grid">
+            <button type="submit" class="btn btn-sm btn-primary">Filtre</button>
+        </div>
+        <div class="col-md-1 d-grid">
+            <a asp-action="Leads" class="btn btn-sm btn-outline-secondary">Temizle</a>
+        </div>
+    </form>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Müşteri</th>
+                            <th>Oluşturma</th>
+                            <th>Tip</th>
+                            <th>Durum</th>
+                            <th>Nereden</th>
+                            <th>Nereye</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-3 small">Filtreye uygun talep bulunamadı.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        var index = 1;
+                        foreach (var r in Model)
+                        {
+                            <tr>
+                                <td>@index</td>
+                                <td>@(r.User?.Email ?? r.CustomerName)</td>
+                                <td>@r.CreatedAt.ToLocalTime().ToString("g")</td>
+                                <td>@r.MoveType</td>
+                                <td>@r.Status</td>
+                                <td>@r.FromAddress</td>
+                                <td>@r.ToAddress</td>
+                                <td class="text-end">
+                                    <a asp-action="LeadDetails" asp-route-id="@r.Id" class="btn btn-sm btn-outline-primary">Detay / Teklif Ver</a>
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,171 @@
+@model Enakliyat.Web.Models.AdminCarrierDetailsViewModel
+
+@{
+    ViewData["Title"] = "Admin - Nakliyeci Detayı";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h3 class="mb-1">@Model.Carrier.Name</h3>
+            <div class="text-muted">@Model.Carrier.CompanyName</div>
+        </div>
+        <div>
+            <a asp-action="Carriers" class="btn btn-sm btn-outline-secondary">\u2190 T\u00fcm Nakliyeciler</a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Firma Bilgileri</h5>
+                    <dl class="row mb-0 small">
+                        <dt class="col-4">Telefon</dt>
+                        <dd class="col-8 mb-1">@Model.Carrier.PhoneNumber</dd>
+
+                        <dt class="col-4">E-posta</dt>
+                        <dd class="col-8 mb-1">@Model.Carrier.Email</dd>
+
+                        <dt class="col-4">Yetki No</dt>
+                        <dd class="col-8 mb-1">@Model.Carrier.LicenseNumber</dd>
+
+                        <dt class="col-4">Ara\u00e7</dt>
+                        <dd class="col-8 mb-1">@Model.Carrier.VehicleInfo</dd>
+
+                        <dt class="col-4">B\u00f6lgeler</dt>
+                        <dd class="col-8 mb-1">@Model.Carrier.ServiceAreas</dd>
+
+                        <dt class="col-4">A\u00e7\u0131klama</dt>
+                        <dd class="col-8 mb-1">@Model.Carrier.Description</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Performans \u00d6zeti</h5>
+                    <div class="row text-center small">
+                        <div class="col-4 mb-2">
+                            <div class="text-muted">Toplam Teklif</div>
+                            <div class="fw-bold fs-5">@Model.Offers.Count</div>
+                        </div>
+                        <div class="col-4 mb-2">
+                            <div class="text-muted">Kabul Edilen</div>
+                            <div class="fw-bold fs-5">@Model.Offers.Count(o => o.Status == "Kabul Edildi")</div>
+                        </div>
+                        <div class="col-4 mb-2">
+                            <div class="text-muted">Beklemede</div>
+                            <div class="fw-bold fs-5">@Model.Offers.Count(o => o.Status == "Beklemede")</div>
+                        </div>
+                        <div class="col-6 mt-3">
+                            <div class="text-muted">Ortalama Puan</div>
+                            <div class="fw-bold fs-5">
+                                @(Model.Carrier.ReviewCount > 0 ? Model.Carrier.AverageRating.ToString("0.0") : "-")
+                                @if (Model.Carrier.ReviewCount > 0)
+                                {
+                                    <span class="text-warning ms-1"><i class="fa fa-star"></i></span>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-6 mt-3">
+                            <div class="text-muted">Yorum Sayısı</div>
+                            <div class="fw-bold fs-5">@Model.Carrier.ReviewCount</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-body">
+            <h5 class="card-title mb-0">Yapt\u0131\u011f\u0131 \u0130\u015fler / Teklifler</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Talep No</th>
+                            <th>Olu\u015fturma Tarihi</th>
+                            <th>Ta\u015f\u0131ma Tipi</th>
+                            <th>Talep Durumu</th>
+                            <th>Teklif</th>
+                            <th>Teklif Durumu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (!Model.Offers.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-3 small">Bu nakliyeciye ait hen\u00fcz teklif / i\u015f bulunmuyor.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        var index = 1;
+                        foreach (var o in Model.Offers)
+                        {
+                            <tr>
+                                <td>@index</td>
+                                <td>@o.MoveRequestId</td>
+                                <td>@o.MoveRequest.CreatedAt.ToLocalTime().ToString("g")</td>
+                                <td>@o.MoveRequest.MoveType</td>
+                                <td>@o.MoveRequest.Status</td>
+                                <td>@o.Price.ToString("N0") TL</td>
+                                <td>@o.Status</td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-body">
+            <h5 class="card-title mb-0">Müşteri Yorumları</h5>
+        </div>
+        <div class="card-body">
+            @if (!Model.Reviews.Any())
+            {
+                <div class="text-muted small">Bu nakliyeci için henüz yorum bulunmuyor.</div>
+            }
+            else
+            {
+                <div class="list-group list-group-flush">
+                    @foreach (var r in Model.Reviews)
+                    {
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between align-items-center mb-1 small">
+                                <div>
+                                    <strong>@(r.User?.Email ?? "Anonim")</strong>
+                                    <span class="text-muted ms-2">Talep #@r.MoveRequestId</span>
+                                </div>
+                                <div class="text-warning">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= r.Rating)
+                                        {
+                                            <i class="fa fa-star"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="far fa-star"></i>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="small">@r.Comment</div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

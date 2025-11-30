@@ -1,0 +1,67 @@
+@model IEnumerable<Enakliyat.Domain.MoveRequest>
+
+@{
+    ViewData["Title"] = "Nakliyeci - Rezervasyonlarım";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Rezervasyonlarım</h3>
+
+    <table class="table table-striped table-hover table-sm align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Talep No</th>
+                <th>Müşteri</th>
+                <th>Nereden</th>
+                <th>Nereye</th>
+                <th>Taşınma Tarihi</th>
+                <th>Ekip</th>
+                <th>Tahmini Varış</th>
+                <th>Durum</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="10" class="text-center">Henüz rezervasyonunuz yok.</td>
+            </tr>
+        }
+        else
+        {
+            var index = 1;
+            foreach (var r in Model)
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@r.Id</td>
+                    <td>@(r.User?.Email ?? "-")</td>
+                    <td>@r.FromAddress</td>
+                    <td>@r.ToAddress</td>
+                    <td>@r.MoveDate.ToLocalTime().ToString("g")</td>
+                    <td>@(r.AssignedTeam ?? "-")</td>
+                    <td>@(r.EstimatedArrivalTime.HasValue ? r.EstimatedArrivalTime.Value.ToLocalTime().ToString("g") : "-")</td>
+                    <td>@r.Status</td>
+                    <td class="text-end" style="white-space: nowrap; min-width: 260px;">
+                        <form asp-action="UpdateReservationInfo" method="post" class="d-inline-flex gap-1 align-items-center mb-1">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@r.Id" />
+                            <input name="assignedTeam" class="form-control form-control-sm" style="max-width: 140px;" value="@r.AssignedTeam" placeholder="Ekip" />
+                            <input name="estimatedArrivalTime" type="datetime-local" class="form-control form-control-sm" style="max-width: 140px;" value="@(r.EstimatedArrivalTime.HasValue ? r.EstimatedArrivalTime.Value.ToLocalTime().ToString("yyyy-MM-ddTHH:mm") : "")" />
+                            <button type="submit" class="btn btn-sm btn-primary">Kaydet</button>
+                        </form>
+                        <form asp-action="CompleteReservation" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@r.Id" />
+                            <button type="submit" class="btn btn-sm btn-success" @(r.Status == "Taşınma Tamamlandı" ? "disabled" : null)>İşi Tamamla</button>
+                        </form>
+                    </td>
+                </tr>
+                index++;
+            }
+        }
+        </tbody>
+    </table>
+</div>

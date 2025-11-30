@@ -1,0 +1,146 @@
+@model IEnumerable<Enakliyat.Domain.User>
+
+@{
+    ViewData["Title"] = "Admin - Kullanıcılar";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Kullanıcılar</h3>
+
+    <form asp-action="Users" method="get" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <input type="text" name="search" value="@ViewBag.Search" class="form-control form-control-sm" placeholder="İsim, e-posta veya telefon" />
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select form-select-sm">
+                <option value="All" selected="@(ViewBag.Status == null || ViewBag.Status == "All" ? "selected" : null)">Durum (Hepsi)</option>
+                <option value="Active" selected="@(ViewBag.Status == "Active" ? "selected" : null)">Aktif</option>
+                <option value="Suspended" selected="@(ViewBag.Status == "Suspended" ? "selected" : null)">Dondurulmuş</option>
+                <option value="Banned" selected="@(ViewBag.Status == "Banned" ? "selected" : null)">Banlı</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-sm btn-primary w-100">Filtrele</button>
+        </div>
+        <div class="col-md-2">
+            <a asp-action="Users" class="btn btn-sm btn-outline-secondary w-100">Temizle</a>
+        </div>
+    </form>
+
+    <table class="table table-striped table-hover table-sm align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>İsim</th>
+                <th>E-posta</th>
+                <th>Telefon</th>
+                <th>Durum</th>
+                <th>Talepler</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="7" class="text-center">Kullanıcı bulunamadı.</td>
+            </tr>
+        }
+        else
+        {
+            var page = ViewBag.Page != null ? (int)ViewBag.Page : 1;
+            var pageSize = ViewBag.PageSize != null ? (int)ViewBag.PageSize : 20;
+            var index = 1 + (page - 1) * pageSize;
+
+            foreach (var u in Model)
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@u.Name</td>
+                    <td>@u.Email</td>
+                    <td>@u.PhoneNumber</td>
+                    <td>
+                        @if (u.IsBanned)
+                        {
+                            <span class="badge bg-danger">Banlı</span>
+                        }
+                        else if (u.IsSuspended)
+                        {
+                            <span class="badge bg-warning text-dark">Dondurulmuş</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Aktif</span>
+                        }
+                    </td>
+                    <td>@u.MoveRequests.Count</td>
+                    <td class="text-end">
+                        <a asp-action="UserDetails" asp-route-id="@u.Id" class="btn btn-sm btn-outline-secondary me-1">Detay</a>
+                        @if (!u.IsBanned)
+                        {
+                            <form asp-action="BanUser" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@u.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Banla</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="UnbanUser" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@u.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-success">Ban Kaldır</button>
+                            </form>
+                        }
+
+                        @if (!u.IsSuspended && !u.IsBanned)
+                        {
+                            <form asp-action="SuspendUser" method="post" class="d-inline ms-1">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@u.Id" />
+                                <button type="submit" class="btn btn-sm btn-warning">Dondur</button>
+                            </form>
+                        }
+                        else if (u.IsSuspended)
+                        {
+                            <form asp-action="UnsuspendUser" method="post" class="d-inline ms-1">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@u.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-success">Aktifleştir</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+                index++;
+            }
+        }
+        </tbody>
+    </table>
+
+    @{
+        int currentPage = ViewBag.Page != null ? (int)ViewBag.Page : 1;
+        int totalPages = ViewBag.TotalPages != null ? (int)ViewBag.TotalPages : 1;
+    }
+
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Kullanıcılar sayfalama">
+            <ul class="pagination pagination-sm justify-content-end">
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Users" asp-route-page="@(currentPage - 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-search="@ViewBag.Search" asp-route-status="@ViewBag.Status">Önceki</a>
+                </li>
+
+                @for (var i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Users" asp-route-page="@i" asp-route-pageSize="@ViewBag.PageSize" asp-route-search="@ViewBag.Search" asp-route-status="@ViewBag.Status">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Users" asp-route-page="@(currentPage + 1)" asp-route-pageSize="@ViewBag.PageSize" asp-route-search="@ViewBag.Search" asp-route-status="@ViewBag.Status">Sonraki</a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>

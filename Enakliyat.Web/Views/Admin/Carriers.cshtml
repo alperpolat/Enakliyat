@@ -1,0 +1,171 @@
+@model IEnumerable<Enakliyat.Domain.Carrier>
+
+@{
+    ViewData["Title"] = "Admin - Nakliyeciler";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Nakliyeciler</h3>
+
+    @if (ViewBag.PendingCarrierApplications != null && ViewBag.PendingCarrierApplications > 0)
+    {
+        <div class="alert alert-warning py-2 mb-3">
+            İncelenmek üzere bekleyen <strong>@ViewBag.PendingCarrierApplications</strong> yeni nakliyeci başvurusu var.
+        </div>
+    }
+
+    <form method="get" class="row g-2 mb-4 align-items-end">
+        <div class="col-md-6">
+            <label class="form-label small text-muted">Ara (isim, firma, telefon, e-posta, yetki no, bölge)</label>
+            <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Örn. Nakliyeci adı veya telefon" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small text-muted">Durum</label>
+            <select name="status" class="form-select">
+                <option value="All" selected="@(ViewBag.Status == null || ViewBag.Status == "All" ? "selected" : null)">Tümü</option>
+                <option value="Approved" selected="@(ViewBag.Status == "Approved" ? "selected" : null)">Onaylı</option>
+                <option value="Pending" selected="@(ViewBag.Status == "Pending" ? "selected" : null)">Onay Bekleyen</option>
+                <option value="Rejected" selected="@(ViewBag.Status == "Rejected" ? "selected" : null)">Reddedilen</option>
+                <option value="Active" selected="@(ViewBag.Status == "Active" ? "selected" : null)">Aktif</option>
+                <option value="Suspended" selected="@(ViewBag.Status == "Suspended" ? "selected" : null)">Askıda</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-grid">
+            <button type="submit" class="btn btn-primary">Filtrele</button>
+        </div>
+    </form>
+
+    <table class="table table-striped table-hover table-sm align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>İsim</th>
+                <th>Firma</th>
+                <th>Telefon</th>
+                <th>E-posta</th>
+                <th>Yetki No</th>
+                <th>Araç / Kapasite</th>
+                <th>Hizmet Bölgeleri</th>
+                <th>Onay Durumu</th>
+                <th>Durum</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-center">Henüz kayıtlı nakliyeci yok.</td>
+            </tr>
+        }
+        else
+        {
+            var page = ViewBag.Page != null ? (int)ViewBag.Page : 1;
+            var pageSize = ViewBag.PageSize != null ? (int)ViewBag.PageSize : 20;
+            var index = 1 + (page - 1) * pageSize;
+
+            foreach (var c in Model)
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@c.Name</td>
+                    <td>@c.CompanyName</td>
+                    <td>@c.PhoneNumber</td>
+                    <td>@c.Email</td>
+                    <td>@c.LicenseNumber</td>
+                    <td>@c.VehicleInfo</td>
+                    <td>@c.ServiceAreas</td>
+                    <td>
+                        @if (c.IsApproved)
+                        {
+                            <span class="badge bg-success">Onaylı</span>
+                        }
+                        else if (c.IsRejected)
+                        {
+                            <span class="badge bg-danger">Reddedildi</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Bekliyor</span>
+                        }
+                    </td>
+                    <td>
+                        @if (c.IsSuspended)
+                        {
+                            <span class="badge bg-danger">Askıda</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Aktif</span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        <a asp-action="CarrierDetails" asp-route-id="@c.Id" class="btn btn-sm btn-outline-secondary ms-1">Detay</a>
+                        @if (!c.IsApproved && !c.IsRejected)
+                        {
+                            <form asp-action="ApproveCarrier" method="post" class="d-inline ms-1">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@c.Id" />
+                                <button type="submit" class="btn btn-sm btn-success">Onayla</button>
+                            </form>
+                            <form asp-action="RejectCarrier" method="post" class="d-inline ms-1">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@c.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Reddet</button>
+                            </form>
+                        }
+
+                        @if (c.IsApproved && !c.IsRejected)
+                        {
+                            if (!c.IsSuspended)
+                            {
+                                <form asp-action="SuspendCarrier" method="post" class="d-inline ms-1">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@c.Id" />
+                                    <button type="submit" class="btn btn-sm btn-warning">Askıya Al</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="UnsuspendCarrier" method="post" class="d-inline ms-1">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@c.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-success">Askıdan Al</button>
+                                </form>
+                            }
+                        }
+                    </td>
+                </tr>
+                index++;
+            }
+        }
+        </tbody>
+    </table>
+
+    @{
+        int currentPage = ViewBag.Page != null ? (int)ViewBag.Page : 1;
+        int totalPages = ViewBag.TotalPages != null ? (int)ViewBag.TotalPages : 1;
+    }
+
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Nakliyeciler sayfalama">
+            <ul class="pagination pagination-sm justify-content-end">
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Carriers" asp-route-page="@(currentPage - 1)" asp-route-search="@ViewBag.Search" asp-route-status="@ViewBag.Status">Önceki</a>
+                </li>
+
+                @for (var i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Carriers" asp-route-page="@i" asp-route-search="@ViewBag.Search" asp-route-status="@ViewBag.Status">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Carriers" asp-route-page="@(currentPage + 1)" asp-route-search="@ViewBag.Search" asp-route-status="@ViewBag.Status">Sonraki</a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>

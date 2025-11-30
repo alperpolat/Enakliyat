@@ -1,0 +1,48 @@
+@model IEnumerable<Enakliyat.Domain.Review>
+
+@{
+    ViewData["Title"] = "Admin - Yorumlar";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Tüm Yorumlar</h3>
+
+    <table class="table table-striped table-hover table-sm align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Tarih</th>
+                <th>Talep No</th>
+                <th>Carrier</th>
+                <th>Kullanıcı</th>
+                <th>Puan</th>
+                <th>Yorum</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="7" class="text-center">Henüz yorum yok.</td>
+            </tr>
+        }
+        else
+        {
+            var index = 1;
+            foreach (var r in Model)
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@r.CreatedAt.ToLocalTime().ToString("g")</td>
+                    <td>@r.MoveRequestId</td>
+                    <td>@(r.Carrier?.Name ?? "-")</td>
+                    <td>@(r.User?.Email ?? "-")</td>
+                    <td>@r.Rating / 5</td>
+                    <td>@r.Comment</td>
+                </tr>
+                index++;
+            }
+        }
+        </tbody>
+    </table>
+</div>

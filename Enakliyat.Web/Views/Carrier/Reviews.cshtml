@@ -1,0 +1,65 @@
+@model IEnumerable<Enakliyat.Domain.Review>
+
+@{
+    ViewData["Title"] = "Nakliyeci - Yorumlarım";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Müşteri Yorumları</h3>
+
+    <table class="table table-striped table-hover table-sm align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Tarih</th>
+                <th>Talep No</th>
+                <th>Müşteri</th>
+                <th>Puan</th>
+                <th>Yorum & Yanıt</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center">Henüz yorumunuz yok.</td>
+            </tr>
+        }
+        else
+        {
+            var index = 1;
+            foreach (var r in Model)
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@r.CreatedAt.ToLocalTime().ToString("g")</td>
+                    <td>@r.MoveRequestId</td>
+                    <td>@(r.User?.Email ?? "-")</td>
+                    <td>@r.Rating / 5</td>
+                    <td>
+                        <div class="small mb-2">@r.Comment</div>
+
+                        @if (!string.IsNullOrWhiteSpace(r.CarrierReply))
+                        {
+                            <div class="border rounded p-2 bg-light mb-2 small">
+                                <strong>Firma Yanıtı:</strong>
+                                <div>@r.CarrierReply</div>
+                            </div>
+                        }
+
+                        <form asp-action="ReplyReview" method="post" class="small">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@r.Id" />
+                            <div class="mb-1">
+                                <textarea name="carrierReply" rows="2" class="form-control form-control-sm" placeholder="Yanıtınız...">@r.CarrierReply</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Yanıtı Kaydet</button>
+                        </form>
+                    </td>
+                </tr>
+                index++;
+            }
+        }
+        </tbody>
+    </table>
+</div>

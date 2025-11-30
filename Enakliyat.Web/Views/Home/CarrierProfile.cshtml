@@ -1,0 +1,102 @@
+@model Enakliyat.Web.Models.HomeCarrierProfileViewModel
+
+@{
+    ViewData["Title"] = "Firma Profili";
+}
+
+<div class="container py-4">
+    <h3 class="mb-1">@Model.Carrier.Name</h3>
+    <div class="text-muted mb-3">@Model.Carrier.CompanyName</div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body small">
+                    <h5 class="card-title mb-3">Firma Bilgileri</h5>
+                    <dl class="row mb-0">
+                        <dt class="col-4">Telefon</dt>
+                        <dd class="col-8 mb-1">@Model.Carrier.PhoneNumber</dd>
+                        <dt class="col-4">E-posta</dt>
+                        <dd class="col-8 mb-1">@Model.Carrier.Email</dd>
+                        <dt class="col-4">Yetki No</dt>
+                        <dd class="col-8 mb-1">@Model.Carrier.LicenseNumber</dd>
+                        <dt class="col-4">Araç</dt>
+                        <dd class="col-8 mb-1">@Model.Carrier.VehicleInfo</dd>
+                        <dt class="col-4">Bölgeler</dt>
+                        <dd class="col-8 mb-1">@Model.Carrier.ServiceAreas</dd>
+                        <dt class="col-4">Açıklama</dt>
+                        <dd class="col-8 mb-1">@Model.Carrier.Description</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title mb-3">Genel Puan</h5>
+                    <div class="display-6">
+                        @if (Model.Carrier.ReviewCount > 0)
+                        {
+                            @Model.Carrier.AverageRating.ToString("0.0") <span class="text-warning"><i class="fa fa-star"></i></span>
+                        }
+                        else
+                        {
+                            @:"-"
+                        }
+                    </div>
+                    <div class="small text-muted mt-2">@Model.Carrier.ReviewCount değerlendirme</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-body">
+            <h5 class="card-title mb-0">Müşteri Yorumları</h5>
+        </div>
+        <div class="card-body">
+            @if (!Model.Reviews.Any())
+            {
+                <div class="text-muted small">Bu firmaya ait yorum bulunmuyor.</div>
+            }
+            else
+            {
+                <div class="list-group list-group-flush">
+                    @foreach (var r in Model.Reviews)
+                    {
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <div>
+                                    <strong>@(r.User?.Email ?? "Anonim")</strong>
+                                    <span class="text-muted ms-2">Talep #@r.MoveRequestId</span>
+                                </div>
+                                <div class="text-warning">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= r.Rating)
+                                        {
+                                            <i class="fa fa-star"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="far fa-star"></i>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="small">@r.Comment</div>
+                            @if (!string.IsNullOrWhiteSpace(r.CarrierReply))
+                            {
+                                <div class="border rounded p-2 bg-light mt-1 small">
+                                    <strong>Firma Yanıtı:</strong> @r.CarrierReply
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <a asp-action="Requests" class="btn btn-secondary mt-3">Taleplerime Dön</a>
+</div>

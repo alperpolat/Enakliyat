@@ -1,0 +1,88 @@
+@model IEnumerable<Enakliyat.Domain.MoveRequest>
+
+@{
+    ViewData["Title"] = "Admin - Kullanıcı Talepleri";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Kullanıcı Talepleri</h3>
+
+    <form asp-action="UserRequests" method="get" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <select name="userId" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">Kullanıcı (Hepsi)</option>
+                @foreach (var u in (IEnumerable<Enakliyat.Domain.User>)ViewBag.Users)
+                {
+                    var selected = ViewBag.SelectedUserId != null && (int)ViewBag.SelectedUserId == u.Id;
+                    <option value="@u.Id" selected="@(selected ? "selected" : null)">@u.Email</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="moveType" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="All">Taşıma Tipi (Hepsi)</option>
+                @{
+                    string selectedMoveType = ViewBag.SelectedMoveType ?? "All";
+                }
+                <option value="Home" selected="@(selectedMoveType == "Home" ? "selected" : null)">Ev Taşıma</option>
+                <option value="Partial" selected="@(selectedMoveType == "Partial" ? "selected" : null)">Parça Eşya</option>
+                <option value="Office" selected="@(selectedMoveType == "Office" ? "selected" : null)">Ofis Taşıma</option>
+                <option value="Storage" selected="@(selectedMoveType == "Storage" ? "selected" : null)">Depolama</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="All">Durum (Hepsi)</option>
+                @{
+                    string selectedStatus = ViewBag.SelectedStatus ?? "All";
+                }
+                <option value="Yeni" selected="@(selectedStatus == "Yeni" ? "selected" : null)">Yeni</option>
+                <option value="Teklif Bekliyor" selected="@(selectedStatus == "Teklif Bekliyor" ? "selected" : null)">Teklif Bekliyor</option>
+                <option value="Taşınma Tamamlandı" selected="@(selectedStatus == "Taşınma Tamamlandı" ? "selected" : null)">Taşınma Tamamlandı</option>
+                <option value="İptal" selected="@(selectedStatus == "İptal" ? "selected" : null)">İptal</option>
+            </select>
+        </div>
+        <div class="col-md-2 mt-1 mt-md-0">
+            <a asp-action="UserRequests" class="btn btn-sm btn-outline-secondary">Filtreyi Temizle</a>
+        </div>
+    </form>
+
+    <table class="table table-striped table-hover table-sm align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Kullanıcı</th>
+                <th>Oluşturma Tarihi</th>
+                <th>Taşıma Tipi</th>
+                <th>Durum</th>
+                <th>Nereden</th>
+                <th>Nereye</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="7" class="text-center">Filtreye göre talep bulunamadı.</td>
+            </tr>
+        }
+        else
+        {
+            var index = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@(item.User?.Email ?? "-")</td>
+                    <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
+                    <td>@item.MoveType</td>
+                    <td>@item.Status</td>
+                    <td>@item.FromAddress</td>
+                    <td>@item.ToAddress</td>
+                </tr>
+                index++;
+            }
+        }
+        </tbody>
+    </table>
+</div>

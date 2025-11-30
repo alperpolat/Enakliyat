@@ -1,0 +1,108 @@
+@model Enakliyat.Web.Models.ReservationViewModel
+
+@{
+    ViewData["Title"] = "Rezervasyon Onayı";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">Rezervasyon Onayı</h3>
+
+    <div class="mb-3">
+        <strong>Talep No:</strong> @Model.Request.Id<br />
+        <strong>Taşıma Tipi:</strong> @Model.Request.MoveType<br />
+        <strong>Nereden:</strong> @Model.Request.FromAddress<br />
+        <strong>Nereye:</strong> @Model.Request.ToAddress<br />
+        <strong>Taşınma Tarihi:</strong> @Model.Request.MoveDate.ToLocalTime().ToString("d")<br />
+        <strong>Durum:</strong> @Model.Request.Status<br />
+        @if (!string.IsNullOrWhiteSpace(Model.Request.AssignedTeam))
+        {
+            <strong>Ekip:</strong> @Model.Request.AssignedTeam<br />
+        }
+        @if (Model.Request.EstimatedArrivalTime.HasValue)
+        {
+            <strong>Tahmini Varış:</strong> @Model.Request.EstimatedArrivalTime.Value.ToLocalTime().ToString("g")<br />
+        }
+    </div>
+
+    @if (Model.AcceptedOffer is not null)
+    {
+        <h5>Seçilen Teklif</h5>
+        <dl class="row mb-3">
+            <dt class="col-sm-3">Nakliyeci</dt>
+            <dd class="col-sm-9">@(Model.AcceptedOffer.Carrier?.Name ?? "-")</dd>
+
+            <dt class="col-sm-3">Seçtiğiniz Firma</dt>
+            <dd class="col-sm-9">@Model.AcceptedOffer?.Carrier?.Name (@Model.AcceptedOffer?.Price.ToString("N2") TL)</dd>
+
+            @if (Model.Contract != null)
+            {
+                <dt class="col-sm-3">Sözleşme No</dt>
+                <dd class="col-sm-9">@Model.Contract.ContractNumber</dd>
+
+                <dt class="col-sm-3">Sigorta</dt>
+                <dd class="col-sm-9">
+                    @(Model.Contract.IsInsuranceIncluded ? "Sigortalı Taşımacılık" : "Sigorta bilgisi yok")
+                </dd>
+            }
+
+            @if (Model.Payment != null)
+            {
+                <dt class="col-sm-3">Ödeme Durumu</dt>
+                <dd class="col-sm-9">
+                    @Model.Payment.Status
+                </dd>
+
+                <dt class="col-sm-3">Kapora (10%)</dt>
+                <dd class="col-sm-9">
+                    @Model.Payment.Amount.ToString("N2") @Model.Payment.Currency
+                </dd>
+
+                <dt class="col-sm-3">Toplam Taşıma Bedeli</dt>
+                <dd class="col-sm-9">
+                    @Model.AcceptedOffer?.Price.ToString("N2") @Model.Payment.Currency
+                </dd>
+            }
+
+            <dt class="col-sm-3">Teklif Notu</dt>
+            <dd class="col-sm-9">@Model.AcceptedOffer.Note</dd>
+        </dl>
+    }
+    else
+    {
+        <p>Bu talep için seçilmiş bir teklif bulunamadı.</p>
+    }
+
+    @if (Model.Contract != null && Model.Payment == null)
+    {
+        <hr class="my-4" />
+        <h5>Test Ödeme (Fake Kart)</h5>
+        <form asp-action="Pay" method="post" class="row g-3 mt-2">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="moveRequestId" value="@Model.Request.Id" />
+
+            <div class="col-md-6">
+                <label class="form-label">Kart Üzerindeki İsim</label>
+                <input name="cardHolder" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Kart Numarası</label>
+                <input name="cardNumber" class="form-control" placeholder="1111 2222 3333 4444" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Son Kullanma</label>
+                <input name="expiry" class="form-control" placeholder="AA/YY" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">CVV</label>
+                <input name="cvv" class="form-control" />
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-success">Test Ödeme Yap (@Model.AcceptedOffer?.Price.ToString("N2") TL)</button>
+            </div>
+        </form>
+    }
+
+    <p class="text-muted">Bu sayfayı kaydedebilir veya yazdırabilirsiniz. İleride PDF/mail entegrasyonu bu ekrandan tetiklenebilir.</p>
+
+    <a asp-action="Requests" class="btn btn-primary">Taleplerime Dön</a>
+</div>

@@ -1,0 +1,106 @@
+@model Enakliyat.Web.Models.AdminRequestDetailsViewModel
+
+@{
+    ViewData["Title"] = "Admin - Talep Detayı";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h3 class="mb-1">Talep #@Model.Request.Id</h3>
+            <div class="text-muted small">
+                @(Model.Request.User?.Email ?? "Anonim") · @Model.Request.CreatedAt.ToLocalTime().ToString("g")
+            </div>
+        </div>
+        <div>
+            <a asp-action="Requests" class="btn btn-sm btn-outline-secondary">← Taleplere dön</a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">İş Bilgileri</h5>
+                    <dl class="row small mb-0">
+                        <dt class="col-4">Durum</dt>
+                        <dd class="col-8 mb-1">@Model.Request.Status</dd>
+                        <dt class="col-4">Taşıma Tipi</dt>
+                        <dd class="col-8 mb-1">@Model.Request.MoveType</dd>
+                        <dt class="col-4">Tarih</dt>
+                        <dd class="col-8 mb-1">@Model.Request.MoveDate.ToLocalTime().ToString("g")</dd>
+                        <dt class="col-4">Müşteri Adı</dt>
+                        <dd class="col-8 mb-1">@Model.Request.CustomerName</dd>
+                        <dt class="col-4">Telefon</dt>
+                        <dd class="col-8 mb-1">@Model.Request.PhoneNumber</dd>
+                        <dt class="col-4">E-posta</dt>
+                        <dd class="col-8 mb-1">@Model.Request.Email</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Adres Bilgileri</h5>
+                    <dl class="row small mb-0">
+                        <dt class="col-4">Nereden</dt>
+                        <dd class="col-8 mb-1">@Model.Request.FromAddress</dd>
+                        <dt class="col-4">Nereye</dt>
+                        <dd class="col-8 mb-1">@Model.Request.ToAddress</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-2">Notlar</h5>
+                    <div class="small text-muted">@Model.Request.Notes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-body">
+            <h5 class="card-title mb-0">Teklifler</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Firma</th>
+                            <th>Oluşturma</th>
+                            <th>Teklif</th>
+                            <th>Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (!Model.Offers.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-3 small">Bu talep için henüz teklif yok.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        var index = 1;
+                        foreach (var o in Model.Offers)
+                        {
+                            <tr>
+                                <td>@index</td>
+                                <td>@o.Carrier?.Name</td>
+                                <td>@o.CreatedAt.ToLocalTime().ToString("g")</td>
+                                <td>@o.Price.ToString("N0") TL</td>
+                                <td>@o.Status</td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
