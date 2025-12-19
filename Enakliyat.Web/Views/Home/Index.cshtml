@@ -4,9 +4,193 @@
     ViewData["Title"] = "Evden Eve Nakliyat Teklif Al";
 }
 
+<!-- QUOTE FORM -->
+<div id="quote-form" class="py-5" style="background-color:#f5f7fb; min-height:100vh;">
+    <div class="container-xxl p-3 p-lg-5 d-flex flex-column justify-content-center">
+        <div class="row justify-content-center mb-4 mb-lg-5">
+            <div class="col-12 text-center">
+                <h2 class="fs-3 fs-lg-2 fw-semibold mb-2">81 ilden +1000 nakliyeciden teklif al.</h2>
+                <p class="text-body-secondary mb-0">Tek form doldur, onaylı nakliyecilerden dakikalar içinde fiyat teklifi gelsin.</p>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card border-0 shadow-lg rounded-4 my-4 my-lg-5">
+                    <div class="card-header bg-white border-0 pb-0 pt-4 px-4 px-lg-5">
+                        <h4 class="card-title mb-1 fs-4 fw-semibold">
+                            Tek form ile <span class="text-primary">tüm nakliyecilerden</span> teklif al
+                        </h4>
+                        <p class="text-body-secondary mb-0">Taşınma tipini seç, adresleri doldur, geri kalanını biz halledelim.</p>
+                    </div>
+                    <div class="card-body px-4 px-lg-5 py-4 py-lg-5">
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs mb-4 border-bottom-0" id="offerTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-semibold" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
+                                <i class="fa fa-home me-2"></i>Ev Taşıma
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold" id="partial-tab" data-bs-toggle="tab" data-bs-target="#partial" type="button" role="tab" aria-controls="partial" aria-selected="false">
+                                <i class="fa fa-box me-2"></i>Parça Eşya
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold" id="office-tab" data-bs-toggle="tab" data-bs-target="#office" type="button" role="tab" aria-controls="office" aria-selected="false">
+                                <i class="fa fa-building me-2"></i>Ofis Taşıma
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold" id="storage-tab" data-bs-toggle="tab" data-bs-target="#storage" type="button" role="tab" aria-controls="storage" aria-selected="false">
+                                <i class="fa fa-archive me-2"></i>Depolama
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="offerTabsContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <form asp-action="Index" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="MoveType" value="Home" />
+                                <div class="row g-3">
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereden</label>
+                                        <input type="text" class="form-control form-control-lg" id="fromLocationText" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="FromCityId" id="fromCityId" />
+                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictId" />
+                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodId" />
+                                        <div id="fromLocationSuggestions" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereye</label>
+                                        <input type="text" class="form-control form-control-lg" id="toLocationText" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="ToCityId" id="toCityId" />
+                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictId" />
+                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodId" />
+                                        <div id="toLocationSuggestions" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mt-2">
+                                    <div class="col-md-3 col-lg-2 ms-auto d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
+                                            Teklif Al
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="tab-pane fade" id="partial" role="tabpanel" aria-labelledby="partial-tab">
+                            <form asp-action="Index" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="MoveType" value="Partial" />
+                                <div class="row g-3">
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereden</label>
+                                        <input type="text" class="form-control form-control-lg" id="fromLocationTextPartial" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="FromCityId" id="fromCityIdPartial" />
+                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictIdPartial" />
+                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodIdPartial" />
+                                        <div id="fromLocationSuggestionsPartial" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereye</label>
+                                        <input type="text" class="form-control form-control-lg" id="toLocationTextPartial" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="ToCityId" id="toCityIdPartial" />
+                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictIdPartial" />
+                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodIdPartial" />
+                                        <div id="toLocationSuggestionsPartial" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mt-2">
+                                    <div class="col-md-3 col-lg-2 ms-auto d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
+                                            Teklif Al
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="tab-pane fade" id="office" role="tabpanel" aria-labelledby="office-tab">
+                            <form asp-action="Index" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="MoveType" value="Office" />
+                                <div class="row g-3">
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereden</label>
+                                        <input type="text" class="form-control form-control-lg" id="fromLocationTextOffice" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="FromCityId" id="fromCityIdOffice" />
+                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictIdOffice" />
+                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodIdOffice" />
+                                        <div id="fromLocationSuggestionsOffice" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereye</label>
+                                        <input type="text" class="form-control form-control-lg" id="toLocationTextOffice" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="ToCityId" id="toCityIdOffice" />
+                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictIdOffice" />
+                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodIdOffice" />
+                                        <div id="toLocationSuggestionsOffice" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mt-2">
+                                    <div class="col-md-3 col-lg-2 ms-auto d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
+                                            Teklif Al
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="tab-pane fade" id="storage" role="tabpanel" aria-labelledby="storage-tab">
+                            <form asp-action="Index" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="MoveType" value="Storage" />
+                                <div class="row g-3">
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereden</label>
+                                        <input type="text" class="form-control form-control-lg" id="fromLocationTextStorage" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="FromCityId" id="fromCityIdStorage" />
+                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictIdStorage" />
+                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodIdStorage" />
+                                        <div id="fromLocationSuggestionsStorage" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                    <div class="col-md-5 position-relative">
+                                        <label class="form-label mb-1">Nereye</label>
+                                        <input type="text" class="form-control form-control-lg" id="toLocationTextStorage" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
+                                        <input type="hidden" asp-for="ToCityId" id="toCityIdStorage" />
+                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictIdStorage" />
+                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodIdStorage" />
+                                        <div id="toLocationSuggestionsStorage" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mt-2">
+                                    <div class="col-md-3 col-lg-2 ms-auto d-grid">
+                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
+                                            Teklif Al
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-4 mt-lg-5">
+            <div class="col-12 text-center text-body-secondary">
+                <small><i class="fa fa-mouse me-2"></i>Daha fazla bilgi için kaydırın</small>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- HERO -->
-<div class="py-5 border-bottom mb-4" style="background-color:#f5f7fb;">
-    <div class="container-xxl p-3 p-lg-5">
+<div class="py-4 border-bottom mb-4" style="background-color:#f5f7fb;">
+    <div class="container-xxl p-3 p-lg-4">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <h1 class="display-4 fw-bolder mb-3 text-body-emphasis" style="letter-spacing:-0.02em;">
@@ -38,171 +222,6 @@
             </div>
             <div class="col-lg-6 d-none d-lg-block text-center">
                 <img src="~/img/3.jpg" alt="Evden eve nakliyat" class="img-fluid rounded-4 shadow" />
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- QUOTE FORM -->
-<div id="quote-form" class="py-5" style="background-color:#ffffff;">
-    <div class="container-xxl p-3 p-lg-5">
-        <div class="row justify-content-center">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm rounded-3">
-                    <div class="card-header bg-body border-0 pb-0">
-                        <h4 class="card-title mb-1 fs-4 fw-semibold">
-                            Tek form ile <span class="text-primary">tüm nakliyecilerden</span> teklif al
-                        </h4>
-                        <p class="text-body-secondary mb-0">Taşınma tipini seç, adresleri doldur, geri kalanını biz halledelim.</p>
-                    </div>
-                    <div class="card-body px-4 px-lg-5 py-4">
-                    <!-- Tabs -->
-                    <ul class="nav nav-tabs mb-4 border-bottom-0" id="offerTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active fw-semibold" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
-                                Ev Taşıma
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link fw-semibold" id="partial-tab" data-bs-toggle="tab" data-bs-target="#partial" type="button" role="tab" aria-controls="partial" aria-selected="false">
-                                Parça Eşya
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link fw-semibold" id="office-tab" data-bs-toggle="tab" data-bs-target="#office" type="button" role="tab" aria-controls="office" aria-selected="false">
-                                Ofis Taşıma
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link fw-semibold" id="storage-tab" data-bs-toggle="tab" data-bs-target="#storage" type="button" role="tab" aria-controls="storage" aria-selected="false">
-                                Depolama
-                            </button>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content" id="offerTabsContent">
-                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            <form asp-action="Index" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="MoveType" value="Home" />
-                                <div class="row g-3 align-items-end">
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereden</label>
-                                        <input type="text" class="form-control form-control-lg" id="fromLocationText" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="FromCityId" id="fromCityId" />
-                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictId" />
-                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodId" />
-                                        <div id="fromLocationSuggestions" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereye</label>
-                                        <input type="text" class="form-control form-control-lg" id="toLocationText" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="ToCityId" id="toCityId" />
-                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictId" />
-                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodId" />
-                                        <div id="toLocationSuggestions" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                    <div class="col-md-2 d-grid">
-                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
-                                            Teklif Al
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="tab-pane fade" id="partial" role="tabpanel" aria-labelledby="partial-tab">
-                            <form asp-action="Index" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="MoveType" value="Partial" />
-                                <div class="row g-3 align-items-end">
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereden</label>
-                                        <input type="text" class="form-control form-control-lg" id="fromLocationTextPartial" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="FromCityId" id="fromCityIdPartial" />
-                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictIdPartial" />
-                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodIdPartial" />
-                                        <div id="fromLocationSuggestionsPartial" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereye</label>
-                                        <input type="text" class="form-control form-control-lg" id="toLocationTextPartial" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="ToCityId" id="toCityIdPartial" />
-                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictIdPartial" />
-                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodIdPartial" />
-                                        <div id="toLocationSuggestionsPartial" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                    <div class="col-md-2 d-grid">
-                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
-                                            Teklif Al
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="tab-pane fade" id="office" role="tabpanel" aria-labelledby="office-tab">
-                            <form asp-action="Index" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="MoveType" value="Office" />
-                                <div class="row g-3 align-items-end">
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereden</label>
-                                        <input type="text" class="form-control form-control-lg" id="fromLocationTextOffice" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="FromCityId" id="fromCityIdOffice" />
-                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictIdOffice" />
-                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodIdOffice" />
-                                        <div id="fromLocationSuggestionsOffice" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereye</label>
-                                        <input type="text" class="form-control form-control-lg" id="toLocationTextOffice" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="ToCityId" id="toCityIdOffice" />
-                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictIdOffice" />
-                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodIdOffice" />
-                                        <div id="toLocationSuggestionsOffice" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                    <div class="col-md-2 d-grid">
-                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
-                                            Teklif Al
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="tab-pane fade" id="storage" role="tabpanel" aria-labelledby="storage-tab">
-                            <form asp-action="Index" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="MoveType" value="Storage" />
-                                <div class="row g-3 align-items-end">
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereden</label>
-                                        <input type="text" class="form-control form-control-lg" id="fromLocationTextStorage" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="FromCityId" id="fromCityIdStorage" />
-                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictIdStorage" />
-                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodIdStorage" />
-                                        <div id="fromLocationSuggestionsStorage" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereye</label>
-                                        <input type="text" class="form-control form-control-lg" id="toLocationTextStorage" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="ToCityId" id="toCityIdStorage" />
-                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictIdStorage" />
-                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodIdStorage" />
-                                        <div id="toLocationSuggestionsStorage" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                    <div class="col-md-2 d-grid">
-                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
-                                            Teklif Al
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                    </div>
-                </div>
             </div>
         </div>
     </div>

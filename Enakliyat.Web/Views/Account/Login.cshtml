@@ -22,7 +22,11 @@
                     <label class="form-label" for="password">Şifre</label>
                     <input type="password" id="password" name="password" class="form-control" required />
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+                <button type="submit" class="btn btn-primary w-100 mb-2">Giriş Yap</button>
+                <a asp-action="GoogleLogin" asp-controller="Account" class="btn btn-outline-danger w-100 mb-2">Google ile devam et</a>
+                <div class="text-center">
+                    <a asp-action="Register" asp-controller="Account">Hesabın yok mu? Kayıt ol</a>
+                </div>
             </form>
         </div>
     </div>

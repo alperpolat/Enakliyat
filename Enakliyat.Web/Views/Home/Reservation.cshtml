@@ -75,7 +75,10 @@
     @if (Model.Contract != null && Model.Payment == null)
     {
         <hr class="my-4" />
-        <h5>Test Ödeme (Fake Kart)</h5>
+        <h5>Kapora Ödemesi (Teklifin %10'u)</h5>
+        <p class="text-muted small mb-2">
+            Bu adımda yalnızca seçtiğiniz teklif tutarının %10'u kapora olarak tahsil edilir. Kalan tutar taşınma sonrasında firma ile aranızda kapatılır.
+        </p>
         <form asp-action="Pay" method="post" class="row g-3 mt-2">
             @Html.AntiForgeryToken()
             <input type="hidden" name="moveRequestId" value="@Model.Request.Id" />
@@ -97,7 +100,12 @@
                 <input name="cvv" class="form-control" />
             </div>
             <div class="col-md-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-success">Test Ödeme Yap (@Model.AcceptedOffer?.Price.ToString("N2") TL)</button>
+                @{
+                    var depositAmount = Model.AcceptedOffer != null ? Math.Round(Model.AcceptedOffer.Price * 0.10m, 2) : 0m;
+                }
+                <button type="submit" class="btn btn-success w-100">
+                    Kapora Ödemesini Yap (@depositAmount.ToString("N2") TL)
+                </button>
             </div>
         </form>
     }

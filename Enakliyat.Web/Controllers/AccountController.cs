@@ -136,6 +136,69 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
+    [HttpGet]
+    public IActionResult GoogleLogin(string? returnUrl = null)
+    {
+        var redirectUrl = Url.Action("GoogleCallback", "Account", new { returnUrl });
+        var properties = new AuthenticationProperties
+        {
+            RedirectUri = redirectUrl
+        };
+
+        return Challenge(properties, "Google");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GoogleCallback(string? returnUrl = null)
+    {
+        var email = User.FindFirst(ClaimTypes.Email)?.Value ?? User.Identity?.Name;
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            TempData["Error"] = "Google hesabınızdan e-posta bilgisi alınamadı.";
+            return RedirectToAction("Login");
+        }
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+        if (user == null)
+        {
+            user = new User
+            {
+                Email = email,
+                Password = PasswordHasher.Hash(Guid.NewGuid().ToString())
+            };
+
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+        }
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim("UserId", user.Id.ToString()),
+            new Claim("IsAdmin", user.IsAdmin.ToString())
+        };
+
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var authProperties = new AuthenticationProperties
+        {
+            IsPersistent = true
+        };
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity),
+            authProperties);
+
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return Redirect(returnUrl);
+        }
+
+        return RedirectToAction("Index", "Home");
+    }
+
     [HttpPost]
     public async Task<IActionResult> Logout()
     {

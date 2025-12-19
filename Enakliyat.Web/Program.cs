@@ -30,6 +30,11 @@ builder.Services.AddAuthentication(options =>
     {
         options.LoginPath = "/CarrierAccount/Login";
         options.Cookie.Name = "CarrierAuthCookie";
+    })
+    .AddGoogle("Google", options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
     });
 
 builder.Services.AddAuthorization();

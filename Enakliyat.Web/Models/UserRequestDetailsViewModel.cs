@@ -12,4 +12,6 @@ public class UserRequestDetailsViewModel
     public int? AcceptedCarrierId { get; set; }
     public int? ReviewRating { get; set; }
     public string? ReviewComment { get; set; }
+
+    public Payment? Payment { get; set; }
 }

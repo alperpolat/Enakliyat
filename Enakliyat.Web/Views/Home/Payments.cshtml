@@ -4,18 +4,30 @@
     ViewData["Title"] = "Ödeme Geçmişim";
 }
 
-<div class="container py-4">
-    <h3 class="mb-3">Ödeme Geçmişim</h3>
+<div class="container-xxl px-3 px-lg-5 py-4">
+    <div class="d-flex align-items-center mb-3">
+        <div>
+            <ol class="breadcrumb mb-1 small text-uppercase">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Ana Sayfa</a></li>
+                <li class="breadcrumb-item active">Ödeme Geçmişim</li>
+            </ol>
+            <h3 class="mb-0">Ödeme Geçmişim</h3>
+        </div>
+    </div>
+
+    <p class="text-muted small mb-3">
+        Bu listede yalnızca sistem üzerinden alınan <strong>%10 kapora ödemeleri</strong> yer alır. Kalan tutar, taşınma sonrasında firma ile aranızda kapatılır.
+    </p>
 
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover table-sm align-middle mb-0">
-                    <thead>
+                    <thead class="table-light">
                         <tr>
-                            <th>#</th>
+                            <th style="width:60px;">#</th>
                             <th>Tarih</th>
-                            <th>Tutar</th>
+                            <th>Tutar (Kapora %10)</th>
                             <th>Durum</th>
                         </tr>
                     </thead>
@@ -34,8 +46,21 @@
                             <tr>
                                 <td>@index</td>
                                 <td>@p.CreatedAt.ToLocalTime().ToString("g")</td>
-                                <td>@p.Amount.ToString("N0") TL</td>
-                                <td>@p.Status</td>
+                                <td>@p.Amount.ToString("N2") TL</td>
+                                <td>
+                                    @if (p.Status == Enakliyat.Domain.PaymentStatus.Paid)
+                                    {
+                                        <span class="badge bg-success">Ödendi</span>
+                                    }
+                                    else if (p.Status == Enakliyat.Domain.PaymentStatus.Pending)
+                                    {
+                                        <span class="badge bg-warning text-dark">Beklemede</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@p.Status</span>
+                                    }
+                                </td>
                             </tr>
                             index++;
                         }

@@ -87,7 +87,8 @@ public class HomeController : Controller
             PhoneNumber = phoneNumber,
             Email = email,
             MoveType = model.MoveType.ToString(),
-            UserId = userId
+            UserId = userId,
+            Status = "Taslak"
         };
 
         await _context.MoveRequests.AddAsync(moveRequest);
@@ -186,13 +187,18 @@ public class HomeController : Controller
             .Select(id => id!.Value)
             .ToList();
 
+        var existingAddOnIds = await _context.AddOnServices
+            .Where(a => intIds.Contains(a.Id))
+            .Select(a => a.Id)
+            .ToListAsync();
+
         var existingAddOns = _context.MoveRequestAddOns
             .Where(a => a.MoveRequestId == request.Id)
             .ToList();
 
         _context.MoveRequestAddOns.RemoveRange(existingAddOns);
 
-        foreach (var addOnId in intIds.Distinct())
+        foreach (var addOnId in existingAddOnIds.Distinct())
         {
             var addOn = new MoveRequestAddOn
             {
@@ -249,7 +255,7 @@ public class HomeController : Controller
         }
 
         var requests = _context.MoveRequests
-            .Where(x => x.UserId == userId)
+            .Where(x => x.UserId == userId && x.Status != "Taslak")
             .OrderByDescending(x => x.CreatedAt)
             .ToList();
 
@@ -287,6 +293,7 @@ public class HomeController : Controller
 
         int? acceptedCarrierId = null;
         Review? existingReview = null;
+        Payment? payment = null;
 
         if (request.AcceptedOfferId.HasValue)
         {
@@ -296,6 +303,13 @@ public class HomeController : Controller
                 acceptedCarrierId = acceptedOffer.CarrierId;
                 existingReview = _context.Reviews
                     .FirstOrDefault(r => r.MoveRequestId == id && r.CarrierId == acceptedOffer.CarrierId && r.UserId == userId);
+
+                var contract = _context.Contracts
+                    .FirstOrDefault(c => c.MoveRequestId == request.Id && c.OfferId == acceptedOffer.Id);
+                if (contract != null)
+                {
+                    payment = _context.Payments.FirstOrDefault(p => p.ContractId == contract.Id);
+                }
             }
         }
 
@@ -309,7 +323,8 @@ public class HomeController : Controller
             CanReview = canReview,
             AcceptedCarrierId = acceptedCarrierId,
             ReviewRating = existingReview?.Rating,
-            ReviewComment = existingReview?.Comment
+            ReviewComment = existingReview?.Comment,
+            Payment = payment
         };
 
         return View(vm);
@@ -540,6 +555,30 @@ public class HomeController : Controller
             .ToListAsync();
 
         return View(items);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> PaymentReceipt(int id)
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var payment = await _context.Payments
+            .Include(p => p.Contract)
+                .ThenInclude(c => c.Offer)
+                    .ThenInclude(o => o.MoveRequest)
+            .FirstOrDefaultAsync(p => p.Id == id && p.Contract.Offer.MoveRequest.UserId == userId);
+
+        if (payment == null)
+        {
+            return NotFound();
+        }
+
+        return View(payment);
     }
 
     public IActionResult Privacy()
