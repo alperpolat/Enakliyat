@@ -1,0 +1,722 @@
+@{
+    ViewData["Title"] = "Eşya Depolama | Güvenli Depo Hizmeti";
+    Layout = "_Layout";
+}
+
+<style>
+    .service-hero {
+        background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+        padding: 6rem 0 4rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .service-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="60" y="20" width="20" height="30" rx="3" fill="rgba(255,255,255,0.03)"/><rect x="70" y="55" width="25" height="20" rx="3" fill="rgba(255,255,255,0.02)"/><rect x="50" y="60" width="15" height="25" rx="3" fill="rgba(255,255,255,0.02)"/></svg>');
+    }
+    
+    .service-hero-content { position: relative; z-index: 2; }
+    
+    .service-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-breadcrumb a {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    
+    .service-breadcrumb span { color: rgba(255,255,255,0.5); }
+    .service-breadcrumb .current { color: #FCD34D; }
+    
+    .service-hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+    
+    .service-hero-title span { color: #FCD34D; }
+    
+    .service-hero-desc {
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.85);
+        margin-bottom: 2rem;
+        line-height: 1.7;
+        max-width: 600px;
+    }
+    
+    .service-hero-stats {
+        display: flex;
+        gap: 3rem;
+        margin-top: 2rem;
+    }
+    
+    .hero-stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #FCD34D;
+    }
+    
+    .hero-stat-label {
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.7);
+    }
+    
+    .service-hero-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+    }
+    
+    .service-hero-card h4 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+    
+    .service-quick-form .form-control {
+        padding: 0.875rem 1rem 0.875rem 2.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+        background: #f8fafc;
+    }
+    
+    .service-quick-form .form-control:focus {
+        border-color: #7C3AED;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+    }
+    
+    .service-quick-form .form-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        z-index: 5;
+    }
+    
+    .service-quick-form .btn-submit {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+    
+    .service-quick-form .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(124,58,237,0.35);
+    }
+    
+    /* Storage Types */
+    .storage-types {
+        padding: 5rem 0;
+        background: #f8fafc;
+    }
+    
+    .storage-type-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 2rem;
+        height: 100%;
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .storage-type-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #7C3AED, #A78BFA);
+        transform: scaleX(0);
+        transition: transform 0.3s;
+    }
+    
+    .storage-type-card:hover::before { transform: scaleX(1); }
+    
+    .storage-type-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(124,58,237,0.15);
+        border-color: #7C3AED;
+    }
+    
+    .storage-type-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, rgba(124,58,237,0.1) 0%, rgba(167,139,250,0.1) 100%);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #7C3AED;
+        margin-bottom: 1.5rem;
+    }
+    
+    .storage-type-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+    }
+    
+    .storage-type-desc {
+        color: #64748b;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+    }
+    
+    .storage-type-features {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .storage-type-features li {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0;
+        color: #475569;
+        font-size: 0.9rem;
+    }
+    
+    .storage-type-features li i {
+        color: #7C3AED;
+        font-size: 0.75rem;
+    }
+    
+    /* Features Section */
+    .storage-features {
+        padding: 5rem 0;
+        background: #fff;
+    }
+    
+    .feature-grid-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        transition: all 0.3s;
+    }
+    
+    .feature-grid-item:hover {
+        background: #fff;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+    
+    .feature-grid-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #7C3AED, #A78BFA);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+    
+    .feature-grid-content h5 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+    }
+    
+    .feature-grid-content p {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    
+    /* Pricing Section */
+    .pricing-section {
+        padding: 5rem 0;
+        background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+    }
+    
+    .pricing-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        height: 100%;
+        position: relative;
+    }
+    
+    .pricing-card.popular::before {
+        content: 'En Popüler';
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #F59E0B, #D97706);
+        color: #fff;
+        padding: 0.35rem 1rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+    
+    .pricing-icon {
+        width: 70px;
+        height: 70px;
+        background: rgba(124,58,237,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 1.75rem;
+        color: #7C3AED;
+    }
+    
+    .pricing-title { font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; }
+    .pricing-desc { color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .pricing-range { font-size: 1.75rem; font-weight: 800; color: #7C3AED; margin-bottom: 0.25rem; }
+    .pricing-note { font-size: 0.8rem; color: #94a3b8; }
+    
+    .service-cta { padding: 5rem 0; background: #f8fafc; }
+    
+    .cta-card {
+        background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        border-radius: 20px;
+        padding: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .cta-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+    
+    .cta-card h3 { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 1rem; }
+    .cta-card p { font-size: 1.1rem; color: rgba(255,255,255,0.9); margin-bottom: 2rem; }
+    
+    .service-faq { padding: 5rem 0; background: #fff; }
+    
+    .accordion-item-custom {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px !important;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+    
+    .accordion-button-custom {
+        background: #fff;
+        border: none;
+        padding: 1.25rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        box-shadow: none !important;
+    }
+    
+    .accordion-button-custom:not(.collapsed) { background: #f8fafc; color: #7C3AED; }
+    .accordion-body-custom { padding: 0 1.5rem 1.5rem; color: #64748b; line-height: 1.8; }
+    
+    @@media (max-width: 991.98px) {
+        .service-hero-title { font-size: 2.25rem; }
+        .service-hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+    }
+    
+    @@media (max-width: 767.98px) {
+        .service-hero { padding: 4rem 0 3rem; }
+        .service-hero-title { font-size: 1.75rem; }
+    }
+</style>
+
+<!-- SERVICE HERO -->
+<section class="service-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 mb-5 mb-lg-0">
+                <div class="service-hero-content" data-aos="fade-right">
+                    <div class="service-breadcrumb">
+                        <a asp-controller="Home" asp-action="Index"><i class="fas fa-home me-1"></i> Ana Sayfa</a>
+                        <span>/</span>
+                        <a href="#">Hizmetler</a>
+                        <span>/</span>
+                        <span class="current">Eşya Depolama</span>
+                    </div>
+                    
+                    <h1 class="service-hero-title">
+                        Güvenli <span>Eşya Depolama</span> Hizmeti
+                    </h1>
+                    
+                    <p class="service-hero-desc">
+                        Eşyalarınızı 7/24 güvenlik, iklimlendirme ve sigorta garantisi ile güvenle saklıyoruz. 
+                        Kısa veya uzun dönem depolama seçenekleri.
+                    </p>
+                    
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-white-custom">
+                            <i class="fas fa-calculator me-2"></i>
+                            Ücretsiz Teklif Al
+                        </a>
+                        <a href="tel:08501234567" class="btn btn-outline-custom" style="border-color: rgba(255,255,255,0.5); color: #fff;">
+                            <i class="fas fa-phone me-2"></i>
+                            0850 123 45 67
+                        </a>
+                    </div>
+                    
+                    <div class="service-hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">50K+</div>
+                            <div class="hero-stat-label">m² Depo Alanı</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">7/24</div>
+                            <div class="hero-stat-label">Güvenlik</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">%100</div>
+                            <div class="hero-stat-label">Sigorta</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-5" data-aos="fade-left">
+                <div class="service-hero-card">
+                    <h4><i class="fas fa-warehouse me-2" style="color: #7C3AED;"></i> Depolama Teklifi</h4>
+                    <form asp-controller="Home" asp-action="Index" method="post" class="service-quick-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="MoveType" value="Storage" />
+                        
+                        <div class="position-relative mb-3">
+                            <i class="fas fa-map-marker-alt form-icon"></i>
+                            <input type="text" class="form-control" name="fromText" placeholder="Eşyaların bulunduğu adres" required />
+                        </div>
+                        
+                        <div class="position-relative mb-3">
+                            <i class="fas fa-calendar form-icon"></i>
+                            <input type="text" class="form-control" name="duration" placeholder="Depolama süresi (ör: 3 ay)" />
+                        </div>
+                        
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Ücretsiz Teklif Al
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STORAGE TYPES -->
+<section class="storage-types">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">
+                <i class="fas fa-boxes"></i>
+                Depolama Türleri
+            </span>
+            <h2 class="section-title">İhtiyacınıza Uygun <span>Depolama Çözümleri</span></h2>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="storage-type-card">
+                    <div class="storage-type-icon"><i class="fas fa-home"></i></div>
+                    <h3 class="storage-type-title">Ev Eşyası Depolama</h3>
+                    <p class="storage-type-desc">Taşınma, tadilat veya geçici durumlarda ev eşyalarınızı güvenle saklayın.</p>
+                    <ul class="storage-type-features">
+                        <li><i class="fas fa-check-circle"></i> İklimlendirmeli depolar</li>
+                        <li><i class="fas fa-check-circle"></i> Özel paketleme hizmeti</li>
+                        <li><i class="fas fa-check-circle"></i> Esnek depolama süreleri</li>
+                        <li><i class="fas fa-check-circle"></i> Ücretsiz nakliye</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="storage-type-card">
+                    <div class="storage-type-icon"><i class="fas fa-building"></i></div>
+                    <h3 class="storage-type-title">Ofis & Arşiv Depolama</h3>
+                    <p class="storage-type-desc">Ofis mobilyaları, IT ekipmanları ve arşivleriniz için profesyonel depolama.</p>
+                    <ul class="storage-type-features">
+                        <li><i class="fas fa-check-circle"></i> KVKK uyumlu arşivleme</li>
+                        <li><i class="fas fa-check-circle"></i> Barkodlu envanter takibi</li>
+                        <li><i class="fas fa-check-circle"></i> Erişim yetkilendirmesi</li>
+                        <li><i class="fas fa-check-circle"></i> Dijital kataloglama</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="storage-type-card">
+                    <div class="storage-type-icon"><i class="fas fa-gem"></i></div>
+                    <h3 class="storage-type-title">Değerli Eşya Depolama</h3>
+                    <p class="storage-type-desc">Antika, sanat eseri ve değerli eşyalarınız için özel güvenlikli depolar.</p>
+                    <ul class="storage-type-features">
+                        <li><i class="fas fa-check-circle"></i> Yüksek güvenlik</li>
+                        <li><i class="fas fa-check-circle"></i> Nem ve sıcaklık kontrolü</li>
+                        <li><i class="fas fa-check-circle"></i> Özel sigorta</li>
+                        <li><i class="fas fa-check-circle"></i> 7/24 kamera izleme</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="storage-features">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
+                <span class="section-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    Güvenlik
+                </span>
+                <h2 class="section-title">Eşyalarınız <span>Güvende</span></h2>
+                <p class="text-muted mb-4">
+                    Modern depolarımızda eşyalarınız en üst düzey güvenlik ve koruma altında.
+                </p>
+                
+                <div class="feature-grid-item">
+                    <div class="feature-grid-icon"><i class="fas fa-video"></i></div>
+                    <div class="feature-grid-content">
+                        <h5>7/24 Kamera Sistemi</h5>
+                        <p>Tüm alanlar kesintisiz kamera ile izlenir ve kayıt altına alınır</p>
+                    </div>
+                </div>
+                
+                <div class="feature-grid-item">
+                    <div class="feature-grid-icon"><i class="fas fa-fingerprint"></i></div>
+                    <div class="feature-grid-content">
+                        <h5>Biyometrik Erişim</h5>
+                        <p>Parmak izi ve kart ile kontrollü giriş sistemi</p>
+                    </div>
+                </div>
+                
+                <div class="feature-grid-item">
+                    <div class="feature-grid-icon"><i class="fas fa-fire-extinguisher"></i></div>
+                    <div class="feature-grid-content">
+                        <h5>Yangın Algılama</h5>
+                        <p>Otomatik yangın algılama ve söndürme sistemleri</p>
+                    </div>
+                </div>
+                
+                <div class="feature-grid-item">
+                    <div class="feature-grid-icon"><i class="fas fa-temperature-low"></i></div>
+                    <div class="feature-grid-content">
+                        <h5>İklimlendirme</h5>
+                        <p>Nem ve sıcaklık kontrollü ortam</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-4 text-center rounded-4" style="background: linear-gradient(135deg, #7C3AED, #5B21B6); color: #fff;">
+                            <i class="fas fa-shield-alt fa-3x mb-3 opacity-75"></i>
+                            <h5 class="fw-bold mb-1">Tam Sigorta</h5>
+                            <p class="small opacity-75 mb-0">Eşyalarınız sigortalı</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-4 text-center rounded-4 bg-light">
+                            <i class="fas fa-user-shield fa-3x mb-3 text-primary"></i>
+                            <h5 class="fw-bold mb-1 text-dark">Güvenlik Personeli</h5>
+                            <p class="small text-muted mb-0">7/24 nöbetçi</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-4 text-center rounded-4 bg-light">
+                            <i class="fas fa-truck fa-3x mb-3 text-primary"></i>
+                            <h5 class="fw-bold mb-1 text-dark">Ücretsiz Nakliye</h5>
+                            <p class="small text-muted mb-0">Depoya taşıma dahil</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-4 text-center rounded-4" style="background: linear-gradient(135deg, #10B981, #059669); color: #fff;">
+                            <i class="fas fa-clock fa-3x mb-3 opacity-75"></i>
+                            <h5 class="fw-bold mb-1">Esnek Erişim</h5>
+                            <p class="small opacity-75 mb-0">İstediğiniz zaman</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge" style="background: rgba(255,255,255,0.2); color: #fff;">
+                <i class="fas fa-tags"></i>
+                Fiyatlandırma
+            </span>
+            <h2 class="section-title" style="color: #fff;">Depolama <span style="color: #FCD34D;">Fiyatları</span></h2>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="pricing-card">
+                    <div class="pricing-icon"><i class="fas fa-box"></i></div>
+                    <h4 class="pricing-title">Mini Depo</h4>
+                    <p class="pricing-desc">5-10 m² | Küçük eşyalar için</p>
+                    <div class="pricing-range">₺1.500/ay</div>
+                    <p class="pricing-note">Başlangıç fiyatı</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="pricing-card popular">
+                    <div class="pricing-icon"><i class="fas fa-home"></i></div>
+                    <h4 class="pricing-title">Standart Depo</h4>
+                    <p class="pricing-desc">10-25 m² | 1+1 ev eşyası için</p>
+                    <div class="pricing-range">₺2.500/ay</div>
+                    <p class="pricing-note">Başlangıç fiyatı</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="pricing-card">
+                    <div class="pricing-icon"><i class="fas fa-warehouse"></i></div>
+                    <h4 class="pricing-title">Büyük Depo</h4>
+                    <p class="pricing-desc">25+ m² | Büyük ev/ofis için</p>
+                    <div class="pricing-range">₺4.000+/ay</div>
+                    <p class="pricing-note">Özel fiyatlandırma</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5" data-aos="fade-up">
+            <p class="text-white-50 mb-3">
+                <i class="fas fa-info-circle me-2"></i>
+                Fiyatlara nakliye dahildir. Uzun dönem indirimleri için iletişime geçin.
+            </p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-white-custom">
+                <i class="fas fa-calculator me-2"></i>
+                Ücretsiz Fiyat Teklifi Al
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="service-faq">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0" data-aos="fade-right">
+                <span class="section-badge">
+                    <i class="fas fa-question-circle"></i>
+                    SSS
+                </span>
+                <h2 class="section-title">Depolama <span>Hakkında</span></h2>
+            </div>
+            
+            <div class="col-lg-8" data-aos="fade-left">
+                <div class="accordion" id="storageFaq">
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom" type="button" data-bs-toggle="collapse" data-bs-target="#stfaq1">
+                                Minimum depolama süresi nedir?
+                            </button>
+                        </h2>
+                        <div id="stfaq1" class="accordion-collapse collapse show" data-bs-parent="#storageFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Minimum depolama süresi 1 aydır. Daha uzun süreler için indirimli fiyatlar sunulmaktadır. 
+                                3 ay ve üzeri depolamalarda %10, 6 ay ve üzeri için %15 indirim uygulanır.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#stfaq2">
+                                Eşyalarıma ne zaman erişebilirim?
+                            </button>
+                        </h2>
+                        <div id="stfaq2" class="accordion-collapse collapse" data-bs-parent="#storageFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Hafta içi 09:00-18:00 saatleri arasında randevu alarak eşyalarınıza erişebilirsiniz. 
+                                Premium paketlerde 7/24 erişim imkanı sunulmaktadır.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#stfaq3">
+                                Hangi eşyalar depolanamaz?
+                            </button>
+                        </h2>
+                        <div id="stfaq3" class="accordion-collapse collapse" data-bs-parent="#storageFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Patlayıcı, yanıcı, bozulabilir gıdalar, canlı hayvanlar ve bitkiler, 
+                                yasadışı maddeler depoya kabul edilmez. Detaylı liste için iletişime geçin.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="service-cta">
+    <div class="container">
+        <div class="cta-card" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mb-4 mb-lg-0">
+                    <h3>Eşyalarınızı Güvenle Depolayın!</h3>
+                    <p>Ücretsiz keşif ve özel fiyat teklifi için hemen iletişime geçin.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-white-custom">
+                        <i class="fas fa-calculator me-2"></i>
+                        Teklif Al
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

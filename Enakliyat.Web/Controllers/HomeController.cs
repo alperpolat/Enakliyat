@@ -14,13 +14,15 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly EnakliyatDbContext _context;
     private readonly IReservationNotificationService _notificationService;
+    private readonly INotificationService _generalNotificationService;
     private readonly IWebHostEnvironment _env;
 
-    public HomeController(ILogger<HomeController> logger, EnakliyatDbContext context, IReservationNotificationService notificationService, IWebHostEnvironment env)
+    public HomeController(ILogger<HomeController> logger, EnakliyatDbContext context, IReservationNotificationService notificationService, INotificationService generalNotificationService, IWebHostEnvironment env)
     {
         _logger = logger;
         _context = context;
         _notificationService = notificationService;
+        _generalNotificationService = generalNotificationService;
         _env = env;
     }
 
@@ -94,6 +96,7 @@ public class HomeController : Controller
         await _context.MoveRequests.AddAsync(moveRequest);
         await _context.SaveChangesAsync();
 
+        TempData["Success"] = $"Talebiniz başarıyla oluşturuldu! Talep numaranız: #{moveRequest.Id}. Şimdi detayları tamamlayarak teklif alabilirsiniz.";
         return RedirectToAction(nameof(Offers), new { id = moveRequest.Id });
     }
 
@@ -142,30 +145,34 @@ public class HomeController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Offers(OfferDetailsViewModel model)
     {
-        if (!ModelState.IsValid || !model.KvkkAccepted)
+        try
         {
-            if (!model.KvkkAccepted)
+            if (!ModelState.IsValid || !model.KvkkAccepted)
             {
-                ModelState.AddModelError(string.Empty, "Lütfen KVKK ve sözleşmeleri onaylayın.");
+                if (!model.KvkkAccepted)
+                {
+                    ModelState.AddModelError(string.Empty, "Lütfen KVKK ve sözleşmeleri onaylayın.");
+                }
+                ViewBag.AddOnServices = _context.AddOnServices
+                    .Where(s => s.IsActive)
+                    .OrderBy(s => s.Name)
+                    .ToList();
+                return View(model);
             }
-            ViewBag.AddOnServices = _context.AddOnServices
-                .Where(s => s.IsActive)
-                .OrderBy(s => s.Name)
-                .ToList();
-            return View(model);
-        }
 
-        var userIdClaim = User.FindFirst("UserId");
-        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
-        {
-            return Unauthorized();
-        }
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            {
+                TempData["Error"] = "Oturum bilgileriniz bulunamadı. Lütfen tekrar giriş yapın.";
+                return RedirectToAction(nameof(Index));
+            }
 
-        var request = await _context.MoveRequests.FirstOrDefaultAsync(x => x.Id == model.MoveRequestId && x.UserId == userId);
-        if (request == null)
-        {
-            return NotFound();
-        }
+            var request = await _context.MoveRequests.FirstOrDefaultAsync(x => x.Id == model.MoveRequestId && x.UserId == userId);
+            if (request == null)
+            {
+                TempData["Error"] = "Talep bulunamadı veya bu talebe erişim yetkiniz yok.";
+                return RedirectToAction(nameof(Requests));
+            }
 
         request.CustomerName = model.CustomerName;
         request.PhoneNumber = model.PhoneNumber;
@@ -220,9 +227,15 @@ public class HomeController : Controller
             {
                 if (file == null || file.Length == 0) continue;
 
-                var safeFileName = Path.GetFileNameWithoutExtension(file.FileName);
-                var ext = Path.GetExtension(file.FileName);
-                var uniqueName = $"{safeFileName}_{Guid.NewGuid():N}{ext}";
+                // File validation
+                var validationError = Enakliyat.Web.Helpers.FileUploadHelper.GetFileValidationError(file, isImage: true);
+                if (!string.IsNullOrEmpty(validationError))
+                {
+                    _logger.LogWarning("Invalid file upload attempt: {Error}", validationError);
+                    continue; // Skip invalid files
+                }
+
+                var uniqueName = Enakliyat.Web.Helpers.FileUploadHelper.GenerateSafeFileName(file.FileName);
                 var physicalPath = Path.Combine(uploadRoot, uniqueName);
 
                 using (var stream = new FileStream(physicalPath, FileMode.Create))
@@ -242,8 +255,19 @@ public class HomeController : Controller
             await _context.SaveChangesAsync();
         }
 
-        TempData["Success"] = "Talebiniz başarıyla güncellendi.";
-        return RedirectToAction(nameof(Requests));
+            TempData["Success"] = "Talebiniz başarıyla güncellendi.";
+            return RedirectToAction(nameof(Requests));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating offer details for request {RequestId}", model.MoveRequestId);
+            TempData["Error"] = "Talebiniz güncellenirken bir hata oluştu. Lütfen tekrar deneyin.";
+            ViewBag.AddOnServices = _context.AddOnServices
+                .Where(s => s.IsActive)
+                .OrderBy(s => s.Name)
+                .ToList();
+            return View(model);
+        }
     }
     [Authorize]
     public IActionResult Requests()
@@ -416,6 +440,16 @@ public class HomeController : Controller
 
             await _context.Contracts.AddAsync(contract);
             await _context.SaveChangesAsync();
+        }
+
+        // Bildirim gönder
+        var acceptedOffer = await _context.Offers
+            .Include(o => o.Carrier)
+            .FirstOrDefaultAsync(o => o.Id == offerId);
+        
+        if (acceptedOffer != null)
+        {
+            await _generalNotificationService.NotifyOfferAcceptedToCarrierAsync(acceptedOffer);
         }
 
         TempData["Success"] = "Seçtiğiniz teklif kabul edildi.";
@@ -748,6 +782,58 @@ public class HomeController : Controller
         return Json(neighborhoods);
     }
 
+    // ===== SERVICE PAGES =====
+    [HttpGet]
+    public IActionResult EvTasima()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult OfisTasima()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult Depolama()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult ParcaEsya()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult SehirlerArasi()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult Hakkimizda()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult Iletisim()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Iletisim(string name, string email, string? phone, string subject, string message)
+    {
+        // In a real app, you would send an email or save to database
+        TempData["ContactSuccess"] = "Mesajınız başarıyla gönderildi. En kısa sürede size dönüş yapacağız.";
+        return RedirectToAction(nameof(Iletisim));
+    }
+
     [HttpGet]
     public IActionResult SearchLocation(string term)
     {
@@ -773,5 +859,226 @@ public class HomeController : Controller
 
         var results = query.Take(10).ToList();
         return Json(results);
+    }
+
+    // Kullanıcı Mesajlaşma
+    [Authorize]
+    public async Task<IActionResult> UserMessages(int moveRequestId)
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var request = await _context.MoveRequests
+            .FirstOrDefaultAsync(r => r.Id == moveRequestId && r.UserId == userId);
+        
+        if (request?.AcceptedOfferId.HasValue == true)
+        {
+            var offer = await _context.Offers
+                .Include(o => o.Carrier)
+                .FirstOrDefaultAsync(o => o.Id == request.AcceptedOfferId.Value);
+            ViewBag.AcceptedOffer = offer;
+        }
+
+        if (request == null) return NotFound();
+
+        var messages = await _context.Messages
+            .Include(m => m.FromUser)
+            .Include(m => m.FromCarrier)
+            .Where(m => m.MoveRequestId == moveRequestId)
+            .OrderBy(m => m.CreatedAt)
+            .ToListAsync();
+
+        // Okunmamış mesajları okundu olarak işaretle
+        var unreadMessages = messages.Where(m => !m.IsRead && m.FromCarrierId.HasValue).ToList();
+        foreach (var msg in unreadMessages)
+        {
+            msg.IsRead = true;
+        }
+        await _context.SaveChangesAsync();
+
+        ViewBag.Request = request;
+        return View(messages);
+    }
+
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SendUserMessage(int moveRequestId, string content, IFormFile? attachment)
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var request = await _context.MoveRequests.FirstOrDefaultAsync(r => r.Id == moveRequestId && r.UserId == userId);
+        if (request == null) return NotFound();
+
+        string? attachmentPath = null;
+        if (attachment != null && attachment.Length > 0)
+        {
+            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "messages");
+            Directory.CreateDirectory(uploadsPath);
+            var fileName = $"{Guid.NewGuid()}_{attachment.FileName}";
+            var filePath = Path.Combine(uploadsPath, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await attachment.CopyToAsync(stream);
+            }
+            attachmentPath = $"messages/{fileName}";
+        }
+
+        var message = new Message
+        {
+            MoveRequestId = moveRequestId,
+            FromUserId = userId,
+            Content = content,
+            AttachmentPath = attachmentPath
+        };
+
+        _context.Messages.Add(message);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(UserMessages), new { moveRequestId });
+    }
+
+    // Gelişmiş Teklif Karşılaştırma
+    [Authorize]
+    public async Task<IActionResult> CompareOffers(int moveRequestId)
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var request = await _context.MoveRequests
+            .FirstOrDefaultAsync(r => r.Id == moveRequestId && r.UserId == userId);
+        if (request == null) return NotFound();
+
+        var offers = await _context.Offers
+            .Include(o => o.Carrier)
+            .Where(o => o.MoveRequestId == moveRequestId)
+            .OrderBy(o => o.Price)
+            .ToListAsync();
+
+        ViewBag.Request = request;
+        return View(offers);
+    }
+
+    // Favori Firmalar
+    [Authorize]
+    public async Task<IActionResult> FavoriteCarriers()
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        // Favori firmalar için ayrı bir entity eklenebilir, şimdilik kullanıcının önceki iş yaptığı firmaları gösteriyoruz
+        var favoriteCarrierIds = await _context.MoveRequests
+            .Where(r => r.UserId == userId && r.AcceptedOfferId != null)
+            .Join(_context.Offers,
+                r => r.AcceptedOfferId,
+                o => o.Id,
+                (r, o) => o.CarrierId)
+            .Distinct()
+            .ToListAsync();
+
+        var carriers = await _context.Carriers
+            .Where(c => favoriteCarrierIds.Contains(c.Id))
+            .ToListAsync();
+
+        return View(carriers);
+    }
+
+    // Ödeme Geçmişi
+    [Authorize]
+    public async Task<IActionResult> PaymentHistory()
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var payments = await _context.Payments
+            .Include(p => p.Contract)
+            .ThenInclude(c => c.Offer)
+            .ThenInclude(o => o.Carrier)
+            .Include(p => p.Contract)
+            .ThenInclude(c => c.MoveRequest)
+            .Where(p => p.Contract.MoveRequest.UserId == userId)
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync();
+
+        return View(payments);
+    }
+
+    // Fatura/İrsaliye PDF
+    [Authorize]
+    public async Task<IActionResult> DownloadInvoice(int paymentId)
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var payment = await _context.Payments
+            .Include(p => p.Contract)
+            .ThenInclude(c => c.MoveRequest)
+            .FirstOrDefaultAsync(p => p.Id == paymentId && p.Contract.MoveRequest.UserId == userId);
+
+        if (payment == null) return NotFound();
+
+        // Basit PDF oluşturma (gerçekte bir PDF kütüphanesi kullanılmalı)
+        var invoiceHtml = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Fatura</title>
+    <style>
+        body {{ font-family: Arial; padding: 20px; }}
+        .header {{ text-align: center; margin-bottom: 30px; }}
+        .info {{ margin-bottom: 20px; }}
+        table {{ width: 100%; border-collapse: collapse; }}
+        th, td {{ border: 1px solid #ddd; padding: 8px; text-align: left; }}
+        th {{ background-color: #f2f2f2; }}
+    </style>
+</head>
+<body>
+    <div class='header'>
+        <h1>FATURA</h1>
+        <p>Fatura No: INV-{payment.Id}-{DateTime.UtcNow:yyyyMMdd}</p>
+    </div>
+    <div class='info'>
+        <p><strong>Müşteri:</strong> {payment.Contract.MoveRequest.CustomerName}</p>
+        <p><strong>Tarih:</strong> {payment.CreatedAt:dd.MM.yyyy}</p>
+    </div>
+    <table>
+        <tr>
+            <th>Açıklama</th>
+            <th>Tutar</th>
+        </tr>
+        <tr>
+            <td>Taşınma Hizmeti - Talep #{payment.Contract.MoveRequest.Id}</td>
+            <td>{payment.Amount:N2} {payment.Currency}</td>
+        </tr>
+        <tr>
+            <td><strong>Toplam</strong></td>
+            <td><strong>{payment.Amount:N2} {payment.Currency}</strong></td>
+        </tr>
+    </table>
+</body>
+</html>";
+
+        var bytes = System.Text.Encoding.UTF8.GetBytes(invoiceHtml);
+        return File(bytes, "text/html", $"Fatura_{payment.Id}.html");
     }
 }

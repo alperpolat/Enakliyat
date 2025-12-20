@@ -1,119 +1,227 @@
 @{
-    ViewData["Title"] = "Nakliyeci Dashboard";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="container-xxl px-3 px-lg-5 py-4">
-    <h3 class="mb-3">Merhaba, @ViewBag.CarrierName</h3>
-
-    <div class="row g-3 mb-3">
-        <div class="col-xl-6 mb-3 mb-xl-0">
-            <div class="card h-100 overflow-hidden">
-                <div class="card-img-overlay d-block d-lg-none bg-blue rounded"></div>
-                <div class="card-img-overlay d-none d-md-block bg-blue rounded mb-n1 mx-n1" style="background-image: url(/dist/assets/img/bg/wave-bg.png); background-position: right bottom; background-repeat: no-repeat; background-size: 100%;"></div>
-                <div class="card-body position-relative text-white text-opacity-70">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="d-flex mb-2">
-                                <div class="me-auto">
-                                    <h5 class="text-white text-opacity-80 mb-2">Genel Teklif Özeti</h5>
-                                    <h3 class="text-white mt-n1 mb-1">@ViewBag.TotalOffers Teklif</h3>
-                                    <p class="mb-1 text-white text-opacity-60">
-                                        Bekleyen: <b>@ViewBag.PendingOffers</b> · Kabul Edilen: <b>@ViewBag.AcceptedOffers</b>
-                                    </p>
-                                    <p class="mb-1 text-white text-opacity-60">
-                                        Tamamlanan Taşımalar: <b>@ViewBag.CompletedMoves</b>
-                                    </p>
-                                </div>
-                            </div>
-
-                            <hr class="bg-white bg-opacity-75 mt-3 mb-3" />
-
-                            <div class="row">
-                                <div class="col-6 col-lg-5">
-                                    <div class="mt-1">
-                                        <i class="fa fa-fw fa-bullhorn fs-28px text-black text-opacity-50"></i>
-                                    </div>
-                                    <div class="mt-1">
-                                        <div>Son 7 Gün Leads</div>
-                                        <div class="fw-600 text-white">@ViewBag.NewLeadsWeek</div>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-lg-5">
-                                    <div class="mt-1">
-                                        <i class="fa fa-fw fa-calendar-check fs-28px text-black text-opacity-50"></i>
-                                    </div>
-                                    <div class="mt-1">
-                                        <div>Aktif Rezervasyon</div>
-                                        <div class="fw-600 text-white">@ViewBag.AcceptedReservations</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr class="bg-white bg-opacity-75 mt-3 mb-3" />
-
-                            <div class="mt-2 mb-1">
-                                <div class="text-white text-opacity-80">Son 7 Günde Kapora</div>
-                                <h4 class="text-white mb-0">@ViewBag.WeeklyDepositAmount?.ToString("N0") TL</h4>
-                            </div>
-                            <div class="fs-12px text-white text-opacity-60">
-                                Ödeme sayısı: <b>@ViewBag.WeeklyDepositCount</b>
-                            </div>
-                        </div>
-                        <div class="col-md-4 d-none d-md-block" style="min-height: 260px;"></div>
+<div class="row g-4 mb-4">
+    <!-- Welcome Card -->
+    <div class="col-12">
+        <div class="carrier-card">
+            <div class="carrier-card-body" style="background: linear-gradient(135deg, #18181b 0%, #27272a 100%); border-radius: 12px;">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h3 class="text-white mb-2">Merhaba, @ViewBag.CarrierName! 👋</h3>
+                        <p class="text-white text-opacity-75 mb-3 mb-lg-0">
+                            Bugün <strong>@ViewBag.NewLeadsWeek</strong> yeni talep sizi bekliyor. Hemen teklif verin ve işinizi büyütün!
+                        </p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <a href="@Url.Action("Leads", "Carrier")" class="btn btn-carrier-primary">
+                            <i class="fas fa-bullhorn me-2"></i>Talepleri Gör
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <div class="col-xl-6">
-            <div class="row g-3">
-                <div class="col-sm-6">
-                    <div class="card mb-3 overflow-hidden fs-13px border-0 bg-gradient-custom-orange" style="min-height: 180px;">
-                        <div class="card-body position-relative">
-                            <h5 class="text-white text-opacity-80 mb-2 fs-16px">Toplam Teklif</h5>
-                            <h3 class="text-white mt-n1">@ViewBag.TotalOffers</h3>
-                            <div class="text-white text-opacity-80">Gönderdiğiniz tüm teklifler</div>
-                        </div>
-                    </div>
+<div class="row g-4 mb-4">
+    <!-- Stats -->
+    <div class="col-lg-3 col-md-6">
+        <div class="carrier-stat-card">
+            <div class="carrier-stat-card-icon">
+                <i class="fas fa-file-invoice"></i>
+            </div>
+            <div class="carrier-stat-card-value">@ViewBag.TotalOffers</div>
+            <div class="carrier-stat-card-label">Toplam Teklif</div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="carrier-stat-card blue">
+            <div class="carrier-stat-card-icon">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div class="carrier-stat-card-value">@ViewBag.PendingOffers</div>
+            <div class="carrier-stat-card-label">Bekleyen Teklif</div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="carrier-stat-card green">
+            <div class="carrier-stat-card-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="carrier-stat-card-value">@ViewBag.AcceptedOffers</div>
+            <div class="carrier-stat-card-label">Kabul Edilen</div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="carrier-stat-card purple">
+            <div class="carrier-stat-card-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="carrier-stat-card-value">@ViewBag.CompletedMoves</div>
+            <div class="carrier-stat-card-label">Tamamlanan İş</div>
+        </div>
+    </div>
+</div>
 
-                    <div class="card mb-3 overflow-hidden fs-13px border-0 bg-gradient-custom-teal" style="min-height: 180px;">
-                        <div class="card-body position-relative">
-                            <h5 class="text-white text-opacity-80 mb-2 fs-16px">Bekleyen Teklifler</h5>
-                            <h3 class="text-white mt-n1">@ViewBag.PendingOffers</h3>
-                            <div class="text-white text-opacity-80">Müşteri cevabı bekleyen teklifler</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-6">
-                    <div class="card mb-3 overflow-hidden fs-13px border-0 bg-gradient-custom-pink" style="min-height: 180px;">
-                        <div class="card-body position-relative">
-                            <h5 class="text-white text-opacity-80 mb-2 fs-16px">Kabul Edilen Teklifler</h5>
-                            <h3 class="text-white mt-n1">@ViewBag.AcceptedOffers</h3>
-                            <div class="text-white text-opacity-80">Sözleşmeye dönüşen teklifler</div>
-                        </div>
-                    </div>
-
-                    <div class="card mb-3 overflow-hidden fs-13px border-0 bg-gradient-custom-indigo" style="min-height: 180px;">
-                        <div class="card-body position-relative">
-                            <h5 class="text-white text-opacity-80 mb-2 fs-16px">Puan &amp; Yorum</h5>
-                            <div class="d-flex align-items-baseline mb-1">
-                                <h3 class="text-white mt-n1 mb-0">
-                                    @if (ViewBag.AverageRating != null)
-                                    {
-                                        @(((double)ViewBag.AverageRating).ToString("0.0"))
-                                    }
-                                    else
-                                    {
-                                        @: "-"
-                                    }
-                                </h3>
-                                <span class="ms-2 text-warning"><i class="fa fa-star"></i></span>
+<div class="row g-4">
+    <!-- Left Column -->
+    <div class="col-xl-8">
+        <!-- Performance -->
+        <div class="carrier-card mb-4">
+            <div class="carrier-card-header">
+                <h3 class="carrier-card-title">Performans Özeti</h3>
+            </div>
+            <div class="carrier-card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 50%;">
+                                <i class="fas fa-star text-warning fs-2"></i>
                             </div>
-                            <div class="text-white text-opacity-80">Yorum sayısı: @ViewBag.ReviewCount</div>
+                            <div class="fs-3 fw-bold">
+                                @if (ViewBag.AverageRating != null)
+                                {
+                                    @(((double)ViewBag.AverageRating).ToString("0.0"))
+                                }
+                                else
+                                {
+                                    @: -
+                                }
+                            </div>
+                            <div class="text-muted small">Ortalama Puan</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 50%;">
+                                <i class="fas fa-comment-alt text-primary fs-2"></i>
+                            </div>
+                            <div class="fs-3 fw-bold">@ViewBag.ReviewCount</div>
+                            <div class="text-muted small">Toplam Değerlendirme</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border-radius: 50%;">
+                                <i class="fas fa-calendar-check text-success fs-2"></i>
+                            </div>
+                            <div class="fs-3 fw-bold">@ViewBag.AcceptedReservations</div>
+                            <div class="text-muted small">Aktif Rezervasyon</div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="carrier-card">
+            <div class="carrier-card-header">
+                <h3 class="carrier-card-title">Hızlı İşlemler</h3>
+            </div>
+            <div class="carrier-card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="@Url.Action("Leads", "Carrier")" class="d-flex align-items-center p-3 rounded-3 text-decoration-none" style="background: #f4f4f5; transition: all 0.2s;">
+                            <div class="me-3" style="width: 48px; height: 48px; background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-bullhorn text-white"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">Yeni Talepleri Gör</div>
+                                <div class="text-muted small">@ViewBag.NewLeadsWeek yeni talep</div>
+                            </div>
+                            <i class="fas fa-chevron-right text-muted ms-auto"></i>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="@Url.Action("Offers", "Carrier")" class="d-flex align-items-center p-3 rounded-3 text-decoration-none" style="background: #f4f4f5; transition: all 0.2s;">
+                            <div class="me-3" style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-file-invoice-dollar text-white"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">Tekliflerimi Yönet</div>
+                                <div class="text-muted small">@ViewBag.PendingOffers bekleyen teklif</div>
+                            </div>
+                            <i class="fas fa-chevron-right text-muted ms-auto"></i>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="@Url.Action("Reservations", "Carrier")" class="d-flex align-items-center p-3 rounded-3 text-decoration-none" style="background: #f4f4f5; transition: all 0.2s;">
+                            <div class="me-3" style="width: 48px; height: 48px; background: linear-gradient(135deg, #22c55e 0%, #4ade80 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-calendar-check text-white"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">Rezervasyonlar</div>
+                                <div class="text-muted small">@ViewBag.AcceptedReservations aktif</div>
+                            </div>
+                            <i class="fas fa-chevron-right text-muted ms-auto"></i>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="@Url.Action("Profile", "Carrier")" class="d-flex align-items-center p-3 rounded-3 text-decoration-none" style="background: #f4f4f5; transition: all 0.2s;">
+                            <div class="me-3" style="width: 48px; height: 48px; background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user-cog text-white"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">Profili Düzenle</div>
+                                <div class="text-muted small">Firma bilgilerinizi güncelleyin</div>
+                            </div>
+                            <i class="fas fa-chevron-right text-muted ms-auto"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Column -->
+    <div class="col-xl-4">
+        <!-- Revenue -->
+        <div class="carrier-card mb-4">
+            <div class="carrier-card-header">
+                <h3 class="carrier-card-title">Haftalık Gelir</h3>
+            </div>
+            <div class="carrier-card-body">
+                <div class="text-center py-3">
+                    <div class="mb-3">
+                        <div class="d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); border-radius: 50%;">
+                            <i class="fas fa-lira-sign text-white fs-1"></i>
+                        </div>
+                    </div>
+                    <div class="text-muted small mb-1">Son 7 Günde Kapora</div>
+                    <div class="fw-bold fs-2 text-success mb-2">@ViewBag.WeeklyDepositAmount?.ToString("N0") ₺</div>
+                    <div class="text-muted small">
+                        <i class="fas fa-receipt me-1"></i>@ViewBag.WeeklyDepositCount ödeme
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tips -->
+        <div class="carrier-card">
+            <div class="carrier-card-header">
+                <h3 class="carrier-card-title">💡 İpuçları</h3>
+            </div>
+            <div class="carrier-card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="d-flex align-items-start mb-3">
+                        <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                        <span class="small">Hızlı yanıt veren firmalar %40 daha fazla iş alıyor</span>
+                    </li>
+                    <li class="d-flex align-items-start mb-3">
+                        <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                        <span class="small">Detaylı açıklama ile teklifleriniz öne çıkıyor</span>
+                    </li>
+                    <li class="d-flex align-items-start mb-3">
+                        <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                        <span class="small">Profil fotoğrafı ve belgeler güven oluşturuyor</span>
+                    </li>
+                    <li class="d-flex align-items-start">
+                        <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                        <span class="small">Olumlu müşteri yorumları sıralamayı yükseltiyor</span>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

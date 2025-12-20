@@ -17,6 +17,7 @@ builder.Services.AddDbContext<EnakliyatDbContext>(options =>
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IReservationNotificationService, SmtpReservationNotificationService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -25,11 +26,21 @@ builder.Services.AddAuthentication(options =>
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
     {
         options.LoginPath = "/Account/Login";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+        options.SlidingExpiration = true;
     })
     .AddCookie("CarrierAuth", options =>
     {
         options.LoginPath = "/CarrierAccount/Login";
         options.Cookie.Name = "CarrierAuthCookie";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+        options.SlidingExpiration = true;
     })
     .AddGoogle("Google", options =>
     {
@@ -48,17 +59,29 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-// Seed default admin user and apply migrations
-using (var scope = app.Services.CreateScope())
+else
 {
-    var context = scope.ServiceProvider.GetRequiredService<EnakliyatDbContext>();
-    context.Database.Migrate();
-    var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
-    await DataSeeder.SeedAdminUserAsync(context);
-    await DataSeeder.SeedAddressesAsync(context, env);
-    await DataSeeder.SeedFakeDataAsync(context);
+    app.UseDeveloperExceptionPage();
 }
+
+// Status code pages
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
+// Global exception handling
+app.UseMiddleware<Enakliyat.Web.Middleware.GlobalExceptionHandlerMiddleware>();
+
+       // Seed default admin user and apply migrations
+       using (var scope = app.Services.CreateScope())
+       {
+           var context = scope.ServiceProvider.GetRequiredService<EnakliyatDbContext>();
+           context.Database.Migrate();
+           var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+           await DataSeeder.SeedAdminUserAsync(context);
+           await DataSeeder.SeedAddressesAsync(context, env);
+           await DataSeeder.SeedSystemSettingsAsync(context);
+           await DataSeeder.SeedNotificationTemplatesAsync(context);
+           await DataSeeder.SeedFakeDataAsync(context);
+       }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

@@ -1,0 +1,55 @@
+@model List<Enakliyat.Domain.Message>
+@{
+    ViewData["Title"] = "Mesajlaşma";
+    var request = ViewBag.Request as Enakliyat.Domain.MoveRequest;
+}
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title">Mesajlaşma - Talep #@request?.Id</h3>
+    </div>
+    <div class="admin-card-body">
+        <div class="mb-3">
+            <strong>Müşteri:</strong> @request?.CustomerName<br/>
+            <strong>Nereden:</strong> @request?.FromAddress<br/>
+            <strong>Nereye:</strong> @request?.ToAddress
+        </div>
+        
+        <div class="messages-container" style="max-height: 500px; overflow-y: auto; border: 1px solid #e1e3ea; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+            @foreach (var msg in Model)
+            {
+                <div class="mb-3 @(msg.FromCarrierId.HasValue ? "text-end" : "")">
+                    <div class="d-inline-block p-3 rounded @(msg.FromCarrierId.HasValue ? "bg-primary text-white" : "bg-light")" style="max-width: 70%;">
+                        <div class="small text-muted mb-1">
+                            @(msg.FromCarrierId.HasValue ? "Siz" : msg.FromUser?.Email ?? "Müşteri") - @msg.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                        </div>
+                        <div>@msg.Content</div>
+                        @if (!string.IsNullOrEmpty(msg.AttachmentPath))
+                        {
+                            <div class="mt-2">
+                                <a href="/uploads/@msg.AttachmentPath" target="_blank" class="btn btn-sm btn-light">
+                                    <i class="fas fa-paperclip"></i> Dosya
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        
+        <form asp-action="SendMessage" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="moveRequestId" value="@request?.Id" />
+            <div class="mb-3">
+                <textarea name="content" class="form-control" rows="3" placeholder="Mesajınızı yazın..." required></textarea>
+            </div>
+            <div class="mb-3">
+                <input type="file" name="attachment" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" />
+            </div>
+            <button type="submit" class="btn btn-admin-primary">
+                <i class="fas fa-paper-plane"></i> Gönder
+            </button>
+        </form>
+    </div>
+</div>
+

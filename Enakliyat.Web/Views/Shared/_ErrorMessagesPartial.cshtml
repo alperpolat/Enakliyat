@@ -1,0 +1,75 @@
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 10px; border: none; margin-bottom: 1.5rem;">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-circle me-2" style="font-size: 1.25rem;"></i>
+            <div>
+                <strong>Hata!</strong>
+                <div>@TempData["Error"]</div>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 10px; border: none; margin-bottom: 1.5rem;">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-check-circle me-2" style="font-size: 1.25rem;"></i>
+            <div>
+                <strong>Başarılı!</strong>
+                <div>@TempData["Success"]</div>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Warning"] != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="border-radius: 10px; border: none; margin-bottom: 1.5rem;">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle me-2" style="font-size: 1.25rem;"></i>
+            <div>
+                <strong>Uyarı!</strong>
+                <div>@TempData["Warning"]</div>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Info"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert" style="border-radius: 10px; border: none; margin-bottom: 1.5rem;">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-info-circle me-2" style="font-size: 1.25rem;"></i>
+            <div>
+                <strong>Bilgi</strong>
+                <div>@TempData["Info"]</div>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 10px; border: none; margin-bottom: 1.5rem;">
+        <div class="d-flex align-items-start">
+            <i class="fas fa-exclamation-circle me-2 mt-1" style="font-size: 1.25rem;"></i>
+            <div style="flex: 1;">
+                <strong>Lütfen formu kontrol edin:</strong>
+                <ul class="mb-0 mt-2" style="padding-left: 1.5rem;">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+

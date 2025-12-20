@@ -117,6 +117,14 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Register(string email, string password)
     {
+        // Password validation
+        var (isValid, errorMessage) = Enakliyat.Web.Helpers.PasswordPolicyHelper.ValidatePassword(password);
+        if (!isValid)
+        {
+            ModelState.AddModelError(string.Empty, errorMessage);
+            return View();
+        }
+
         var exists = await _context.Users.AnyAsync(u => u.Email == email);
         if (exists)
         {
@@ -133,6 +141,7 @@ public class AccountController : Controller
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
+        TempData["Success"] = "Kayıt başarılı! Giriş yapabilirsiniz.";
         return RedirectToAction("Login");
     }
 

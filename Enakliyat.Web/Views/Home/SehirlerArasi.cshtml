@@ -1,0 +1,654 @@
+@{
+    ViewData["Title"] = "Şehirlerarası Nakliyat | Türkiye Geneli Taşımacılık";
+    Layout = "_Layout";
+}
+
+<style>
+    .service-hero {
+        background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+        padding: 6rem 0 4rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .service-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M60,50 Q75,30 90,50 T120,50" stroke="rgba(255,255,255,0.05)" stroke-width="3" fill="none"/><path d="M50,70 Q70,50 90,70" stroke="rgba(255,255,255,0.03)" stroke-width="2" fill="none"/></svg>');
+    }
+    
+    .service-hero-content { position: relative; z-index: 2; }
+    
+    .service-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-breadcrumb a {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    
+    .service-breadcrumb span { color: rgba(255,255,255,0.5); }
+    .service-breadcrumb .current { color: #FCD34D; }
+    
+    .service-hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+    
+    .service-hero-title span { color: #FCD34D; }
+    
+    .service-hero-desc {
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.85);
+        margin-bottom: 2rem;
+        line-height: 1.7;
+        max-width: 600px;
+    }
+    
+    .service-hero-stats {
+        display: flex;
+        gap: 3rem;
+        margin-top: 2rem;
+    }
+    
+    .hero-stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #FCD34D;
+    }
+    
+    .hero-stat-label {
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.7);
+    }
+    
+    .service-hero-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+    }
+    
+    .service-hero-card h4 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+    
+    .service-quick-form .form-control {
+        padding: 0.875rem 1rem 0.875rem 2.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+        background: #f8fafc;
+    }
+    
+    .service-quick-form .form-control:focus {
+        border-color: #DC2626;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
+    }
+    
+    .service-quick-form .form-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        z-index: 5;
+    }
+    
+    .service-quick-form .btn-submit {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+    
+    .service-quick-form .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(220,38,38,0.35);
+    }
+    
+    /* Routes Section */
+    .routes-section {
+        padding: 5rem 0;
+        background: #f8fafc;
+    }
+    
+    .route-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s;
+        height: 100%;
+    }
+    
+    .route-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-color: #DC2626;
+    }
+    
+    .route-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, rgba(220,38,38,0.1), rgba(239,68,68,0.1));
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #DC2626;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+    
+    .route-info h5 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+    }
+    
+    .route-info span {
+        font-size: 0.85rem;
+        color: #DC2626;
+        font-weight: 600;
+    }
+    
+    /* Features */
+    .features-section {
+        padding: 5rem 0;
+        background: #fff;
+    }
+    
+    .feature-card {
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 2rem;
+        height: 100%;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+    
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #DC2626, #EF4444);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 1.75rem;
+        color: #fff;
+    }
+    
+    .feature-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .feature-desc {
+        color: #64748b;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    
+    /* Pricing */
+    .pricing-section {
+        padding: 5rem 0;
+        background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+    }
+    
+    .pricing-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        height: 100%;
+    }
+    
+    .pricing-route {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .pricing-distance {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-bottom: 1rem;
+    }
+    
+    .pricing-price {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #DC2626;
+        margin-bottom: 0.25rem;
+    }
+    
+    .pricing-note {
+        font-size: 0.8rem;
+        color: #94a3b8;
+    }
+    
+    .service-cta { padding: 5rem 0; background: #f8fafc; }
+    
+    .cta-card {
+        background: linear-gradient(135deg, #0052CC 0%, #003d99 100%);
+        border-radius: 20px;
+        padding: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .cta-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+    
+    .cta-card h3 { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 1rem; }
+    .cta-card p { font-size: 1.1rem; color: rgba(255,255,255,0.9); margin-bottom: 2rem; }
+    
+    .service-faq { padding: 5rem 0; background: #fff; }
+    
+    .accordion-item-custom {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px !important;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+    
+    .accordion-button-custom {
+        background: #fff;
+        border: none;
+        padding: 1.25rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        box-shadow: none !important;
+    }
+    
+    .accordion-button-custom:not(.collapsed) { background: #f8fafc; color: #DC2626; }
+    .accordion-body-custom { padding: 0 1.5rem 1.5rem; color: #64748b; line-height: 1.8; }
+    
+    @@media (max-width: 991.98px) {
+        .service-hero-title { font-size: 2.25rem; }
+        .service-hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+    }
+    
+    @@media (max-width: 767.98px) {
+        .service-hero { padding: 4rem 0 3rem; }
+        .service-hero-title { font-size: 1.75rem; }
+    }
+</style>
+
+<!-- SERVICE HERO -->
+<section class="service-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 mb-5 mb-lg-0">
+                <div class="service-hero-content" data-aos="fade-right">
+                    <div class="service-breadcrumb">
+                        <a asp-controller="Home" asp-action="Index"><i class="fas fa-home me-1"></i> Ana Sayfa</a>
+                        <span>/</span>
+                        <a href="#">Hizmetler</a>
+                        <span>/</span>
+                        <span class="current">Şehirlerarası Nakliyat</span>
+                    </div>
+                    
+                    <h1 class="service-hero-title">
+                        <span>Şehirlerarası</span> Nakliyat Hizmeti
+                    </h1>
+                    
+                    <p class="service-hero-desc">
+                        Türkiye'nin her köşesine güvenli ve hızlı taşımacılık. 81 ilde hizmet, 
+                        sigortalı taşıma ve profesyonel ekiplerle yanınızdayız.
+                    </p>
+                    
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-white-custom">
+                            <i class="fas fa-calculator me-2"></i>
+                            Ücretsiz Teklif Al
+                        </a>
+                        <a href="tel:08501234567" class="btn btn-outline-custom" style="border-color: rgba(255,255,255,0.5); color: #fff;">
+                            <i class="fas fa-phone me-2"></i>
+                            0850 123 45 67
+                        </a>
+                    </div>
+                    
+                    <div class="service-hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">81</div>
+                            <div class="hero-stat-label">İl Kapsama</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">20K+</div>
+                            <div class="hero-stat-label">Şehirlerarası Taşınma</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">%100</div>
+                            <div class="hero-stat-label">Sigorta</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-5" data-aos="fade-left">
+                <div class="service-hero-card">
+                    <h4><i class="fas fa-route me-2" style="color: #DC2626;"></i> Şehirlerarası Teklif</h4>
+                    <form asp-controller="Home" asp-action="Index" method="post" class="service-quick-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="MoveType" value="Home" />
+                        
+                        <div class="position-relative mb-3">
+                            <i class="fas fa-map-marker-alt form-icon"></i>
+                            <input type="text" class="form-control" name="fromText" placeholder="Hangi şehirden?" required />
+                        </div>
+                        
+                        <div class="position-relative mb-3">
+                            <i class="fas fa-flag-checkered form-icon"></i>
+                            <input type="text" class="form-control" name="toText" placeholder="Hangi şehire?" required />
+                        </div>
+                        
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Ücretsiz Teklif Al
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- POPULAR ROUTES -->
+<section class="routes-section">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">
+                <i class="fas fa-route"></i>
+                Popüler Güzergahlar
+            </span>
+            <h2 class="section-title">En Çok Tercih Edilen <span>Rotalar</span></h2>
+        </div>
+        
+        <div class="row g-3">
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="0">
+                <div class="route-card">
+                    <div class="route-icon"><i class="fas fa-arrow-right"></i></div>
+                    <div class="route-info">
+                        <h5>İstanbul → Ankara</h5>
+                        <span>₺4.500'den başlayan</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="50">
+                <div class="route-card">
+                    <div class="route-icon"><i class="fas fa-arrow-right"></i></div>
+                    <div class="route-info">
+                        <h5>İstanbul → İzmir</h5>
+                        <span>₺5.000'den başlayan</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="route-card">
+                    <div class="route-icon"><i class="fas fa-arrow-right"></i></div>
+                    <div class="route-info">
+                        <h5>Ankara → İstanbul</h5>
+                        <span>₺4.500'den başlayan</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
+                <div class="route-card">
+                    <div class="route-icon"><i class="fas fa-arrow-right"></i></div>
+                    <div class="route-info">
+                        <h5>İstanbul → Antalya</h5>
+                        <span>₺6.000'den başlayan</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="route-card">
+                    <div class="route-icon"><i class="fas fa-arrow-right"></i></div>
+                    <div class="route-info">
+                        <h5>İstanbul → Bursa</h5>
+                        <span>₺3.500'den başlayan</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="250">
+                <div class="route-card">
+                    <div class="route-icon"><i class="fas fa-arrow-right"></i></div>
+                    <div class="route-info">
+                        <h5>Ankara → İzmir</h5>
+                        <span>₺5.500'den başlayan</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">
+                <i class="fas fa-star"></i>
+                Özellikler
+            </span>
+            <h2 class="section-title">Şehirlerarası Nakliyatta <span>Avantajlar</span></h2>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-truck-moving"></i></div>
+                    <h4 class="feature-title">Direkt Sefer</h4>
+                    <p class="feature-desc">Eşyalarınız aktarmasız, direkt yeni adresinize ulaşır</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h4 class="feature-title">Tam Sigorta</h4>
+                    <p class="feature-desc">Uzun yol boyunca eşyalarınız sigorta güvencesinde</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-map-marked-alt"></i></div>
+                    <h4 class="feature-title">GPS Takip</h4>
+                    <p class="feature-desc">Eşyalarınızın konumunu anlık takip edin</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-users"></i></div>
+                    <h4 class="feature-title">Deneyimli Ekip</h4>
+                    <p class="feature-desc">Uzun yol tecrübeli profesyonel ekipler</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING EXAMPLES -->
+<section class="pricing-section">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge" style="background: rgba(255,255,255,0.2); color: #fff;">
+                <i class="fas fa-tags"></i>
+                Örnek Fiyatlar
+            </span>
+            <h2 class="section-title" style="color: #fff;">Şehirlerarası <span style="color: #FCD34D;">Fiyatları</span></h2>
+            <p class="section-subtitle" style="color: rgba(255,255,255,0.8);">2+1 ev eşyası için ortalama fiyatlar</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="pricing-card">
+                    <div class="pricing-route">İstanbul → Ankara</div>
+                    <div class="pricing-distance">~450 km</div>
+                    <div class="pricing-price">₺4.500 - ₺7.000</div>
+                    <div class="pricing-note">Ev büyüklüğüne göre</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="pricing-card">
+                    <div class="pricing-route">İstanbul → İzmir</div>
+                    <div class="pricing-distance">~480 km</div>
+                    <div class="pricing-price">₺5.000 - ₺8.000</div>
+                    <div class="pricing-note">Ev büyüklüğüne göre</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="pricing-card">
+                    <div class="pricing-route">İstanbul → Antalya</div>
+                    <div class="pricing-distance">~700 km</div>
+                    <div class="pricing-price">₺6.000 - ₺10.000</div>
+                    <div class="pricing-note">Ev büyüklüğüne göre</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="pricing-card">
+                    <div class="pricing-route">Ankara → İzmir</div>
+                    <div class="pricing-distance">~580 km</div>
+                    <div class="pricing-price">₺5.500 - ₺9.000</div>
+                    <div class="pricing-note">Ev büyüklüğüne göre</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5" data-aos="fade-up">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-white-custom">
+                <i class="fas fa-calculator me-2"></i>
+                Kendi Rotanız için Fiyat Al
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="service-faq">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0" data-aos="fade-right">
+                <span class="section-badge">
+                    <i class="fas fa-question-circle"></i>
+                    SSS
+                </span>
+                <h2 class="section-title">Şehirlerarası <span>Hakkında</span></h2>
+            </div>
+            
+            <div class="col-lg-8" data-aos="fade-left">
+                <div class="accordion" id="interFaq">
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom" type="button" data-bs-toggle="collapse" data-bs-target="#ifaq1">
+                                Şehirlerarası taşınma ne kadar sürer?
+                            </button>
+                        </h2>
+                        <div id="ifaq1" class="accordion-collapse collapse show" data-bs-parent="#interFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Mesafeye bağlı olarak değişir. 300-500 km arası genellikle aynı gün veya ertesi gün, 
+                                500 km üzeri rotalar 1-2 gün içinde tamamlanır. Yükleme ve yerleştirme süreleri hariçtir.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ifaq2">
+                                Eşyalar başka eşyalarla birlikte mi taşınıyor?
+                            </button>
+                        </h2>
+                        <div id="ifaq2" class="accordion-collapse collapse" data-bs-parent="#interFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Hayır, "Komple Araç" hizmetinde sadece sizin eşyalarınız taşınır. 
+                                "Parsiyel" seçeneğinde ise araç paylaşımlı olup daha ekonomik fiyat sunulur.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ifaq3">
+                                Fiyatı etkileyen faktörler nelerdir?
+                            </button>
+                        </h2>
+                        <div id="ifaq3" class="accordion-collapse collapse" data-bs-parent="#interFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Mesafe, eşya miktarı, kat durumu, asansör varlığı, özel paketleme ihtiyacı 
+                                ve ek hizmetler (depolama, sigorta türü vb.) fiyatı etkileyen temel faktörlerdir.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="service-cta">
+    <div class="container">
+        <div class="cta-card" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mb-4 mb-lg-0">
+                    <h3>Şehirlerarası Taşınmaya Hazır mısınız?</h3>
+                    <p>81 ilden onaylı nakliye firmalarından anında teklif alın.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-white-custom">
+                        <i class="fas fa-calculator me-2"></i>
+                        Teklif Al
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

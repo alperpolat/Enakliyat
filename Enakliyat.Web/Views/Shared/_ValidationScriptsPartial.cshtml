@@ -1,2 +1,56 @@
-﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+﻿<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.21.0/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
+
+<script>
+    // Türkçe validation mesajları
+    $.validator.setDefaults({
+        messages: {
+            required: "Bu alan zorunludur.",
+            email: "Geçerli bir e-posta adresi giriniz.",
+            url: "Geçerli bir URL giriniz.",
+            date: "Geçerli bir tarih giriniz.",
+            number: "Geçerli bir sayı giriniz.",
+            digits: "Sadece rakam giriniz.",
+            equalTo: "Değerler eşleşmiyor.",
+            maxlength: $.validator.format("En fazla {0} karakter girebilirsiniz."),
+            minlength: $.validator.format("En az {0} karakter girmelisiniz."),
+            rangelength: $.validator.format("En az {0}, en fazla {1} karakter girmelisiniz."),
+            range: $.validator.format("{0} ile {1} arasında bir değer giriniz."),
+            max: $.validator.format("En fazla {0} değerini girebilirsiniz."),
+            min: $.validator.format("En az {0} değerini girmelisiniz.")
+        }
+    });
+
+    // Telefon numarası validation
+    $.validator.addMethod("turkishphone", function(value, element) {
+        if (!value) return true; // Optional
+        var cleaned = value.replace(/[\s\-\(\)]/g, "");
+        return /^(\+90|0)?[5][0-9]{9}$/.test(cleaned);
+    }, "Geçerli bir telefon numarası giriniz. (Örn: 0532 123 45 67)");
+
+    // Form submit sırasında validation gösterimi
+    $(document).ready(function() {
+        $('form').on('submit', function(e) {
+            if (!$(this).valid()) {
+                e.preventDefault();
+                // İlk hatalı alana scroll
+                var firstError = $(this).find('.field-validation-error:first');
+                if (firstError.length) {
+                    $('html, body').animate({
+                        scrollTop: firstError.offset().top - 100
+                    }, 500);
+                }
+            }
+        });
+
+        // Real-time validation feedback
+        $('input, select, textarea').on('blur', function() {
+            if ($(this).valid()) {
+                $(this).removeClass('is-invalid').addClass('is-valid');
+            } else {
+                $(this).removeClass('is-valid').addClass('is-invalid');
+            }
+        });
+    });
+</script>

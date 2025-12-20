@@ -63,7 +63,7 @@
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <h5 class="card-title mb-3">Teklif Ver</h5>
-                    <form asp-action="CreateOffer" method="post" class="small">
+                    <form asp-action="CreateOffer" method="post" class="small" id="offerForm">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="moveRequestId" value="@request.Id" />
                         <div class="mb-2">
@@ -74,7 +74,15 @@
                             <label class="form-label form-label-sm">Not (opsiyonel)</label>
                             <textarea name="note" rows="3" class="form-control form-control-sm"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-sm btn-primary">Teklif Gönder</button>
+                        <button type="submit" class="btn btn-sm btn-primary" id="submitOfferBtn">
+                            <span class="submit-text">
+                                <i class="fas fa-paper-plane me-1"></i>Teklif Gönder
+                            </span>
+                            <span class="loading-text" style="display: none;">
+                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                Gönderiliyor...
+                            </span>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -122,3 +130,22 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Form submit loading state
+        const offerForm = document.getElementById('offerForm');
+        const submitOfferBtn = document.getElementById('submitOfferBtn');
+        if (offerForm && submitOfferBtn) {
+            offerForm.addEventListener('submit', function() {
+                const submitText = submitOfferBtn.querySelector('.submit-text');
+                const loadingText = submitOfferBtn.querySelector('.loading-text');
+                if (submitText && loadingText) {
+                    submitText.style.display = 'none';
+                    loadingText.style.display = 'inline';
+                    submitOfferBtn.disabled = true;
+                }
+            });
+        }
+    </script>
+}

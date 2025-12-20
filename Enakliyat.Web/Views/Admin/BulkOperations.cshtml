@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Toplu İşlemler";
+}
+
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title">Toplu İşlemler</h3>
+    </div>
+    <div class="admin-card-body">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h4 class="admin-card-title">Firma İşlemleri</h4>
+                    </div>
+                    <div class="admin-card-body">
+                        <p class="text-muted">Carriers sayfasından seçili firmalara toplu işlem yapabilirsiniz.</p>
+                        <a href="@Url.Action("Carriers", "Admin")" class="btn btn-admin-primary">
+                            <i class="fas fa-truck me-2"></i>Firmalar Sayfasına Git
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h4 class="admin-card-title">Bilgilendirme</h4>
+                    </div>
+                    <div class="admin-card-body">
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Toplu Onay</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Toplu Askıya Alma</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Toplu Email Gönderimi</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

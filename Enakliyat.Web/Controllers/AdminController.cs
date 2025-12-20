@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Enakliyat.Web.Controllers;
 
@@ -64,6 +65,34 @@ public class AdminController : Controller
         ViewBag.WeeklyDepositCount = paidPaymentsWeek.Count;
         ViewBag.WeeklyDepositAmount = paidPaymentsWeek.Sum(p => p.Amount);
 
+        // Son 30 günlük trend verileri (grafik için)
+        var last30Days = Enumerable.Range(0, 30)
+            .Select(i => today.AddDays(-29 + i))
+            .ToList();
+
+        var requestsByDay = await _context.MoveRequests
+            .Where(r => r.CreatedAt >= last30Days.First() && r.CreatedAt < today.AddDays(1))
+            .GroupBy(r => r.CreatedAt.Date)
+            .Select(g => new { Date = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Date, x => x.Count);
+
+        var paymentsByDay = await _context.Payments
+            .Where(p => p.Status == PaymentStatus.Paid && p.CreatedAt >= last30Days.First() && p.CreatedAt < today.AddDays(1))
+            .GroupBy(p => p.CreatedAt.Date)
+            .Select(g => new { Date = g.Key, Amount = g.Sum(p => p.Amount) })
+            .ToDictionaryAsync(x => x.Date, x => x.Amount);
+
+        ViewBag.ChartLabels = last30Days.Select(d => d.ToString("dd.MM")).ToList();
+        ViewBag.RequestsChartData = last30Days.Select(d => requestsByDay.ContainsKey(d) ? requestsByDay[d] : 0).ToList();
+        ViewBag.PaymentsChartData = last30Days.Select(d => paymentsByDay.ContainsKey(d) ? (double)paymentsByDay[d] : 0).ToList();
+
+        // Durum dağılımı (pie chart için)
+        var statusDistribution = await _context.MoveRequests
+            .GroupBy(r => r.Status)
+            .Select(g => new { Status = g.Key, Count = g.Count() })
+            .ToListAsync();
+        ViewBag.StatusDistribution = statusDistribution;
+
         var paidToday = await _context.Payments
             .Where(p => p.Status == PaymentStatus.Paid && p.CreatedAt >= today && p.CreatedAt < today.AddDays(1))
             .ToListAsync();
@@ -82,7 +111,7 @@ public class AdminController : Controller
         return User.HasClaim("IsAdmin", "True");
     }
 
-    public async Task<IActionResult> Requests(int? cityId, int? districtId, string? moveType, string? status, int page = 1, int pageSize = 20)
+    public async Task<IActionResult> Requests(int? cityId, int? districtId, string? moveType, string? status, string? search, int page = 1, int pageSize = 20)
     {
         if (!IsCurrentUserAdmin())
         {
@@ -101,6 +130,8 @@ public class AdminController : Controller
         ViewBag.SelectedDistrictId = districtId;
         ViewBag.SelectedMoveType = moveType;
         ViewBag.SelectedStatus = status;
+        ViewBag.Search = search;
+        ViewBag.Search = search;
 
         var districts = Enumerable.Empty<District>();
         if (cityId.HasValue)
@@ -115,6 +146,19 @@ public class AdminController : Controller
         var query = _context.MoveRequests
             .Include(x => x.User)
             .AsQueryable();
+
+        // Arama özelliği
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            search = search.Trim();
+            query = query.Where(r => 
+                r.CustomerName.Contains(search) ||
+                r.PhoneNumber.Contains(search) ||
+                (r.Email != null && r.Email.Contains(search)) ||
+                r.FromAddress.Contains(search) ||
+                r.ToAddress.Contains(search) ||
+                r.Id.ToString().Contains(search));
+        }
 
         if (cityId.HasValue)
         {
@@ -774,5 +818,356 @@ public class AdminController : Controller
 
         TempData["Success"] = "Kullanıcı tekrar aktifleştirildi.";
         return RedirectToAction(nameof(Users));
+    }
+
+    // Bildirim Yönetimi
+    public async Task<IActionResult> Notifications()
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        var templates = await _context.NotificationTemplates
+            .OrderBy(t => t.Type)
+            .ThenBy(t => t.EventType)
+            .ToListAsync();
+
+        return View(templates);
+    }
+
+    public async Task<IActionResult> NotificationTemplate(int? id)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        if (id.HasValue)
+        {
+            var template = await _context.NotificationTemplates.FindAsync(id);
+            if (template == null) return NotFound();
+            return View(template);
+        }
+
+        return View(new NotificationTemplate());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> NotificationTemplate(NotificationTemplate template)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        if (ModelState.IsValid)
+        {
+            if (template.Id == 0)
+            {
+                _context.NotificationTemplates.Add(template);
+            }
+            else
+            {
+                _context.NotificationTemplates.Update(template);
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Şablon kaydedildi.";
+            return RedirectToAction(nameof(Notifications));
+        }
+
+        return View(template);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteNotificationTemplate(int id)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        var template = await _context.NotificationTemplates.FindAsync(id);
+        if (template == null) return NotFound();
+
+        _context.NotificationTemplates.Remove(template);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Şablon silindi.";
+        return RedirectToAction(nameof(Notifications));
+    }
+
+    // Sistem Ayarları
+    public async Task<IActionResult> Settings()
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        var settings = await _context.SystemSettings
+            .OrderBy(s => s.Category)
+            .ThenBy(s => s.Key)
+            .ToListAsync();
+
+        ViewBag.Categories = settings.Select(s => s.Category).Distinct().ToList();
+        return View(settings);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateSetting(int id, string value)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        var setting = await _context.SystemSettings.FindAsync(id);
+        if (setting == null) return NotFound();
+
+        setting.Value = value;
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Ayar güncellendi.";
+        return RedirectToAction(nameof(Settings));
+    }
+
+    public IActionResult CreateSetting()
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+        return View(new SystemSetting());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateSetting(SystemSetting setting)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        if (ModelState.IsValid)
+        {
+            _context.SystemSettings.Add(setting);
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Ayar oluşturuldu.";
+            return RedirectToAction(nameof(Settings));
+        }
+
+        return View(setting);
+    }
+
+    // Komisyon Yönetimi
+    public async Task<IActionResult> Commissions()
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        var carriers = await _context.Carriers
+            .Where(c => c.IsApproved)
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+
+        // Her firma için komisyon oranını ayarlardan al (varsayılan %10)
+        var defaultCommissionRate = await _context.SystemSettings
+            .FirstOrDefaultAsync(s => s.Key == "DefaultCommissionRate");
+        var defaultRate = defaultCommissionRate != null && decimal.TryParse(defaultCommissionRate.Value, out var rate) ? rate : 10m;
+
+        ViewBag.DefaultCommissionRate = defaultRate;
+        return View(carriers);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateCarrierCommission(int carrierId, decimal commissionRate)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        var setting = await _context.SystemSettings
+            .FirstOrDefaultAsync(s => s.Key == $"CarrierCommission_{carrierId}");
+
+        if (setting == null)
+        {
+            setting = new SystemSetting
+            {
+                Key = $"CarrierCommission_{carrierId}",
+                Category = "Commission",
+                Description = $"Firma #{carrierId} komisyon oranı"
+            };
+            _context.SystemSettings.Add(setting);
+        }
+
+        setting.Value = commissionRate.ToString("F2");
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Komisyon oranı güncellendi.";
+        return RedirectToAction(nameof(Commissions));
+    }
+
+    // Finansal Raporlar
+    public async Task<IActionResult> FinancialReports(DateTime? startDate, DateTime? endDate)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        var start = startDate ?? DateTime.UtcNow.AddMonths(-1);
+        var end = endDate ?? DateTime.UtcNow;
+
+        var payments = await _context.Payments
+            .Include(p => p.Contract)
+            .ThenInclude(c => c.Offer)
+            .ThenInclude(o => o.Carrier)
+            .Where(p => p.CreatedAt >= start && p.CreatedAt <= end && p.Status == PaymentStatus.Paid)
+            .ToListAsync();
+
+        var totalRevenue = payments.Sum(p => p.Amount);
+        var defaultCommissionRate = await _context.SystemSettings
+            .FirstOrDefaultAsync(s => s.Key == "DefaultCommissionRate");
+        var defaultRate = defaultCommissionRate != null && decimal.TryParse(defaultCommissionRate.Value, out var rate) ? rate : 10m;
+
+        var totalCommission = totalRevenue * (defaultRate / 100m);
+
+        ViewBag.StartDate = start;
+        ViewBag.EndDate = end;
+        ViewBag.TotalRevenue = totalRevenue;
+        ViewBag.TotalCommission = totalCommission;
+        ViewBag.Payments = payments;
+
+        return View();
+    }
+
+    // Toplu İşlemler
+    public async Task<IActionResult> BulkOperations()
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BulkApproveCarriers(int[] carrierIds)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        var carriers = await _context.Carriers
+            .Where(c => carrierIds.Contains(c.Id))
+            .ToListAsync();
+
+        foreach (var carrier in carriers)
+        {
+            carrier.IsApproved = true;
+            carrier.IsRejected = false;
+        }
+
+        await _context.SaveChangesAsync();
+        TempData["Success"] = $"{carriers.Count} firma onaylandı.";
+        return RedirectToAction(nameof(Carriers));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BulkSuspendCarriers(int[] carrierIds)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        var carriers = await _context.Carriers
+            .Where(c => carrierIds.Contains(c.Id))
+            .ToListAsync();
+
+        foreach (var carrier in carriers)
+        {
+            carrier.IsSuspended = true;
+        }
+
+        await _context.SaveChangesAsync();
+        TempData["Success"] = $"{carriers.Count} firma askıya alındı.";
+        return RedirectToAction(nameof(Carriers));
+    }
+
+    // Firma Belge Onay Sistemi
+    public async Task<IActionResult> CarrierDocuments(int? carrierId)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        IQueryable<CarrierDocument> query = _context.CarrierDocuments.Include(d => d.Carrier);
+
+        if (carrierId.HasValue)
+        {
+            query = query.Where(d => d.CarrierId == carrierId.Value);
+        }
+
+        var documents = await query
+            .OrderByDescending(d => d.CreatedAt)
+            .ToListAsync();
+
+        ViewBag.Carriers = await _context.Carriers
+            .Where(c => c.IsApproved || !c.IsRejected)
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+
+        return View(documents);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ApproveCarrierDocument(int documentId)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        var document = await _context.CarrierDocuments
+            .Include(d => d.Carrier)
+            .FirstOrDefaultAsync(d => d.Id == documentId);
+
+        if (document == null) return NotFound();
+
+        // Belge onaylandı olarak işaretle (CarrierDocument'a IsApproved eklenebilir)
+        // Şimdilik sadece carrier'ı onayla
+        if (!document.Carrier.IsApproved)
+        {
+            document.Carrier.IsApproved = true;
+            document.Carrier.IsRejected = false;
+            await _context.SaveChangesAsync();
+        }
+
+        TempData["Success"] = "Belge onaylandı.";
+        return RedirectToAction(nameof(CarrierDocuments));
+    }
+
+    // Raporlama/Export
+    public async Task<IActionResult> ExportRequests(DateTime? startDate, DateTime? endDate)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        var start = startDate ?? DateTime.UtcNow.AddMonths(-1);
+        var end = endDate ?? DateTime.UtcNow;
+
+        var requests = await _context.MoveRequests
+            .Include(r => r.User)
+            .Where(r => r.CreatedAt >= start && r.CreatedAt <= end)
+            .ToListAsync();
+
+        // AcceptedOffer'ları ayrı çek
+        var acceptedOfferIds = requests.Where(r => r.AcceptedOfferId.HasValue).Select(r => r.AcceptedOfferId!.Value).ToList();
+        var acceptedOffers = await _context.Offers
+            .Include(o => o.Carrier)
+            .Where(o => acceptedOfferIds.Contains(o.Id))
+            .ToDictionaryAsync(o => o.Id);
+
+        // CSV formatında export (Excel için)
+        var csv = "ID,Tarih,Müşteri,Telefon,Email,Nereden,Nereye,Tip,Durum,Firma,Fiyat\n";
+        foreach (var req in requests)
+        {
+            var offer = req.AcceptedOfferId.HasValue && acceptedOffers.ContainsKey(req.AcceptedOfferId.Value) 
+                ? acceptedOffers[req.AcceptedOfferId.Value] 
+                : null;
+            csv += $"{req.Id},{req.CreatedAt:dd.MM.yyyy},{req.CustomerName},{req.PhoneNumber},{req.Email ?? ""},";
+            csv += $"{req.FromAddress},{req.ToAddress},{req.MoveType},{req.Status},";
+            csv += $"{offer?.Carrier?.Name ?? ""},{offer?.Price ?? 0}\n";
+        }
+
+        return File(System.Text.Encoding.UTF8.GetBytes(csv), "text/csv", $"Talepler_{start:yyyyMMdd}_{end:yyyyMMdd}.csv");
+    }
+
+    // Log/Audit Trail (Basit versiyon - SystemSetting ile log tutulabilir)
+    public async Task<IActionResult> ActivityLogs(DateTime? startDate, DateTime? endDate)
+    {
+        if (!IsCurrentUserAdmin()) return Forbid();
+
+        var start = startDate ?? DateTime.UtcNow.AddDays(-7);
+        var end = endDate ?? DateTime.UtcNow;
+
+        // Şimdilik SystemSetting'lerde Category="Log" olanları göster
+        // İleride ayrı bir ActivityLog entity'si eklenebilir
+        var logs = await _context.SystemSettings
+            .Where(s => s.Category == "Log" && s.CreatedAt >= start && s.CreatedAt <= end)
+            .OrderByDescending(s => s.CreatedAt)
+            .ToListAsync();
+
+        ViewBag.StartDate = start;
+        ViewBag.EndDate = end;
+
+        return View(logs);
     }
 }

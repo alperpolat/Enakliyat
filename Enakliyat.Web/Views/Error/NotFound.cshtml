@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Sayfa Bulunamadı";
+    Layout = "_Layout";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="error-page">
+                <h1 class="display-1 fw-bold text-primary">404</h1>
+                <h2 class="mb-4">Sayfa Bulunamadı</h2>
+                <p class="lead text-muted mb-4">
+                    Aradığınız sayfa mevcut değil veya taşınmış olabilir.
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">
+                        <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
+                    </a>
+                    <button onclick="history.back()" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Geri Git
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-page {
+        padding: 3rem 0;
+    }
+    .error-page h1 {
+        font-size: 8rem;
+        line-height: 1;
+    }
+    .error-page h2 {
+        font-size: 2rem;
+        font-weight: 600;
+    }
+</style>
+

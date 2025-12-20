@@ -1,0 +1,81 @@
+@{
+    ViewData["Title"] = "Finansal Raporlar";
+}
+
+<div class="admin-card mb-4">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title">Finansal Raporlar</h3>
+    </div>
+    <div class="admin-card-body">
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label class="form-label">Başlangıç Tarihi</label>
+                <input type="date" name="startDate" value="@ViewBag.StartDate.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Bitiş Tarihi</label>
+                <input type="date" name="endDate" value="@ViewBag.EndDate.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-admin-primary w-100">Filtrele</button>
+            </div>
+        </form>
+        
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-card-icon">
+                        <i class="fas fa-lira-sign"></i>
+                    </div>
+                    <div class="stat-card-value">@ViewBag.TotalRevenue.ToString("N2") TL</div>
+                    <div class="stat-card-label">Toplam Gelir</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card orange">
+                    <div class="stat-card-icon">
+                        <i class="fas fa-percent"></i>
+                    </div>
+                    <div class="stat-card-value">@ViewBag.TotalCommission.ToString("N2") TL</div>
+                    <div class="stat-card-label">Toplam Komisyon</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card teal">
+                    <div class="stat-card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-card-value">@((ViewBag.TotalRevenue - ViewBag.TotalCommission).ToString("N2")) TL</div>
+                    <div class="stat-card-label">Net Gelir</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table admin-table">
+                <thead>
+                    <tr>
+                        <th>Tarih</th>
+                        <th>Firma</th>
+                        <th>Tutar</th>
+                        <th>Durum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var payment in ViewBag.Payments as List<Enakliyat.Domain.Payment> ?? new List<Enakliyat.Domain.Payment>())
+                    {
+                        <tr>
+                            <td>@payment.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>@(payment.Contract?.Offer?.Carrier?.Name ?? "-")</td>
+                            <td>@payment.Amount.ToString("N2") @payment.Currency</td>
+                            <td>
+                                <span class="badge bg-success">@payment.Status</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

@@ -40,16 +40,28 @@ public static class DataSeeder
 
         if (!context.Carriers.Any())
         {
+            // İstanbul'dan bir district al (varsa)
+            var istanbulDistrict = await context.Districts
+                .Include(d => d.City)
+                .Where(d => d.City.Name == "İstanbul")
+                .FirstOrDefaultAsync();
+
             var carrier = new Carrier
             {
                 Name = "Demo Nakliyeci",
                 CompanyName = "Demo Nakliyat",
                 PhoneNumber = "+90 555 000 0000",
+                LandlinePhone = "+90 212 000 0000",
                 Email = "carrier@enakliyat.local",
+                Website = "https://demo-nakliyat.com",
+                DistrictId = istanbulDistrict?.Id,
                 LicenseNumber = "YETKI-DEMO-001",
                 VehicleInfo = "3+1 kamyon, 2 personel",
                 ServiceAreas = "İstanbul, Ankara",
                 Description = "Demo amaçlı onaylı nakliyeci.",
+                TaxOffice = "Beşiktaş Vergi Dairesi",
+                TaxNumber = "1234567890",
+                InvoiceAddress = "İstanbul, Beşiktaş, Demo Mahallesi, Demo Sokak No:1",
                 IsApproved = true,
                 IsRejected = false
             };
@@ -97,20 +109,37 @@ public static class DataSeeder
             var existingCarrierCount = context.Carriers.Count();
             var carriersToCreate = 50 - existingCarrierCount;
 
+            // Rastgele district'ler al
+            var districts = await context.Districts
+                .Include(d => d.City)
+                .Where(d => d.City.Name == "İstanbul" || d.City.Name == "Ankara" || d.City.Name == "İzmir")
+                .ToListAsync();
+            var random = new Random();
+
             var newCarriers = new List<Carrier>();
             for (int i = 1; i <= carriersToCreate; i++)
             {
                 int index = existingCarrierCount + i;
+                var district = districts.Any() ? districts[random.Next(districts.Count)] : null;
+                
                 newCarriers.Add(new Carrier
                 {
                     Name = $"Nakliyeci {index}",
                     CompanyName = $"Nakliye360 Taşımacılık #{index}",
                     PhoneNumber = $"+90 532 000 {index:0000}",
+                    LandlinePhone = $"+90 212 {random.Next(200, 999)} {random.Next(1000, 9999)}",
                     Email = $"carrier{index}@nakliye360.test",
+                    Website = index % 3 == 0 ? $"https://nakliyeci{index}.com" : null,
+                    DistrictId = district?.Id,
                     LicenseNumber = $"YETKI-{index:0000}",
                     VehicleInfo = "1 kamyon, 3 personel",
                     ServiceAreas = "İstanbul, Ankara, İzmir",
                     Description = "Test amaçlı eklenen demo nakliyeci.",
+                    TaxOffice = district != null ? $"{district.Name} Vergi Dairesi" : "Beşiktaş Vergi Dairesi",
+                    TaxNumber = $"{random.Next(100000000, 999999999)}",
+                    InvoiceAddress = district != null 
+                        ? $"{district.City.Name}, {district.Name}, Demo Mahallesi, Demo Sokak No:{index}"
+                        : "İstanbul, Beşiktaş, Demo Mahallesi, Demo Sokak No:1",
                     IsApproved = true,
                     IsRejected = false,
                     IsSuspended = false,
@@ -301,6 +330,108 @@ public static class DataSeeder
                 await context.SaveChangesAsync();
             }
         }
+    }
+
+    public static async Task SeedSystemSettingsAsync(EnakliyatDbContext context)
+    {
+        if (context.SystemSettings.Any())
+        {
+            return; // Zaten yüklenmiş
+        }
+
+        var settings = new List<SystemSetting>
+        {
+            new SystemSetting
+            {
+                Key = "DefaultCommissionRate",
+                Value = "10",
+                Description = "Varsayılan komisyon oranı (%)",
+                Category = "Financial"
+            },
+            new SystemSetting
+            {
+                Key = "PlatformName",
+                Value = "Nakliye360",
+                Description = "Platform adı",
+                Category = "General"
+            },
+            new SystemSetting
+            {
+                Key = "SupportEmail",
+                Value = "destek@nakliye360.com",
+                Description = "Destek e-posta adresi",
+                Category = "General"
+            },
+            new SystemSetting
+            {
+                Key = "SupportPhone",
+                Value = "+90 532 123 45 67",
+                Description = "Destek telefon numarası",
+                Category = "General"
+            },
+            new SystemSetting
+            {
+                Key = "MaxFileUploadSize",
+                Value = "10485760",
+                Description = "Maksimum dosya yükleme boyutu (byte)",
+                Category = "System"
+            },
+            new SystemSetting
+            {
+                Key = "MinPasswordLength",
+                Value = "6",
+                Description = "Minimum şifre uzunluğu",
+                Category = "Security"
+            }
+        };
+
+        await context.SystemSettings.AddRangeAsync(settings);
+        await context.SaveChangesAsync();
+    }
+
+    public static async Task SeedNotificationTemplatesAsync(EnakliyatDbContext context)
+    {
+        if (context.NotificationTemplates.Any())
+        {
+            return; // Zaten yüklenmiş
+        }
+
+        var templates = new List<NotificationTemplate>
+        {
+            new NotificationTemplate
+            {
+                Name = "Yeni Teklif E-posta",
+                Type = "Email",
+                EventType = "NewOffer",
+                Subject = "Yeni Teklifiniz Var - Talep No: {MoveRequestId}",
+                Body = "<h2>Merhaba {CustomerName},</h2><p>Talep numaranız {MoveRequestId} için yeni bir teklif aldınız.</p><p>Teklif detaylarını görmek için <a href='{OfferLink}'>buraya tıklayın</a>.</p>",
+                IsActive = true,
+                Variables = "MoveRequestId,CustomerName,OfferLink"
+            },
+            new NotificationTemplate
+            {
+                Name = "Teklif Kabul Edildi E-posta",
+                Type = "Email",
+                EventType = "OfferAccepted",
+                Subject = "Teklifiniz Kabul Edildi - Talep No: {MoveRequestId}",
+                Body = "<h2>Merhaba {CarrierName},</h2><p>{MoveRequestId} numaralı talep için sunduğunuz teklif kabul edildi!</p><p>Rezervasyon detaylarını görmek için <a href='{ReservationLink}'>buraya tıklayın</a>.</p>",
+                IsActive = true,
+                Variables = "MoveRequestId,CarrierName,ReservationLink"
+            },
+            new NotificationTemplate
+            {
+                Name = "Rezervasyon Onayı E-posta",
+                Type = "Email",
+                EventType = "ReservationConfirmed",
+                Subject = "Rezervasyonunuz Onaylandı - Talep No: {MoveRequestId}",
+                Body = "<h2>Merhaba {CustomerName},</h2><p>Rezervasyonunuz onaylandı. Taşınma tarihiniz: {MoveDate}</p><p>Detayları görmek için <a href='{ReservationLink}'>buraya tıklayın</a>.</p>",
+                IsActive = true,
+                Variables = "MoveRequestId,CustomerName,MoveDate,ReservationLink"
+            }
+        };
+
+        await context.NotificationTemplates.AddRangeAsync(templates);
+        await context.SaveChangesAsync();
     }
 
     public static async Task SeedAddressesAsync(EnakliyatDbContext context, IWebHostEnvironment env)

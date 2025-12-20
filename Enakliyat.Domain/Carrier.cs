@@ -5,12 +5,21 @@ public class Carrier : BaseEntity
     public string Name { get; set; } = string.Empty;
     public string? CompanyName { get; set; }
     public string PhoneNumber { get; set; } = string.Empty;
+    public string? LandlinePhone { get; set; } // Firma Sabit Telefon
     public string? Email { get; set; }
+    public string? Website { get; set; } // Firma Web Sitesi
+    public int? DistrictId { get; set; } // Firmanın Bulunduğu İlçe
+    public District? District { get; set; }
 
     public string? LicenseNumber { get; set; }
     public string? VehicleInfo { get; set; }
     public string? ServiceAreas { get; set; }
     public string? Description { get; set; }
+
+    // Fatura Bilgileri
+    public string? TaxOffice { get; set; } // Vergi Dairesi
+    public string? TaxNumber { get; set; } // Vergi No / TC Kimlik No
+    public string? InvoiceAddress { get; set; } // Fatura Adresi
 
     public bool IsApproved { get; set; } = false;
     public bool IsRejected { get; set; } = false;

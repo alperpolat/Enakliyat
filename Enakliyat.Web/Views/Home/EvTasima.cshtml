@@ -1,0 +1,807 @@
+@{
+    ViewData["Title"] = "Evden Eve Nakliyat | Profesyonel Ev Taşıma Hizmeti";
+    Layout = "_Layout";
+}
+
+<style>
+    /* Service Page Hero */
+    .service-hero {
+        background: linear-gradient(135deg, #0052CC 0%, #0747A6 50%, #003366 100%);
+        padding: 6rem 0 4rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .service-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="80" cy="20" r="40" fill="rgba(255,255,255,0.03)"/><circle cx="90" cy="80" r="30" fill="rgba(255,255,255,0.02)"/></svg>');
+        background-size: cover;
+    }
+    
+    .service-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .service-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-breadcrumb a {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+    }
+    
+    .service-breadcrumb a:hover {
+        color: #fff;
+    }
+    
+    .service-breadcrumb span {
+        color: rgba(255,255,255,0.5);
+    }
+    
+    .service-breadcrumb .current {
+        color: #FFD700;
+    }
+    
+    .service-hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+    
+    .service-hero-title span {
+        color: #FFD700;
+    }
+    
+    .service-hero-desc {
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.85);
+        margin-bottom: 2rem;
+        line-height: 1.7;
+        max-width: 600px;
+    }
+    
+    .service-hero-stats {
+        display: flex;
+        gap: 3rem;
+        margin-top: 2rem;
+    }
+    
+    .hero-stat {
+        text-align: left;
+    }
+    
+    .hero-stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #FFD700;
+    }
+    
+    .hero-stat-label {
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.7);
+    }
+    
+    .service-hero-image {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .service-hero-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+    }
+    
+    .service-hero-card h4 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+    
+    .service-quick-form .form-control {
+        padding: 0.875rem 1rem 0.875rem 2.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+        background: #f8fafc;
+    }
+    
+    .service-quick-form .form-control:focus {
+        border-color: #0052CC;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(0,82,204,0.1);
+    }
+    
+    .service-quick-form .form-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        z-index: 5;
+    }
+    
+    .service-quick-form .btn-submit {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #FF6B35 0%, #FF8F6B 100%);
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+    
+    .service-quick-form .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(255,107,53,0.35);
+    }
+    
+    /* Process Section */
+    .process-section {
+        padding: 5rem 0;
+        background: #f8fafc;
+    }
+    
+    .process-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 2rem;
+        height: 100%;
+        border: 1px solid #e2e8f0;
+        position: relative;
+        transition: all 0.3s;
+    }
+    
+    .process-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        border-color: #0052CC;
+    }
+    
+    .process-number {
+        position: absolute;
+        top: -15px;
+        left: 2rem;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #0052CC 0%, #4C9AFF 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 800;
+        font-size: 1rem;
+    }
+    
+    .process-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(0,82,204,0.1);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #0052CC;
+        margin-bottom: 1.25rem;
+        margin-top: 0.5rem;
+    }
+    
+    .process-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .process-desc {
+        color: #64748b;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    
+    /* Features Section */
+    .features-section {
+        padding: 5rem 0;
+        background: #fff;
+    }
+    
+    .feature-box {
+        display: flex;
+        gap: 1.25rem;
+        padding: 1.5rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        transition: all 0.3s;
+    }
+    
+    .feature-box:hover {
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transform: translateX(5px);
+    }
+    
+    .feature-box-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #0052CC 0%, #4C9AFF 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+    
+    .feature-box-content h5 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+    }
+    
+    .feature-box-content p {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin: 0;
+    }
+    
+    /* Pricing Section */
+    .pricing-section {
+        padding: 5rem 0;
+        background: linear-gradient(135deg, #0052CC 0%, #0747A6 100%);
+        color: #fff;
+    }
+    
+    .pricing-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        height: 100%;
+    }
+    
+    .pricing-icon {
+        width: 70px;
+        height: 70px;
+        background: rgba(0,82,204,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 1.75rem;
+        color: #0052CC;
+    }
+    
+    .pricing-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .pricing-desc {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .pricing-range {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #0052CC;
+        margin-bottom: 0.25rem;
+    }
+    
+    .pricing-note {
+        font-size: 0.8rem;
+        color: #94a3b8;
+    }
+    
+    /* Service CTA */
+    .service-cta {
+        padding: 5rem 0;
+        background: #f8fafc;
+    }
+    
+    .cta-card {
+        background: linear-gradient(135deg, #FF6B35 0%, #FF8F6B 100%);
+        border-radius: 20px;
+        padding: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .cta-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+    
+    .cta-card h3 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 1rem;
+    }
+    
+    .cta-card p {
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.9);
+        margin-bottom: 2rem;
+    }
+    
+    /* FAQ Section Service */
+    .service-faq {
+        padding: 5rem 0;
+        background: #fff;
+    }
+    
+    @@media (max-width: 991.98px) {
+        .service-hero-title {
+            font-size: 2.25rem;
+        }
+        
+        .service-hero-stats {
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .hero-stat-number {
+            font-size: 2rem;
+        }
+    }
+    
+    @@media (max-width: 767.98px) {
+        .service-hero {
+            padding: 4rem 0 3rem;
+        }
+        
+        .service-hero-title {
+            font-size: 1.75rem;
+        }
+        
+        .service-hero-desc {
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<!-- SERVICE HERO -->
+<section class="service-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 mb-5 mb-lg-0">
+                <div class="service-hero-content" data-aos="fade-right">
+                    <div class="service-breadcrumb">
+                        <a asp-controller="Home" asp-action="Index"><i class="fas fa-home me-1"></i> Ana Sayfa</a>
+                        <span>/</span>
+                        <a href="#">Hizmetler</a>
+                        <span>/</span>
+                        <span class="current">Evden Eve Nakliyat</span>
+                    </div>
+                    
+                    <h1 class="service-hero-title">
+                        Evden Eve <span>Nakliyat</span> Hizmeti
+                    </h1>
+                    
+                    <p class="service-hero-desc">
+                        Evinizi güvenle yeni adresinize taşıyoruz. Profesyonel ekipler, sigortalı taşımacılık 
+                        ve %100 müşteri memnuniyeti garantisi ile yanınızdayız.
+                    </p>
+                    
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-white-custom">
+                            <i class="fas fa-calculator me-2"></i>
+                            Ücretsiz Teklif Al
+                        </a>
+                        <a href="tel:08501234567" class="btn btn-outline-custom" style="border-color: rgba(255,255,255,0.5); color: #fff;">
+                            <i class="fas fa-phone me-2"></i>
+                            0850 123 45 67
+                        </a>
+                    </div>
+                    
+                    <div class="service-hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">30K+</div>
+                            <div class="hero-stat-label">Tamamlanan Taşınma</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">4.9/5</div>
+                            <div class="hero-stat-label">Müşteri Puanı</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">81</div>
+                            <div class="hero-stat-label">İl Kapsama</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-5" data-aos="fade-left">
+                <div class="service-hero-card">
+                    <h4><i class="fas fa-paper-plane me-2 text-primary"></i> Hızlı Teklif Al</h4>
+                    <form asp-controller="Home" asp-action="Index" method="post" class="service-quick-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="MoveType" value="Home" />
+                        
+                        <div class="position-relative mb-3">
+                            <i class="fas fa-map-marker-alt form-icon"></i>
+                            <input type="text" class="form-control" name="fromText" placeholder="Nereden?" required />
+                        </div>
+                        
+                        <div class="position-relative mb-3">
+                            <i class="fas fa-flag-checkered form-icon"></i>
+                            <input type="text" class="form-control" name="toText" placeholder="Nereye?" required />
+                        </div>
+                        
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Ücretsiz Teklif Al
+                        </button>
+                    </form>
+                    
+                    <div class="d-flex justify-content-center gap-4 mt-3 text-muted" style="font-size: 0.8rem;">
+                        <span><i class="fas fa-check text-success me-1"></i> Ücretsiz</span>
+                        <span><i class="fas fa-check text-success me-1"></i> Hızlı</span>
+                        <span><i class="fas fa-check text-success me-1"></i> Güvenli</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PROCESS SECTION -->
+<section class="process-section">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">
+                <i class="fas fa-tasks"></i>
+                Taşınma Süreci
+            </span>
+            <h2 class="section-title">Evden Eve Nakliyat <span>Nasıl Yapılır?</span></h2>
+            <p class="section-subtitle">
+                Profesyonel ekibimizle taşınma sürecinizi adım adım yönetiyoruz
+            </p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="process-card">
+                    <div class="process-number">1</div>
+                    <div class="process-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h4 class="process-title">Keşif & Planlama</h4>
+                    <p class="process-desc">Uzman ekibimiz evinizi ziyaret eder, eşyalarınızı listeler ve taşınma planı hazırlar.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="process-card">
+                    <div class="process-number">2</div>
+                    <div class="process-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h4 class="process-title">Paketleme</h4>
+                    <p class="process-desc">Özel paketleme malzemeleri ile eşyalarınız titizlikle paketlenir ve etiketlenir.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="process-card">
+                    <div class="process-number">3</div>
+                    <div class="process-icon">
+                        <i class="fas fa-truck-loading"></i>
+                    </div>
+                    <h4 class="process-title">Yükleme & Taşıma</h4>
+                    <p class="process-desc">Deneyimli ekip eşyalarınızı güvenle yükler ve sigortalı araçlarla taşır.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="process-card">
+                    <div class="process-number">4</div>
+                    <div class="process-icon">
+                        <i class="fas fa-couch"></i>
+                    </div>
+                    <h4 class="process-title">Yerleştirme</h4>
+                    <p class="process-desc">Eşyalarınız yeni evinize yerleştirilir, montajlar yapılır ve temizlik bırakılır.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="features-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
+                <span class="section-badge">
+                    <i class="fas fa-star"></i>
+                    Özellikler
+                </span>
+                <h2 class="section-title">Evden Eve Nakliyatta <span>Fark Yaratan</span> Hizmetler</h2>
+                <p class="text-muted mb-4">
+                    30 yıllık sektör tecrübemiz ve binlerce başarılı taşınma deneyimimizle 
+                    size en kaliteli hizmeti sunuyoruz.
+                </p>
+                
+                <div class="feature-box">
+                    <div class="feature-box-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-box-content">
+                        <h5>Tam Sigorta Güvencesi</h5>
+                        <p>Tüm eşyalarınız taşıma süresince sigorta kapsamında</p>
+                    </div>
+                </div>
+                
+                <div class="feature-box">
+                    <div class="feature-box-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="feature-box-content">
+                        <h5>Profesyonel Ekip</h5>
+                        <p>Eğitimli ve deneyimli taşınma uzmanları</p>
+                    </div>
+                </div>
+                
+                <div class="feature-box">
+                    <div class="feature-box-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="feature-box-content">
+                        <h5>Özel Paketleme</h5>
+                        <p>Kırılacak eşyalar için özel koruma malzemeleri</p>
+                    </div>
+                </div>
+                
+                <div class="feature-box">
+                    <div class="feature-box-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="feature-box-content">
+                        <h5>Montaj & Demontaj</h5>
+                        <p>Mobilya söküm ve kurulum hizmeti dahil</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="row g-4">
+                    <div class="col-6">
+                        <div class="p-4 bg-primary text-white rounded-4 text-center">
+                            <i class="fas fa-truck-moving fa-3x mb-3 opacity-75"></i>
+                            <h5 class="fw-bold mb-1">Modern Araç Filosu</h5>
+                            <p class="small opacity-75 mb-0">Klimalı ve GPS takipli araçlar</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-4 bg-light rounded-4 text-center">
+                            <i class="fas fa-clock fa-3x mb-3 text-primary"></i>
+                            <h5 class="fw-bold mb-1 text-dark">Zamanında Teslimat</h5>
+                            <p class="small text-muted mb-0">Söz verilen saatte teslim</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-4 bg-light rounded-4 text-center">
+                            <i class="fas fa-broom fa-3x mb-3 text-primary"></i>
+                            <h5 class="fw-bold mb-1 text-dark">Temizlik Hizmeti</h5>
+                            <p class="small text-muted mb-0">Taşınma sonrası temizlik</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-4 bg-success text-white rounded-4 text-center">
+                            <i class="fas fa-hand-holding-heart fa-3x mb-3 opacity-75"></i>
+                            <h5 class="fw-bold mb-1">Müşteri Memnuniyeti</h5>
+                            <p class="small opacity-75 mb-0">%98 memnuniyet oranı</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING SECTION -->
+<section class="pricing-section">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge" style="background: rgba(255,255,255,0.2); color: #fff;">
+                <i class="fas fa-tags"></i>
+                Fiyatlandırma
+            </span>
+            <h2 class="section-title" style="color: #fff;">Evden Eve Nakliyat <span style="color: #FFD700;">Fiyatları</span></h2>
+            <p class="section-subtitle" style="color: rgba(255,255,255,0.8);">
+                Şeffaf fiyatlandırma politikamız ile bütçenize uygun seçenekler
+            </p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="pricing-card">
+                    <div class="pricing-icon">
+                        <i class="fas fa-couch"></i>
+                    </div>
+                    <h4 class="pricing-title">1+1 Daire</h4>
+                    <p class="pricing-desc">Küçük evler ve stüdyo daireler için ideal</p>
+                    <div class="pricing-range">₺2.500 - ₺4.500</div>
+                    <p class="pricing-note">Şehir içi taşıma için</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="pricing-card">
+                    <div class="pricing-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h4 class="pricing-title">2+1 / 3+1 Daire</h4>
+                    <p class="pricing-desc">Orta büyüklükte evler için standart paket</p>
+                    <div class="pricing-range">₺4.500 - ₺8.000</div>
+                    <p class="pricing-note">Şehir içi taşıma için</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="pricing-card">
+                    <div class="pricing-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h4 class="pricing-title">4+1 ve Üzeri</h4>
+                    <p class="pricing-desc">Büyük evler ve villalar için kapsamlı hizmet</p>
+                    <div class="pricing-range">₺8.000+</div>
+                    <p class="pricing-note">Şehir içi taşıma için</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5" data-aos="fade-up">
+            <p class="text-white-50 mb-3">
+                <i class="fas fa-info-circle me-2"></i>
+                Fiyatlar tahmini olup, kesin fiyat için ücretsiz keşif yapılması gerekmektedir.
+            </p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-white-custom">
+                <i class="fas fa-calculator me-2"></i>
+                Ücretsiz Fiyat Teklifi Al
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICE FAQ -->
+<section class="service-faq">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0" data-aos="fade-right">
+                <span class="section-badge">
+                    <i class="fas fa-question-circle"></i>
+                    SSS
+                </span>
+                <h2 class="section-title">Evden Eve Nakliyat <span>Hakkında</span></h2>
+                <p class="text-muted">
+                    Evden eve nakliyat hizmeti hakkında en çok sorulan sorular ve cevapları.
+                </p>
+            </div>
+            
+            <div class="col-lg-8" data-aos="fade-left">
+                <div class="accordion accordion-custom" id="serviceFaq">
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom" type="button" data-bs-toggle="collapse" data-bs-target="#sfaq1">
+                                Evden eve nakliyat fiyatı nasıl belirlenir?
+                            </button>
+                        </h2>
+                        <div id="sfaq1" class="accordion-collapse collapse show" data-bs-parent="#serviceFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Evden eve nakliyat fiyatı; eşya miktarı, taşınma mesafesi, kat durumu, asansör varlığı, 
+                                paketleme ihtiyacı ve ek hizmetler (montaj, depolama vb.) gibi faktörlere göre belirlenir. 
+                                Kesin fiyat için ücretsiz keşif yapılması önerilir.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sfaq2">
+                                Eşyalarım sigortalı mı taşınıyor?
+                            </button>
+                        </h2>
+                        <div id="sfaq2" class="accordion-collapse collapse" data-bs-parent="#serviceFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Evet, tüm taşımalar nakliyat sigortası kapsamındadır. Taşıma sırasında oluşabilecek 
+                                hasar ve kayıplar sigorta tarafından karşılanır. Değerli eşyalar için ek sigorta 
+                                yaptırmanız da mümkündür.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sfaq3">
+                                Taşınma ne kadar sürer?
+                            </button>
+                        </h2>
+                        <div id="sfaq3" class="accordion-collapse collapse" data-bs-parent="#serviceFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Standart bir 2+1 ev için şehir içi taşınma genellikle 4-6 saat sürer. Büyük evler, 
+                                şehirlerarası taşınmalar veya özel paketleme gerektiren durumlar için süre uzayabilir. 
+                                Keşif sonrası size tahmini süre bilgisi verilir.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sfaq4">
+                                Paketleme malzemesi kim tarafından sağlanır?
+                            </button>
+                        </h2>
+                        <div id="sfaq4" class="accordion-collapse collapse" data-bs-parent="#serviceFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Paketleme hizmeti dahilse, tüm malzemeler (koliler, streç film, köpük, battaniye vb.) 
+                                nakliye firması tarafından sağlanır. Kendiniz paketlemek isterseniz, malzeme satın alma 
+                                veya kiralama seçenekleri de sunulmaktadır.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="service-cta">
+    <div class="container">
+        <div class="cta-card" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mb-4 mb-lg-0">
+                    <h3>Evden Eve Nakliyat için Hemen Teklif Alın!</h3>
+                    <p>81 ilden 1000+ onaylı firmadan dakikalar içinde fiyat teklifi alın.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-white-custom me-2 mb-2 mb-lg-0">
+                        <i class="fas fa-calculator me-2"></i>
+                        Teklif Al
+                    </a>
+                    <a href="tel:08501234567" class="btn btn-outline-custom" style="border-color: #fff; color: #fff;">
+                        <i class="fas fa-phone me-2"></i>
+                        Ara
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

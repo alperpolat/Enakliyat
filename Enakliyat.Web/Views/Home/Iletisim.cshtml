@@ -1,0 +1,419 @@
+@{
+    ViewData["Title"] = "İletişim";
+}
+
+<style>
+    .contact-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        padding: 4rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .contact-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 70%;
+        height: 150%;
+        background: radial-gradient(circle, rgba(34,197,94,0.1) 0%, transparent 60%);
+    }
+    
+    .contact-hero h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 0.75rem;
+    }
+    
+    .contact-hero p {
+        font-size: 1.125rem;
+        color: rgba(255,255,255,0.8);
+    }
+    
+    .contact-section {
+        padding: 4rem 0;
+        background: #f8fafc;
+    }
+    
+    .contact-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+        height: 100%;
+    }
+    
+    .contact-card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 1.5rem;
+    }
+    
+    .contact-info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .contact-info-icon {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.125rem;
+    }
+    
+    .contact-info-content h4 {
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 0.25rem;
+        font-size: 1rem;
+    }
+    
+    .contact-info-content p {
+        color: #64748b;
+        margin: 0;
+        font-size: 0.9375rem;
+    }
+    
+    .contact-info-content a {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .contact-info-content a:hover {
+        text-decoration: underline;
+    }
+    
+    .form-label-custom {
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control-custom {
+        padding: 0.75rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        background: #f8fafc;
+    }
+    
+    .form-control-custom:focus {
+        border-color: #3b82f6;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
+    }
+    
+    .btn-contact-submit {
+        padding: 0.875rem 2rem;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 700;
+        transition: all 0.3s;
+    }
+    
+    .btn-contact-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(59,130,246,0.3);
+        color: #fff;
+    }
+    
+    .social-links {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+    
+    .social-link {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 1.125rem;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+    
+    .social-link:hover {
+        background: #3b82f6;
+        color: #fff;
+        transform: translateY(-3px);
+    }
+    
+    .faq-section {
+        padding: 4rem 0;
+    }
+    
+    .faq-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+    
+    .faq-subtitle {
+        color: #64748b;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .faq-accordion .accordion-item {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px !important;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+    
+    .faq-accordion .accordion-button {
+        font-weight: 600;
+        color: #0f172a;
+        padding: 1.25rem 1.5rem;
+        background: #fff;
+    }
+    
+    .faq-accordion .accordion-button:not(.collapsed) {
+        background: #f8fafc;
+        color: #3b82f6;
+        box-shadow: none;
+    }
+    
+    .faq-accordion .accordion-body {
+        padding: 1.25rem 1.5rem;
+        color: #64748b;
+        line-height: 1.7;
+    }
+    
+    .map-container {
+        border-radius: 16px;
+        overflow: hidden;
+        height: 300px;
+        background: #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+    }
+</style>
+
+<!-- Hero -->
+<section class="contact-hero">
+    <div class="container-xxl px-3 px-lg-5 position-relative">
+        <h1>İletişim</h1>
+        <p>Sorularınız mı var? Size yardımcı olmaktan mutluluk duyarız.</p>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section">
+    <div class="container-xxl px-3 px-lg-5">
+        <div class="row g-4">
+            <!-- Contact Form -->
+            <div class="col-lg-7">
+                <div class="contact-card">
+                    <h2 class="contact-card-title">Bize Mesaj Gönderin</h2>
+                    
+                    @if (TempData["ContactSuccess"] != null)
+                    {
+                        <div class="alert alert-success" style="border-radius: 10px;">
+                            <i class="fas fa-check-circle me-2"></i>
+                            @TempData["ContactSuccess"]
+                        </div>
+                    }
+                    
+                    <form method="post" asp-action="Iletisim">
+                        @Html.AntiForgeryToken()
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label form-label-custom">Adınız Soyadınız</label>
+                                <input type="text" name="name" class="form-control form-control-custom" placeholder="Ad Soyad" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-label-custom">E-posta Adresiniz</label>
+                                <input type="email" name="email" class="form-control form-control-custom" placeholder="ornek@email.com" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-label-custom">Telefon Numaranız</label>
+                                <input type="tel" name="phone" class="form-control form-control-custom" placeholder="0532 xxx xx xx" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label form-label-custom">Konu</label>
+                                <select name="subject" class="form-select form-control-custom">
+                                    <option value="Genel Soru">Genel Soru</option>
+                                    <option value="Teknik Destek">Teknik Destek</option>
+                                    <option value="Firma Başvurusu">Firma Başvurusu</option>
+                                    <option value="Şikayet">Şikayet</option>
+                                    <option value="Öneri">Öneri</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label form-label-custom">Mesajınız</label>
+                                <textarea name="message" class="form-control form-control-custom" rows="5" placeholder="Mesajınızı buraya yazın..." required></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-contact-submit">
+                                    <i class="fas fa-paper-plane me-2"></i>Mesaj Gönder
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Contact Info -->
+            <div class="col-lg-5">
+                <div class="contact-card mb-4">
+                    <h2 class="contact-card-title">İletişim Bilgileri</h2>
+                    
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-info-content">
+                            <h4>Adres</h4>
+                            <p>Atatürk Mah. Cumhuriyet Cad. No:123<br>Kadıköy, İstanbul</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon" style="background: linear-gradient(135deg, #22c55e 0%, #4ade80 100%);">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="contact-info-content">
+                            <h4>Telefon</h4>
+                            <p><a href="tel:+902161234567">0216 123 45 67</a></p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon" style="background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-info-content">
+                            <h4>E-posta</h4>
+                            <p><a href="mailto:info@nakliye360.com">info@nakliye360.com</a></p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="contact-info-content">
+                            <h4>Çalışma Saatleri</h4>
+                            <p>Pazartesi - Cumartesi: 09:00 - 18:00<br>Pazar: Kapalı</p>
+                        </div>
+                    </div>
+                    
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="map-container">
+                    <div class="text-center">
+                        <i class="fas fa-map-marked-alt fa-3x mb-2"></i>
+                        <p class="mb-0">Harita yakında eklenecek</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="container-xxl px-3 px-lg-5">
+        <h2 class="faq-title">Sık Sorulan Sorular</h2>
+        <p class="faq-subtitle">En çok sorulan sorulara hızlı yanıtlar</p>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion faq-accordion" id="contactFaq">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                Nakliye360 nasıl çalışır?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#contactFaq">
+                            <div class="accordion-body">
+                                Taşınma talebinizi platformumuza girin, ardından onaylı nakliyecilerden 
+                                dakikalar içinde teklif alın. Teklifleri karşılaştırın, firma yorumlarını 
+                                inceleyin ve size en uygun firmayı seçin.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Nakliye360'ı kullanmak ücretli mi?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#contactFaq">
+                            <div class="accordion-body">
+                                Hayır, platformumuz müşteriler için tamamen ücretsizdir. Teklif almak, 
+                                firmaları karşılaştırmak ve iletişime geçmek için herhangi bir ücret alınmaz.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                Nakliyeciler nasıl seçiliyor?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#contactFaq">
+                            <div class="accordion-body">
+                                Platformumuza başvuran tüm nakliyeciler titiz bir inceleme sürecinden geçer. 
+                                Yetki belgeleri, sigorta poliçeleri ve referansları kontrol edilir. 
+                                Sadece onaylanan firmalar teklif verebilir.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                Eşyalarım sigortalı mı?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#contactFaq">
+                            <div class="accordion-body">
+                                Platformumuzdaki tüm onaylı nakliyeciler sigorta poliçesine sahiptir. 
+                                Taşınma öncesinde sigorta kapsamını firmayla görüşmenizi öneririz.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

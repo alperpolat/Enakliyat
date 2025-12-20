@@ -1,0 +1,762 @@
+@{
+    ViewData["Title"] = "Parça Eşya Taşıma | Ekonomik Tek Parça Nakliye";
+    Layout = "_Layout";
+}
+
+<style>
+    .service-hero {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        padding: 6rem 0 4rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .service-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="65" y="25" width="15" height="15" rx="2" fill="rgba(255,255,255,0.03)"/><rect x="75" y="50" width="20" height="20" rx="2" fill="rgba(255,255,255,0.02)"/><rect x="55" y="60" width="12" height="18" rx="2" fill="rgba(255,255,255,0.03)"/></svg>');
+    }
+    
+    .service-hero-content { position: relative; z-index: 2; }
+    
+    .service-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-breadcrumb a {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    
+    .service-breadcrumb span { color: rgba(255,255,255,0.5); }
+    .service-breadcrumb .current { color: #FCD34D; }
+    
+    .service-hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+    }
+    
+    .service-hero-title span { color: #FCD34D; }
+    
+    .service-hero-desc {
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.85);
+        margin-bottom: 2rem;
+        line-height: 1.7;
+        max-width: 600px;
+    }
+    
+    .service-hero-stats {
+        display: flex;
+        gap: 3rem;
+        margin-top: 2rem;
+    }
+    
+    .hero-stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #FCD34D;
+    }
+    
+    .hero-stat-label {
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.7);
+    }
+    
+    .service-hero-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+    }
+    
+    .service-hero-card h4 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+    
+    .service-quick-form .form-control {
+        padding: 0.875rem 1rem 0.875rem 2.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+        background: #f8fafc;
+    }
+    
+    .service-quick-form .form-control:focus {
+        border-color: #059669;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+    }
+    
+    .service-quick-form .form-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        z-index: 5;
+    }
+    
+    .service-quick-form .btn-submit {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+    
+    .service-quick-form .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(5,150,105,0.35);
+    }
+    
+    /* What We Move */
+    .what-we-move {
+        padding: 5rem 0;
+        background: #f8fafc;
+    }
+    
+    .item-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s;
+        height: 100%;
+    }
+    
+    .item-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        border-color: #059669;
+    }
+    
+    .item-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, rgba(5,150,105,0.1), rgba(16,185,129,0.1));
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.75rem;
+        color: #059669;
+        transition: all 0.3s;
+    }
+    
+    .item-card:hover .item-icon {
+        background: linear-gradient(135deg, #059669, #10B981);
+        color: #fff;
+    }
+    
+    .item-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+    }
+    
+    .item-price {
+        font-size: 0.85rem;
+        color: #059669;
+        font-weight: 600;
+    }
+    
+    /* Advantages */
+    .advantages-section {
+        padding: 5rem 0;
+        background: #fff;
+    }
+    
+    .advantage-item {
+        display: flex;
+        gap: 1.25rem;
+        padding: 1.5rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        transition: all 0.3s;
+    }
+    
+    .advantage-item:hover {
+        background: #fff;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        transform: translateX(5px);
+    }
+    
+    .advantage-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #059669, #10B981);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+    
+    .advantage-content h5 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+    }
+    
+    .advantage-content p {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    
+    /* Pricing */
+    .pricing-section {
+        padding: 5rem 0;
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
+    
+    .pricing-table {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+    
+    .pricing-table-header {
+        background: #f8fafc;
+        padding: 1.25rem 1.5rem;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 1rem;
+        font-weight: 700;
+        color: #1e293b;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .pricing-table-row {
+        padding: 1.25rem 1.5rem;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        align-items: center;
+        transition: background 0.2s;
+    }
+    
+    .pricing-table-row:last-child {
+        border-bottom: none;
+    }
+    
+    .pricing-table-row:hover {
+        background: #f8fafc;
+    }
+    
+    .pricing-item-name {
+        font-weight: 600;
+        color: #1e293b;
+    }
+    
+    .pricing-item-name i {
+        color: #059669;
+        margin-right: 0.75rem;
+    }
+    
+    .pricing-item-value {
+        color: #64748b;
+    }
+    
+    .pricing-item-price {
+        font-weight: 700;
+        color: #059669;
+    }
+    
+    .service-cta { padding: 5rem 0; background: #f8fafc; }
+    
+    .cta-card {
+        background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        border-radius: 20px;
+        padding: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .cta-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+    
+    .cta-card h3 { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 1rem; }
+    .cta-card p { font-size: 1.1rem; color: rgba(255,255,255,0.9); margin-bottom: 2rem; }
+    
+    .service-faq { padding: 5rem 0; background: #fff; }
+    
+    .accordion-item-custom {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px !important;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+    
+    .accordion-button-custom {
+        background: #fff;
+        border: none;
+        padding: 1.25rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        box-shadow: none !important;
+    }
+    
+    .accordion-button-custom:not(.collapsed) { background: #f8fafc; color: #059669; }
+    .accordion-body-custom { padding: 0 1.5rem 1.5rem; color: #64748b; line-height: 1.8; }
+    
+    @@media (max-width: 991.98px) {
+        .service-hero-title { font-size: 2.25rem; }
+        .service-hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+        
+        .pricing-table-header,
+        .pricing-table-row {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .pricing-table-header > *:last-child,
+        .pricing-table-row > *:last-child {
+            display: none;
+        }
+    }
+    
+    @@media (max-width: 767.98px) {
+        .service-hero { padding: 4rem 0 3rem; }
+        .service-hero-title { font-size: 1.75rem; }
+    }
+</style>
+
+<!-- SERVICE HERO -->
+<section class="service-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 mb-5 mb-lg-0">
+                <div class="service-hero-content" data-aos="fade-right">
+                    <div class="service-breadcrumb">
+                        <a asp-controller="Home" asp-action="Index"><i class="fas fa-home me-1"></i> Ana Sayfa</a>
+                        <span>/</span>
+                        <a href="#">Hizmetler</a>
+                        <span>/</span>
+                        <span class="current">Parça Eşya Taşıma</span>
+                    </div>
+                    
+                    <h1 class="service-hero-title">
+                        Ekonomik <span>Parça Eşya</span> Taşıma
+                    </h1>
+                    
+                    <p class="service-hero-desc">
+                        Tek bir koliden büyük mobilyalara kadar parça eşyalarınızı ekonomik fiyatlarla 
+                        güvenle taşıyoruz. Hızlı teslimat ve canlı takip.
+                    </p>
+                    
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-white-custom">
+                            <i class="fas fa-calculator me-2"></i>
+                            Ücretsiz Teklif Al
+                        </a>
+                        <a href="tel:08501234567" class="btn btn-outline-custom" style="border-color: rgba(255,255,255,0.5); color: #fff;">
+                            <i class="fas fa-phone me-2"></i>
+                            0850 123 45 67
+                        </a>
+                    </div>
+                    
+                    <div class="service-hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">₺199</div>
+                            <div class="hero-stat-label">Başlangıç Fiyatı</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">1-3</div>
+                            <div class="hero-stat-label">Gün Teslimat</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">81</div>
+                            <div class="hero-stat-label">İl Teslimat</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-5" data-aos="fade-left">
+                <div class="service-hero-card">
+                    <h4><i class="fas fa-box me-2" style="color: #059669;"></i> Parça Eşya Teklifi</h4>
+                    <form asp-controller="Home" asp-action="Index" method="post" class="service-quick-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="MoveType" value="Partial" />
+                        
+                        <div class="position-relative mb-3">
+                            <i class="fas fa-map-marker-alt form-icon"></i>
+                            <input type="text" class="form-control" name="fromText" placeholder="Nereden alınacak?" required />
+                        </div>
+                        
+                        <div class="position-relative mb-3">
+                            <i class="fas fa-flag-checkered form-icon"></i>
+                            <input type="text" class="form-control" name="toText" placeholder="Nereye teslim?" required />
+                        </div>
+                        
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Ücretsiz Teklif Al
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WHAT WE MOVE -->
+<section class="what-we-move">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">
+                <i class="fas fa-boxes"></i>
+                Taşıdıklarımız
+            </span>
+            <h2 class="section-title">Hangi <span>Eşyaları Taşıyoruz?</span></h2>
+        </div>
+        
+        <div class="row g-3">
+            <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="0">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-couch"></i></div>
+                    <h5 class="item-title">Koltuk</h5>
+                    <span class="item-price">₺299'dan</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="50">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-bed"></i></div>
+                    <h5 class="item-title">Yatak</h5>
+                    <span class="item-price">₺249'dan</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="100">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-tv"></i></div>
+                    <h5 class="item-title">Televizyon</h5>
+                    <span class="item-price">₺199'dan</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="150">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-snowflake"></i></div>
+                    <h5 class="item-title">Buzdolabı</h5>
+                    <span class="item-price">₺349'dan</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="200">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-tshirt"></i></div>
+                    <h5 class="item-title">Gardırop</h5>
+                    <span class="item-price">₺399'dan</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="250">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-box"></i></div>
+                    <h5 class="item-title">Koli</h5>
+                    <span class="item-price">₺99'dan</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="300">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-desktop"></i></div>
+                    <h5 class="item-title">Bilgisayar</h5>
+                    <span class="item-price">₺149'dan</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="350">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-chair"></i></div>
+                    <h5 class="item-title">Masa/Sandalye</h5>
+                    <span class="item-price">₺179'dan</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="400">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-wind"></i></div>
+                    <h5 class="item-title">Klima</h5>
+                    <span class="item-price">₺299'dan</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="450">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-blender"></i></div>
+                    <h5 class="item-title">Beyaz Eşya</h5>
+                    <span class="item-price">₺249'dan</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="500">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-bicycle"></i></div>
+                    <h5 class="item-title">Bisiklet</h5>
+                    <span class="item-price">₺199'dan</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="550">
+                <div class="item-card">
+                    <div class="item-icon"><i class="fas fa-ellipsis-h"></i></div>
+                    <h5 class="item-title">Diğer</h5>
+                    <span class="item-price">Teklif Al</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ADVANTAGES -->
+<section class="advantages-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
+                <span class="section-badge">
+                    <i class="fas fa-star"></i>
+                    Avantajlar
+                </span>
+                <h2 class="section-title">Parça Eşya Taşımada <span>Neden Biz?</span></h2>
+                
+                <div class="advantage-item">
+                    <div class="advantage-icon"><i class="fas fa-piggy-bank"></i></div>
+                    <div class="advantage-content">
+                        <h5>Ekonomik Fiyatlar</h5>
+                        <p>Komple nakliyat yerine sadece taşıdığınız eşya kadar ödeyin</p>
+                    </div>
+                </div>
+                
+                <div class="advantage-item">
+                    <div class="advantage-icon"><i class="fas fa-shipping-fast"></i></div>
+                    <div class="advantage-content">
+                        <h5>Hızlı Teslimat</h5>
+                        <p>Şehir içi aynı gün, şehirlerarası 1-3 gün teslimat</p>
+                    </div>
+                </div>
+                
+                <div class="advantage-item">
+                    <div class="advantage-icon"><i class="fas fa-map-marked-alt"></i></div>
+                    <div class="advantage-content">
+                        <h5>Canlı Takip</h5>
+                        <p>Eşyanızın nerede olduğunu anlık olarak görün</p>
+                    </div>
+                </div>
+                
+                <div class="advantage-item">
+                    <div class="advantage-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div class="advantage-content">
+                        <h5>Sigortalı Taşıma</h5>
+                        <p>Tüm eşyalar hasar sigortası kapsamında</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-4 text-center rounded-4" style="background: linear-gradient(135deg, #059669, #047857); color: #fff;">
+                            <i class="fas fa-truck fa-3x mb-3 opacity-75"></i>
+                            <h5 class="fw-bold mb-1">Kapıdan Kapıya</h5>
+                            <p class="small opacity-75 mb-0">Adresinizden alınır</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-4 text-center rounded-4 bg-light">
+                            <i class="fas fa-box-open fa-3x mb-3 text-success"></i>
+                            <h5 class="fw-bold mb-1 text-dark">Özel Paketleme</h5>
+                            <p class="small text-muted mb-0">Koruma garantili</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-4 text-center rounded-4 bg-light">
+                            <i class="fas fa-hand-holding-usd fa-3x mb-3 text-success"></i>
+                            <h5 class="fw-bold mb-1 text-dark">Kapıda Ödeme</h5>
+                            <p class="small text-muted mb-0">Teslimde ödeme seçeneği</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-4 text-center rounded-4" style="background: linear-gradient(135deg, #F59E0B, #D97706); color: #fff;">
+                            <i class="fas fa-headset fa-3x mb-3 opacity-75"></i>
+                            <h5 class="fw-bold mb-1">7/24 Destek</h5>
+                            <p class="small opacity-75 mb-0">Her zaman yanınızda</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING TABLE -->
+<section class="pricing-section">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge" style="background: rgba(255,255,255,0.2); color: #fff;">
+                <i class="fas fa-tags"></i>
+                Fiyat Listesi
+            </span>
+            <h2 class="section-title" style="color: #fff;">Parça Eşya <span style="color: #FCD34D;">Fiyatları</span></h2>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-10" data-aos="fade-up">
+                <div class="pricing-table">
+                    <div class="pricing-table-header">
+                        <div>Eşya Türü</div>
+                        <div>Şehir İçi</div>
+                        <div>Şehirlerarası</div>
+                    </div>
+                    <div class="pricing-table-row">
+                        <div class="pricing-item-name"><i class="fas fa-box"></i> Koli (1-5 adet)</div>
+                        <div class="pricing-item-price">₺99 - ₺249</div>
+                        <div class="pricing-item-price">₺149 - ₺349</div>
+                    </div>
+                    <div class="pricing-table-row">
+                        <div class="pricing-item-name"><i class="fas fa-chair"></i> Tek Parça Mobilya</div>
+                        <div class="pricing-item-price">₺199 - ₺399</div>
+                        <div class="pricing-item-price">₺299 - ₺599</div>
+                    </div>
+                    <div class="pricing-table-row">
+                        <div class="pricing-item-name"><i class="fas fa-tv"></i> Elektronik Eşya</div>
+                        <div class="pricing-item-price">₺149 - ₺349</div>
+                        <div class="pricing-item-price">₺249 - ₺499</div>
+                    </div>
+                    <div class="pricing-table-row">
+                        <div class="pricing-item-name"><i class="fas fa-snowflake"></i> Beyaz Eşya</div>
+                        <div class="pricing-item-price">₺249 - ₺449</div>
+                        <div class="pricing-item-price">₺399 - ₺699</div>
+                    </div>
+                    <div class="pricing-table-row">
+                        <div class="pricing-item-name"><i class="fas fa-couch"></i> Koltuk Takımı</div>
+                        <div class="pricing-item-price">₺399 - ₺699</div>
+                        <div class="pricing-item-price">₺599 - ₺999</div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <p class="text-white-50">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Fiyatlar mesafeye ve eşya boyutuna göre değişebilir.
+                    </p>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-white-custom mt-2">
+                        <i class="fas fa-calculator me-2"></i>
+                        Detaylı Fiyat Al
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="service-faq">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0" data-aos="fade-right">
+                <span class="section-badge">
+                    <i class="fas fa-question-circle"></i>
+                    SSS
+                </span>
+                <h2 class="section-title">Parça Eşya <span>Hakkında</span></h2>
+            </div>
+            
+            <div class="col-lg-8" data-aos="fade-left">
+                <div class="accordion" id="partialFaq">
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom" type="button" data-bs-toggle="collapse" data-bs-target="#pfaq1">
+                                Minimum kaç parça taşıyorsunuz?
+                            </button>
+                        </h2>
+                        <div id="pfaq1" class="accordion-collapse collapse show" data-bs-parent="#partialFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Tek parça eşya bile taşıyoruz! Bir koli, bir sandalye veya tek bir beyaz eşya - 
+                                ne olursa olsun kapıdan kapıya güvenle ulaştırıyoruz.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pfaq2">
+                                Teslimat süresi ne kadar?
+                            </button>
+                        </h2>
+                        <div id="pfaq2" class="accordion-collapse collapse" data-bs-parent="#partialFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Şehir içi teslimatlar genellikle aynı gün veya ertesi gün tamamlanır. 
+                                Şehirlerarası teslimatlar 1-3 iş günü içinde gerçekleştirilir. Ekspres seçenekleri de mevcuttur.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pfaq3">
+                                Eşyamı nasıl takip edebilirim?
+                            </button>
+                        </h2>
+                        <div id="pfaq3" class="accordion-collapse collapse" data-bs-parent="#partialFaq">
+                            <div class="accordion-body accordion-body-custom">
+                                Her gönderime özel takip numarası verilir. Web sitemiz veya SMS ile eşyanızın 
+                                hangi aşamada olduğunu anlık olarak takip edebilirsiniz.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="service-cta">
+    <div class="container">
+        <div class="cta-card" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mb-4 mb-lg-0">
+                    <h3>Parça Eşyanızı Hemen Gönderin!</h3>
+                    <p>Ekonomik fiyatlar, hızlı teslimat ve tam güvence ile.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-white-custom">
+                        <i class="fas fa-calculator me-2"></i>
+                        Teklif Al
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

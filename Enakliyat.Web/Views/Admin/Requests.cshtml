@@ -9,6 +9,9 @@
 
     <form asp-action="Requests" method="get" class="row g-2 mb-3">
         <div class="col-md-3">
+            <input type="text" name="search" class="form-control form-control-sm" placeholder="Ara (İsim, Telefon, Email, Adres, Talep No)" value="@ViewBag.Search" />
+        </div>
+        <div class="col-md-2">
             <select name="cityId" class="form-select form-select-sm" onchange="this.form.submit()">
                 <option value="">Şehir (Hepsi)</option>
                 @foreach (var city in (IEnumerable<Enakliyat.Domain.City>)ViewBag.Cities)

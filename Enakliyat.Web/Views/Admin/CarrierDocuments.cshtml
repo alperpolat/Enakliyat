@@ -1,0 +1,73 @@
+@model List<Enakliyat.Domain.CarrierDocument>
+@{
+    ViewData["Title"] = "Firma Belgeleri";
+}
+
+<div class="admin-card mb-4">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title">Firma Belgeleri</h3>
+    </div>
+    <div class="admin-card-body">
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label class="form-label">Firma Seç</label>
+                <select name="carrierId" class="form-select" onchange="this.form.submit()">
+                    <option value="">Tüm Firmalar</option>
+                    @foreach (var carrier in ViewBag.Carriers as List<Enakliyat.Domain.Carrier> ?? new List<Enakliyat.Domain.Carrier>())
+                    {
+                        <option value="@carrier.Id" selected="@(ViewContext.HttpContext.Request.Query["carrierId"].ToString() == carrier.Id.ToString())">
+                            @carrier.Name
+                        </option>
+                    }
+                </select>
+            </div>
+        </form>
+        
+        <div class="table-responsive">
+            <table class="table admin-table">
+                <thead>
+                    <tr>
+                        <th>Firma</th>
+                        <th>Belge Tipi</th>
+                        <th>Tarih</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var doc in Model)
+                        {
+                            <tr>
+                                <td><strong>@doc.Carrier?.Name</strong></td>
+                                <td>@doc.DocumentType</td>
+                                <td>@doc.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                <td>
+                                    <a href="/uploads/@doc.FilePath" target="_blank" class="btn btn-sm btn-admin-light me-2">
+                                        <i class="fas fa-eye"></i> Görüntüle
+                                    </a>
+                                    <form asp-action="ApproveCarrierDocument" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="documentId" value="@doc.Id" />
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="fas fa-check"></i> Onayla
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                Belge bulunamadı.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

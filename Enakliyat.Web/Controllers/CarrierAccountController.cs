@@ -73,18 +73,30 @@ public class CarrierAccountController : Controller
     }
 
     [HttpGet]
-    public IActionResult Register()
+    public async Task<IActionResult> Register()
     {
+        var districts = await _context.Districts
+            .Include(d => d.City)
+            .OrderBy(d => d.City.Name)
+            .ThenBy(d => d.Name)
+            .ToListAsync();
+        ViewBag.Districts = districts;
         return View();
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Register(string companyName, string name, string phoneNumber, string email, string password, string? licenseNumber, string? vehicleInfo, string? serviceAreas, string? description, IFormFile[]? documents)
+    public async Task<IActionResult> Register(string companyName, string name, string phoneNumber, string? landlinePhone, string email, string password, string? passwordConfirm, string? website, int? districtId, string? licenseNumber, string? vehicleInfo, string? serviceAreas, string? description, string? taxOffice, string? taxNumber, string? invoiceAddress, IFormFile[]? documents)
     {
         if (string.IsNullOrWhiteSpace(companyName) || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(phoneNumber) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
         {
             ModelState.AddModelError(string.Empty, "Tüm zorunlu alanları doldurun.");
+            return View();
+        }
+
+        if (!string.IsNullOrWhiteSpace(passwordConfirm) && password != passwordConfirm)
+        {
+            ModelState.AddModelError(string.Empty, "Şifreler eşleşmiyor.");
             return View();
         }
 
@@ -100,11 +112,17 @@ public class CarrierAccountController : Controller
             Name = name,
             CompanyName = companyName,
             PhoneNumber = phoneNumber,
+            LandlinePhone = landlinePhone,
             Email = email,
+            Website = website,
+            DistrictId = districtId,
             LicenseNumber = licenseNumber,
             VehicleInfo = vehicleInfo,
             ServiceAreas = serviceAreas,
             Description = description,
+            TaxOffice = taxOffice,
+            TaxNumber = taxNumber,
+            InvoiceAddress = invoiceAddress,
             IsApproved = false,
             IsRejected = false,
             IsSuspended = false
@@ -132,9 +150,15 @@ public class CarrierAccountController : Controller
             {
                 if (file == null || file.Length == 0) continue;
 
-                var safeName = Path.GetFileNameWithoutExtension(file.FileName);
-                var ext = Path.GetExtension(file.FileName);
-                var uniqueName = $"{safeName}_{Guid.NewGuid():N}{ext}";
+                // File validation
+                var validationError = Enakliyat.Web.Helpers.FileUploadHelper.GetFileValidationError(file, isImage: false);
+                if (!string.IsNullOrEmpty(validationError))
+                {
+                    ModelState.AddModelError(string.Empty, $"Dosya hatası: {validationError}");
+                    continue;
+                }
+
+                var uniqueName = Enakliyat.Web.Helpers.FileUploadHelper.GenerateSafeFileName(file.FileName);
                 var physicalPath = Path.Combine(uploadRoot, uniqueName);
 
                 using (var stream = new FileStream(physicalPath, FileMode.Create))

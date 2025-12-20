@@ -1,513 +1,1690 @@
 ﻿@model Enakliyat.Web.Models.MoveRequestViewModel
 
 @{
-    ViewData["Title"] = "Evden Eve Nakliyat Teklif Al";
+    ViewData["Title"] = "Evden Eve Nakliyat | Güvenilir Nakliye Firmaları";
+    Layout = "_Layout";
 }
 
-<!-- QUOTE FORM -->
-<div id="quote-form" class="py-5" style="background-color:#f5f7fb; min-height:100vh;">
-    <div class="container-xxl p-3 p-lg-5 d-flex flex-column justify-content-center">
-        <div class="row justify-content-center mb-4 mb-lg-5">
-            <div class="col-12 text-center">
-                <h2 class="fs-3 fs-lg-2 fw-semibold mb-2">81 ilden +1000 nakliyeciden teklif al.</h2>
-                <p class="text-body-secondary mb-0">Tek form doldur, onaylı nakliyecilerden dakikalar içinde fiyat teklifi gelsin.</p>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-12">
-                <div class="card border-0 shadow-lg rounded-4 my-4 my-lg-5">
-                    <div class="card-header bg-white border-0 pb-0 pt-4 px-4 px-lg-5">
-                        <h4 class="card-title mb-1 fs-4 fw-semibold">
-                            Tek form ile <span class="text-primary">tüm nakliyecilerden</span> teklif al
-                        </h4>
-                        <p class="text-body-secondary mb-0">Taşınma tipini seç, adresleri doldur, geri kalanını biz halledelim.</p>
+<style>
+    /* ===== HERO SECTION ===== */
+    .hero-section {
+        background: linear-gradient(135deg, #0052CC 0%, #0747A6 50%, #003366 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        padding: 2rem 0;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.03)" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,208C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+        background-size: cover;
+    }
+    
+    .hero-floating-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+    
+    .hero-shape {
+        position: absolute;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+    
+    .hero-shape-1 {
+        width: 300px;
+        height: 300px;
+        top: -100px;
+        right: -100px;
+    }
+    
+    .hero-shape-2 {
+        width: 200px;
+        height: 200px;
+        bottom: 100px;
+        left: -50px;
+    }
+    
+    .hero-shape-3 {
+        width: 150px;
+        height: 150px;
+        top: 50%;
+        right: 20%;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        color: #fff;
+        padding: 0.5rem 1.25rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .hero-badge i {
+        color: #FFD700;
+    }
+    
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: #fff;
+        line-height: 1.15;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero-title span {
+        color: #FFD700;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: rgba(255,255,255,0.85);
+        margin-bottom: 2rem;
+        line-height: 1.7;
+    }
+    
+    .hero-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .hero-feature {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: rgba(255,255,255,0.9);
+        font-weight: 500;
+    }
+    
+    .hero-feature-icon {
+        width: 32px;
+        height: 32px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+    }
+    
+    .hero-feature-icon i {
+        color: #4ADE80;
+    }
+    
+    /* ===== QUOTE FORM ===== */
+    .quote-form-card {
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+        overflow: hidden;
+        position: relative;
+        z-index: 3;
+    }
+    
+    .quote-form-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .quote-form-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+    }
+    
+    .quote-form-subtitle {
+        font-size: 0.9rem;
+        color: #64748b;
+    }
+    
+    .quote-tabs {
+        display: flex;
+        background: #f1f5f9;
+        border-radius: 12px;
+        padding: 4px;
+        margin: 1.5rem 2rem 0;
+    }
+    
+    .quote-tab {
+        flex: 1;
+        padding: 0.875rem 1rem;
+        border: none;
+        background: transparent;
+        color: #64748b;
+        font-weight: 600;
+        font-size: 0.875rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .quote-tab:hover {
+        color: #0052CC;
+    }
+    
+    .quote-tab.active {
+        background: #fff;
+        color: #0052CC;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .quote-form-body {
+        padding: 2rem;
+    }
+    
+    .form-floating-custom {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+    
+    .form-control-custom {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+    }
+    
+    .form-control-custom:focus {
+        border-color: #0052CC;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(0,82,204,0.1);
+        outline: none;
+    }
+    
+    .form-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        pointer-events: none;
+    }
+    
+    .btn-quote-submit {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #FF6B35 0%, #FF8F6B 100%);
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+    
+    .btn-quote-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(255,107,53,0.4);
+    }
+    
+    .quote-trust-badges {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e2e8f0;
+    }
+    
+    .trust-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #64748b;
+        font-size: 0.85rem;
+    }
+    
+    .trust-badge i {
+        color: #0052CC;
+    }
+    
+    /* ===== SERVICES SECTION ===== */
+    .services-section {
+        background: #f8fafc;
+        padding: 6rem 0;
+    }
+    
+    .service-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 2rem;
+        height: 100%;
+        border: 1px solid #e2e8f0;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .service-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #0052CC, #4C9AFF);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
+    }
+    
+    .service-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(0,82,204,0.15);
+        border-color: #0052CC;
+    }
+    
+    .service-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, rgba(0,82,204,0.1) 0%, rgba(76,154,255,0.1) 100%);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        color: #0052CC;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .service-card:hover .service-icon {
+        background: linear-gradient(135deg, #0052CC 0%, #4C9AFF 100%);
+        color: #fff;
+        transform: scale(1.1);
+    }
+    
+    .service-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+    }
+    
+    .service-desc {
+        color: #64748b;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1.5rem 0;
+    }
+    
+    .service-features li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #475569;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .service-features li i {
+        color: #22c55e;
+        font-size: 0.75rem;
+    }
+    
+    .service-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #0052CC;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .service-link:hover {
+        gap: 0.75rem;
+        color: #003d99;
+    }
+    
+    /* ===== HOW IT WORKS ===== */
+    .how-section {
+        padding: 6rem 0;
+        background: #fff;
+    }
+    
+    .step-card {
+        text-align: center;
+        padding: 2rem 1.5rem;
+        position: relative;
+    }
+    
+    .step-number {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #0052CC 0%, #4C9AFF 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #fff;
+        margin: 0 auto 1.5rem;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .step-connector {
+        position: absolute;
+        top: 50px;
+        left: calc(50% + 30px);
+        width: calc(100% - 60px);
+        height: 3px;
+        background: linear-gradient(90deg, #0052CC, #4C9AFF);
+        z-index: 1;
+    }
+    
+    .step-icon {
+        width: 80px;
+        height: 80px;
+        background: #f1f5f9;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #0052CC;
+        margin: 0 auto 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .step-card:hover .step-icon {
+        background: linear-gradient(135deg, #0052CC 0%, #4C9AFF 100%);
+        color: #fff;
+        transform: scale(1.1);
+    }
+    
+    .step-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+    }
+    
+    .step-desc {
+        color: #64748b;
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+    
+    /* ===== STATS SECTION ===== */
+    .stats-section {
+        background: linear-gradient(135deg, #0052CC 0%, #0747A6 100%);
+        padding: 5rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stats-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .stat-number {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: #fff;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-number span {
+        color: #FFD700;
+    }
+    
+    .stat-label {
+        color: rgba(255,255,255,0.8);
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+    
+    /* ===== ADVANTAGES SECTION ===== */
+    .advantages-section {
+        padding: 6rem 0;
+        background: #f8fafc;
+    }
+    
+    .advantage-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 2rem;
+        height: 100%;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .advantage-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+    
+    .advantage-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .advantage-icon.blue {
+        background: rgba(0,82,204,0.1);
+        color: #0052CC;
+    }
+    
+    .advantage-icon.green {
+        background: rgba(34,197,94,0.1);
+        color: #22c55e;
+    }
+    
+    .advantage-icon.orange {
+        background: rgba(255,107,53,0.1);
+        color: #FF6B35;
+    }
+    
+    .advantage-icon.purple {
+        background: rgba(168,85,247,0.1);
+        color: #a855f7;
+    }
+    
+    .advantage-icon.yellow {
+        background: rgba(234,179,8,0.1);
+        color: #eab308;
+    }
+    
+    .advantage-icon.cyan {
+        background: rgba(6,182,212,0.1);
+        color: #06b6d4;
+    }
+    
+    .advantage-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .advantage-desc {
+        color: #64748b;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    
+    /* ===== TESTIMONIALS ===== */
+    .testimonials-section {
+        padding: 6rem 0;
+        background: #fff;
+    }
+    
+    .testimonial-card {
+        background: #f8fafc;
+        border-radius: 20px;
+        padding: 2rem;
+        height: 100%;
+        position: relative;
+    }
+    
+    .testimonial-quote {
+        font-size: 3rem;
+        color: #0052CC;
+        opacity: 0.2;
+        position: absolute;
+        top: 1rem;
+        left: 1.5rem;
+    }
+    
+    .testimonial-rating {
+        display: flex;
+        gap: 0.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .testimonial-rating i {
+        color: #fbbf24;
+        font-size: 1rem;
+    }
+    
+    .testimonial-text {
+        color: #475569;
+        font-size: 1rem;
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+        font-style: italic;
+    }
+    
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #0052CC 0%, #4C9AFF 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+    
+    .author-info h5 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+    }
+    
+    .author-info span {
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+    
+    /* ===== FAQ SECTION ===== */
+    .faq-section {
+        padding: 6rem 0;
+        background: #f8fafc;
+    }
+    
+    .accordion-custom {
+        border: none;
+    }
+    
+    .accordion-item-custom {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px !important;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+    
+    .accordion-button-custom {
+        background: #fff;
+        border: none;
+        padding: 1.25rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        box-shadow: none !important;
+    }
+    
+    .accordion-button-custom:not(.collapsed) {
+        background: #f8fafc;
+        color: #0052CC;
+    }
+    
+    .accordion-button-custom::after {
+        background-size: 16px;
+    }
+    
+    .accordion-body-custom {
+        padding: 0 1.5rem 1.5rem;
+        color: #64748b;
+        line-height: 1.8;
+    }
+    
+    /* ===== BLOG SECTION ===== */
+    .blog-section {
+        padding: 6rem 0;
+        background: #fff;
+    }
+    
+    .blog-card {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .blog-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+    
+    .blog-image {
+        height: 200px;
+        background: linear-gradient(135deg, #0052CC 0%, #4C9AFF 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: rgba(255,255,255,0.3);
+    }
+    
+    .blog-content {
+        padding: 1.5rem;
+    }
+    
+    .blog-category {
+        display: inline-block;
+        background: rgba(0,82,204,0.1);
+        color: #0052CC;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+    
+    .blog-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+    
+    .blog-excerpt {
+        color: #64748b;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+    
+    .blog-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: #94a3b8;
+        font-size: 0.85rem;
+    }
+    
+    /* ===== CTA SECTION ===== */
+    .cta-section {
+        background: linear-gradient(135deg, #FF6B35 0%, #FF8F6B 100%);
+        padding: 5rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -10%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+    
+    .cta-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 1rem;
+    }
+    
+    .cta-subtitle {
+        color: rgba(255,255,255,0.9);
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* ===== RESPONSIVE ===== */
+    @@media (max-width: 991.98px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-section {
+            min-height: auto;
+            padding: 3rem 0;
+        }
+        
+        .quote-tabs {
+            flex-wrap: wrap;
+        }
+        
+        .quote-tab {
+            flex: 1 1 45%;
+        }
+        
+        .step-connector {
+            display: none;
+        }
+    }
+    
+    @@media (max-width: 767.98px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .hero-features {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .quote-trust-badges {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+        }
+    }
+    
+    /* Location suggestions */
+    .location-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        z-index: 100;
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 4px;
+    }
+    
+    .location-suggestion-item {
+        padding: 0.875rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid #f1f5f9;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .location-suggestion-item:last-child {
+        border-bottom: none;
+    }
+    
+    .location-suggestion-item:hover {
+        background: #f8fafc;
+    }
+    
+    .location-suggestion-item i {
+        color: #0052CC;
+    }
+</style>
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="hero-floating-shapes">
+        <div class="hero-shape hero-shape-1"></div>
+        <div class="hero-shape hero-shape-2"></div>
+        <div class="hero-shape hero-shape-3"></div>
+    </div>
+    
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="hero-content" data-aos="fade-right">
+                    <div class="hero-badge">
+                        <i class="fas fa-star"></i>
+                        Türkiye'nin 1 Numaralı Nakliyat Platformu
                     </div>
-                    <div class="card-body px-4 px-lg-5 py-4 py-lg-5">
-                    <!-- Tabs -->
-                    <ul class="nav nav-tabs mb-4 border-bottom-0" id="offerTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active fw-semibold" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
-                                <i class="fa fa-home me-2"></i>Ev Taşıma
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link fw-semibold" id="partial-tab" data-bs-toggle="tab" data-bs-target="#partial" type="button" role="tab" aria-controls="partial" aria-selected="false">
-                                <i class="fa fa-box me-2"></i>Parça Eşya
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link fw-semibold" id="office-tab" data-bs-toggle="tab" data-bs-target="#office" type="button" role="tab" aria-controls="office" aria-selected="false">
-                                <i class="fa fa-building me-2"></i>Ofis Taşıma
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link fw-semibold" id="storage-tab" data-bs-toggle="tab" data-bs-target="#storage" type="button" role="tab" aria-controls="storage" aria-selected="false">
-                                <i class="fa fa-archive me-2"></i>Depolama
-                            </button>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content" id="offerTabsContent">
-                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            <form asp-action="Index" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="MoveType" value="Home" />
-                                <div class="row g-3">
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereden</label>
-                                        <input type="text" class="form-control form-control-lg" id="fromLocationText" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="FromCityId" id="fromCityId" />
-                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictId" />
-                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodId" />
-                                        <div id="fromLocationSuggestions" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereye</label>
-                                        <input type="text" class="form-control form-control-lg" id="toLocationText" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="ToCityId" id="toCityId" />
-                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictId" />
-                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodId" />
-                                        <div id="toLocationSuggestions" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                </div>
-                                <div class="row g-3 mt-2">
-                                    <div class="col-md-3 col-lg-2 ms-auto d-grid">
-                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
-                                            Teklif Al
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                    
+                    <h1 class="hero-title">
+                        Evden Eve Nakliyat için <span>Tek Form</span>, Onlarca Teklif
+                    </h1>
+                    
+                    <p class="hero-subtitle">
+                        81 ilden 1000+ onaylı nakliye firmasından anında teklif alın. 
+                        Fiyatları karşılaştırın, yorumları okuyun, en uygununu seçin.
+                    </p>
+                    
+                    <div class="hero-features">
+                        <div class="hero-feature">
+                            <div class="hero-feature-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <span>Ücretsiz Teklif</span>
                         </div>
-
-                        <div class="tab-pane fade" id="partial" role="tabpanel" aria-labelledby="partial-tab">
-                            <form asp-action="Index" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="MoveType" value="Partial" />
-                                <div class="row g-3">
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereden</label>
-                                        <input type="text" class="form-control form-control-lg" id="fromLocationTextPartial" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="FromCityId" id="fromCityIdPartial" />
-                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictIdPartial" />
-                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodIdPartial" />
-                                        <div id="fromLocationSuggestionsPartial" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereye</label>
-                                        <input type="text" class="form-control form-control-lg" id="toLocationTextPartial" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="ToCityId" id="toCityIdPartial" />
-                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictIdPartial" />
-                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodIdPartial" />
-                                        <div id="toLocationSuggestionsPartial" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                </div>
-                                <div class="row g-3 mt-2">
-                                    <div class="col-md-3 col-lg-2 ms-auto d-grid">
-                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
-                                            Teklif Al
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                        <div class="hero-feature">
+                            <div class="hero-feature-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <span>Sigortalı Taşıma</span>
                         </div>
-
-                        <div class="tab-pane fade" id="office" role="tabpanel" aria-labelledby="office-tab">
-                            <form asp-action="Index" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="MoveType" value="Office" />
-                                <div class="row g-3">
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereden</label>
-                                        <input type="text" class="form-control form-control-lg" id="fromLocationTextOffice" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="FromCityId" id="fromCityIdOffice" />
-                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictIdOffice" />
-                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodIdOffice" />
-                                        <div id="fromLocationSuggestionsOffice" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereye</label>
-                                        <input type="text" class="form-control form-control-lg" id="toLocationTextOffice" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="ToCityId" id="toCityIdOffice" />
-                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictIdOffice" />
-                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodIdOffice" />
-                                        <div id="toLocationSuggestionsOffice" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                </div>
-                                <div class="row g-3 mt-2">
-                                    <div class="col-md-3 col-lg-2 ms-auto d-grid">
-                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
-                                            Teklif Al
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                        <div class="hero-feature">
+                            <div class="hero-feature-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <span>%100 Güvenli Ödeme</span>
                         </div>
-
-                        <div class="tab-pane fade" id="storage" role="tabpanel" aria-labelledby="storage-tab">
-                            <form asp-action="Index" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="MoveType" value="Storage" />
-                                <div class="row g-3">
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereden</label>
-                                        <input type="text" class="form-control form-control-lg" id="fromLocationTextStorage" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="FromCityId" id="fromCityIdStorage" />
-                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictIdStorage" />
-                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodIdStorage" />
-                                        <div id="fromLocationSuggestionsStorage" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                    <div class="col-md-5 position-relative">
-                                        <label class="form-label mb-1">Nereye</label>
-                                        <input type="text" class="form-control form-control-lg" id="toLocationTextStorage" placeholder="Sokak, mahalle, il veya ilçe" autocomplete="off" />
-                                        <input type="hidden" asp-for="ToCityId" id="toCityIdStorage" />
-                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictIdStorage" />
-                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodIdStorage" />
-                                        <div id="toLocationSuggestionsStorage" class="list-group position-absolute w-100" style="z-index: 1000;"></div>
-                                    </div>
-                                </div>
-                                <div class="row g-3 mt-2">
-                                    <div class="col-md-3 col-lg-2 ms-auto d-grid">
-                                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 999px;">
-                                            Teklif Al
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="quote-form-card" data-aos="fade-left" data-aos-delay="200">
+                    <div class="quote-form-header">
+                        <h2 class="quote-form-title">Hemen Teklif Al</h2>
+                        <p class="quote-form-subtitle">Dakikalar içinde fiyat teklifleri gelsin</p>
+                    </div>
+                    
+                    <div class="quote-tabs" id="quoteTabs">
+                        <button class="quote-tab active" data-tab="home" type="button">
+                            <i class="fas fa-home"></i>
+                            <span class="d-none d-sm-inline">Ev Taşıma</span>
+                        </button>
+                        <button class="quote-tab" data-tab="office" type="button">
+                            <i class="fas fa-building"></i>
+                            <span class="d-none d-sm-inline">Ofis</span>
+                        </button>
+                        <button class="quote-tab" data-tab="storage" type="button">
+                            <i class="fas fa-warehouse"></i>
+                            <span class="d-none d-sm-inline">Depolama</span>
+                        </button>
+                        <button class="quote-tab" data-tab="partial" type="button">
+                            <i class="fas fa-box"></i>
+                            <span class="d-none d-sm-inline">Parça Eşya</span>
+                        </button>
+                    </div>
+                    
+                    <div class="quote-form-body">
+                        <form asp-action="Index" method="post" id="quoteForm">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="MoveType" id="moveType" value="Home" />
+                            
+                            <div class="form-floating-custom" style="position: relative;">
+                                <i class="fas fa-map-marker-alt form-icon"></i>
+                                <input type="text" 
+                                       class="form-control-custom" 
+                                       id="fromLocationText" 
+                                       placeholder="Nereden taşınacak?" 
+                                       autocomplete="off"
+                                       required />
+                                <input type="hidden" asp-for="FromCityId" id="fromCityId" />
+                                <input type="hidden" asp-for="FromDistrictId" id="fromDistrictId" />
+                                <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodId" />
+                                <div id="fromLocationSuggestions" class="location-suggestions" style="display: none;"></div>
+                            </div>
+                            
+                            <div class="form-floating-custom" style="position: relative;">
+                                <i class="fas fa-flag-checkered form-icon"></i>
+                                <input type="text" 
+                                       class="form-control-custom" 
+                                       id="toLocationText" 
+                                       placeholder="Nereye taşınacak?" 
+                                       autocomplete="off"
+                                       required />
+                                <input type="hidden" asp-for="ToCityId" id="toCityId" />
+                                <input type="hidden" asp-for="ToDistrictId" id="toDistrictId" />
+                                <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodId" />
+                                <div id="toLocationSuggestions" class="location-suggestions" style="display: none;"></div>
+                            </div>
+                            
+                            <button type="submit" class="btn-quote-submit">
+                                <i class="fas fa-paper-plane"></i>
+                                Ücretsiz Teklif Al
+                            </button>
+                        </form>
+                        
+                        <div class="quote-trust-badges">
+                            <div class="trust-badge">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>SSL Güvenli</span>
+                            </div>
+                            <div class="trust-badge">
+                                <i class="fas fa-lock"></i>
+                                <span>KVKK Uyumlu</span>
+                            </div>
+                            <div class="trust-badge">
+                                <i class="fas fa-headset"></i>
+                                <span>7/24 Destek</span>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center mt-4 mt-lg-5">
-            <div class="col-12 text-center text-body-secondary">
-                <small><i class="fa fa-mouse me-2"></i>Daha fazla bilgi için kaydırın</small>
-            </div>
-        </div>
     </div>
-</div>
+</section>
 
-<!-- HERO -->
-<div class="py-4 border-bottom mb-4" style="background-color:#f5f7fb;">
-    <div class="container-xxl p-3 p-lg-4">
-        <div class="row align-items-center">
-            <div class="col-lg-6 mb-4 mb-lg-0">
-                <h1 class="display-4 fw-bolder mb-3 text-body-emphasis" style="letter-spacing:-0.02em;">
-                    <span class="d-block">
-                        <span style="color:#1a73e8;">Evden</span>
-                        <span style="color:#34a853;">eve</span>
-                        <span style="color:#fbbc05;">nakliyat</span>
-                        <span style="color:#ea4335;">için</span>
-                    </span>
-                    <span class="d-block text-primary">
-                        <span style="color:#34a853;">tek</span>
-                        <span style="color:#1a73e8;">form,</span>
-                        <span style="color:#ea4335;">onlarca</span>
-                        <span style="color:#fbbc05;">teklif.</span>
-                    </span>
-                </h1>
-                <p class="fs-5 text-body-secondary mb-4">
-                    Türkiye genelindeki onaylı nakliyecilerden dakikalar içinde fiyat teklifi al.
-                    Taşınma detaylarını gir, firmaları puan ve yorumlarına göre karşılaştır, en uygununu seç.
-                </p>
-                <ul class="list-unstyled mb-4 text-body-secondary">
-                    <li class="mb-2"><i class="fa fa-check text-theme me-2"></i> Onaylı ve puanlı firmalar</li>
-                    <li class="mb-2"><i class="fa fa-check text-theme me-2"></i> Fotoğraflı talep oluşturma</li>
-                    <li class="mb-2"><i class="fa fa-check text-theme me-2"></i> %10 kapora ile güvenli rezervasyon</li>
-                </ul>
-                <a href="#quote-form" class="btn btn-theme fw-semibold px-4 py-2">
-                    Hemen ücretsiz teklif al
+<!-- SERVICES SECTION -->
+<section class="services-section" id="hizmetler">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">
+                <i class="fas fa-truck"></i>
+                Hizmetlerimiz
+            </span>
+            <h2 class="section-title">Tüm Taşınma İhtiyaçlarınız için <span>Tek Adres</span></h2>
+            <p class="section-subtitle">
+                Evden eve nakliyattan ofis taşımaya, depolamadan parça eşya gönderime kadar tüm hizmetler
+            </p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <a asp-controller="Home" asp-action="EvTasima" class="text-decoration-none">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <h3 class="service-title">Evden Eve Nakliyat</h3>
+                        <p class="service-desc">
+                            Evinizi güvenle yeni adresinize taşıyoruz. Profesyonel ekip ve sigortalı taşımacılık.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-circle"></i> Profesyonel paketleme</li>
+                            <li><i class="fas fa-circle"></i> Sigortalı taşıma</li>
+                            <li><i class="fas fa-circle"></i> Montaj/demontaj</li>
+                        </ul>
+                        <span class="service-link">
+                            Detaylı Bilgi <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </div>
                 </a>
             </div>
-            <div class="col-lg-6 d-none d-lg-block text-center">
-                <img src="~/img/3.jpg" alt="Evden eve nakliyat" class="img-fluid rounded-4 shadow" />
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <a asp-controller="Home" asp-action="OfisTasima" class="text-decoration-none">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3 class="service-title">Ofis Taşıma</h3>
+                        <p class="service-desc">
+                            İşinizi aksatmadan ofisinizi taşıyoruz. Hafta sonu ve gece taşıma seçenekleri.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-circle"></i> Hafta sonu hizmeti</li>
+                            <li><i class="fas fa-circle"></i> IT ekipman taşıma</li>
+                            <li><i class="fas fa-circle"></i> Arşiv taşıma</li>
+                        </ul>
+                        <span class="service-link">
+                            Detaylı Bilgi <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <a asp-controller="Home" asp-action="Depolama" class="text-decoration-none">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-warehouse"></i>
+                        </div>
+                        <h3 class="service-title">Eşya Depolama</h3>
+                        <p class="service-desc">
+                            Eşyalarınızı güvenli ve iklimlendirmeli depolarda saklıyoruz.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-circle"></i> 7/24 güvenlik</li>
+                            <li><i class="fas fa-circle"></i> İklimlendirme</li>
+                            <li><i class="fas fa-circle"></i> Esnek süreler</li>
+                        </ul>
+                        <span class="service-link">
+                            Detaylı Bilgi <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <a asp-controller="Home" asp-action="ParcaEsya" class="text-decoration-none">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <h3 class="service-title">Parça Eşya Taşıma</h3>
+                        <p class="service-desc">
+                            Tek bir eşyadan büyük mobilyalara kadar parça taşıma hizmeti.
+                        </p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-circle"></i> Ekonomik fiyat</li>
+                            <li><i class="fas fa-circle"></i> Hızlı teslimat</li>
+                            <li><i class="fas fa-circle"></i> Takipli gönderim</li>
+                        </ul>
+                        <span class="service-link">
+                            Detaylı Bilgi <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- STEPS / ADVANTAGES -->
-<div class="py-5" style="background-color:#f5f7fb;">
-    <div class="container-xxl p-3 p-lg-5">
+<!-- HOW IT WORKS -->
+<section class="how-section" id="nasil-calisir">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">
+                <i class="fas fa-cogs"></i>
+                Süreç
+            </span>
+            <h2 class="section-title">Nasıl <span>Çalışır?</span></h2>
+            <p class="section-subtitle">
+                4 basit adımda taşınmanızı tamamlayın
+            </p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-connector d-none d-lg-block"></div>
+                    <div class="step-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <h4 class="step-title">Talep Oluştur</h4>
+                    <p class="step-desc">Nereden nereye taşınacağını ve taşınma tipini belirt</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-connector d-none d-lg-block"></div>
+                    <div class="step-icon">
+                        <i class="fas fa-list-alt"></i>
+                    </div>
+                    <h4 class="step-title">Teklifleri Al</h4>
+                    <p class="step-desc">Onaylı firmalardan dakikalar içinde fiyat teklifleri al</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-connector d-none d-lg-block"></div>
+                    <div class="step-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <h4 class="step-title">Karşılaştır</h4>
+                    <p class="step-desc">Fiyat, puan ve yorumları inceleyerek en uygununu seç</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">
+                        <i class="fas fa-truck-moving"></i>
+                    </div>
+                    <h4 class="step-title">Taşın</h4>
+                    <p class="step-desc">Rezervasyonu tamamla ve rahatça taşın</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STATS SECTION -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="0">
+                <div class="stat-item">
+                    <div class="stat-number">1000<span>+</span></div>
+                    <div class="stat-label">Onaylı Firma</div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-item">
+                    <div class="stat-number">50K<span>+</span></div>
+                    <div class="stat-label">Mutlu Müşteri</div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-item">
+                    <div class="stat-number">81</div>
+                    <div class="stat-label">İl Kapsama</div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-item">
+                    <div class="stat-number">4.8<span>/5</span></div>
+                    <div class="stat-label">Müşteri Puanı</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ADVANTAGES SECTION -->
+<section class="advantages-section" id="avantajlar">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">
+                <i class="fas fa-award"></i>
+                Avantajlar
+            </span>
+            <h2 class="section-title">Neden <span>Nakliye360?</span></h2>
+            <p class="section-subtitle">
+                Türkiye'nin en güvenilir nakliyat platformunu tercih etmeniz için 6 neden
+            </p>
+        </div>
+        
         <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title fw-semibold mb-2">1. Talebini oluştur</h5>
-                        <p class="card-text text-body-secondary mb-0">
-                            Nereden nereye taşınacağını, kat bilgisini ve varsa özel isteklerini forma gir.
-                            Dilersen eşyalarının fotoğraflarını ekle.
-                        </p>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="advantage-card">
+                    <div class="advantage-icon blue">
+                        <i class="fas fa-shield-alt"></i>
                     </div>
+                    <h4 class="advantage-title">Onaylı & Güvenilir Firmalar</h4>
+                    <p class="advantage-desc">Tüm firmalar evrak kontrolünden geçer. Sigorta ve yetki belgeleri doğrulanmış firmalarla çalışırsınız.</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title fw-semibold mb-2">2. Teklifleri karşılaştır</h5>
-                        <p class="card-text text-body-secondary mb-0">
-                            Onaylı nakliyecilerden gelen fiyatları gör, puan ve yorumlara göre firmaları kıyasla.
-                        </p>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="advantage-card">
+                    <div class="advantage-icon green">
+                        <i class="fas fa-comments-dollar"></i>
                     </div>
+                    <h4 class="advantage-title">Rekabetçi Fiyatlar</h4>
+                    <p class="advantage-desc">Tek formla onlarca firmadan teklif alın. Fiyatları karşılaştırarak en uygun seçeneği bulun.</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title fw-semibold mb-2">3. Rezervasyon yap</h5>
-                        <p class="card-text text-body-secondary mb-0">
-                            Seçtiğin firmayı %10 kapora ile rezerve et.
-                            Taşınma günü ekibini ve saatini panelden takip et.
-                        </p>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="advantage-card">
+                    <div class="advantage-icon orange">
+                        <i class="fas fa-star"></i>
                     </div>
+                    <h4 class="advantage-title">Gerçek Müşteri Yorumları</h4>
+                    <p class="advantage-desc">Daha önce taşınan müşterilerin deneyimlerini okuyun. Şeffaf puanlama sistemi ile karar verin.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="advantage-card">
+                    <div class="advantage-icon purple">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h4 class="advantage-title">Güvenli Ödeme</h4>
+                    <p class="advantage-desc">%10 kapora ile rezervasyon yapın. Kalan ödemeyi taşınma sonrası güvenle tamamlayın.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="advantage-card">
+                    <div class="advantage-icon yellow">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4 class="advantage-title">7/24 Müşteri Desteği</h4>
+                    <p class="advantage-desc">Taşınma öncesi, sırası ve sonrasında her zaman yanınızdayız. WhatsApp ve telefon desteği.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                <div class="advantage-card">
+                    <div class="advantage-icon cyan">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <h4 class="advantage-title">Dijital Sözleşme</h4>
+                    <p class="advantage-desc">Online sözleşme ile haklarınız güvence altında. Tüm detaylar kayıt altına alınır.</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- TESTIMONIALS -->
-<div class="py-5" style="background-color:#ffffff;">
-    <div class="container-xxl p-3 p-lg-5">
-        <div class="text-center mb-5">
-            <h1 class="mb-3 text-center">Müşterilerimiz Ne Diyor</h1>
-            <p class="fs-6 text-body text-opacity-75 text-center mb-0">
-                Nakliye360 üzerinden taşınan gerçek kullanıcıların yorumları. <br />
-                Fiyat şeffaflığı, zamanında teslim ve profesyonel ekip deneyimlerini kendi cümleleriyle dinle.
+<!-- TESTIMONIALS SECTION -->
+<section class="testimonials-section" id="yorumlar">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">
+                <i class="fas fa-quote-left"></i>
+                Müşteri Yorumları
+            </span>
+            <h2 class="section-title">Müşterilerimiz <span>Ne Diyor?</span></h2>
+            <p class="section-subtitle">
+                Nakliye360 ile taşınan binlerce mutlu müşterinin deneyimleri
             </p>
         </div>
-        <div class="row g-3 g-lg-4 mb-4">
-            <div class="col-xl-4 col-md-6">
-                <div class="card p-4 border-0 h-100 rounded-4">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center me-3" style="width:50px;height:50px;">
-                            <span class="fw-bold text-primary">AK</span>
-                        </div>
-                        <div>
-                            <h5 class="mb-0">Ayşe K.</h5>
-                            <small class="text-muted">İstanbul &rarr; Ankara taşınması</small>
-                        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">
+                        <i class="fas fa-quote-left"></i>
                     </div>
-                    <div class="mb-3 d-flex">
-                        <i class="fa fa-quote-left fa-2x text-body text-opacity-15"></i>
-                        <div class="p-3">
-                            <div class="text-warning d-flex mb-2">
-                                <i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star"></i>
-                            </div>
-                            Tek form doldurarak 5 farklı firmadan teklif aldım. Fiyat ve yorumları kolayca kıyasladım,
-                            ekip tam saatinde geldi, hiçbir eşyam zarar görmedi.
-                        </div>
-                        <div class="d-flex align-items-end">
-                            <i class="fa fa-quote-right fa-2x text-body text-opacity-15"></i>
-                        </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
                     </div>
-                </div>
-            </div>
-            <div class="col-xl-4 col-md-6">
-                <div class="card p-4 border-0 h-100 rounded-4">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center me-3" style="width:50px;height:50px;">
-                            <span class="fw-bold text-primary">MB</span>
-                        </div>
-                        <div>
-                            <h5 class="mb-0">Mehmet B.</h5>
-                            <small class="text-muted">Ofis taşıma, İzmir</small>
-                        </div>
-                    </div>
-                    <div class="mb-3 d-flex">
-                        <i class="fa fa-quote-left fa-2x text-body text-opacity-15"></i>
-                        <div class="p-3">
-                            <div class="text-warning d-flex mb-2">
-                                <i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star"></i>
-                            </div>
-                            Ofis ekipmanlarımız için sigortalı taşıma arıyorduk. eTaşın üzerinden
-                            kurumsal referanslı bir firma bulduk, hafta sonu taşınma kusursuz tamamlandı.
-                        </div>
-                        <div class="d-flex align-items-end">
-                            <i class="fa fa-quote-right fa-2x text-body text-opacity-15"></i>
+                    <p class="testimonial-text">
+                        "Tek form doldurarak 5 farklı firmadan teklif aldım. Fiyat ve yorumları kolayca kıyasladım, 
+                        ekip tam saatinde geldi, hiçbir eşyam zarar görmedi. Kesinlikle tavsiye ediyorum!"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AK</div>
+                        <div class="author-info">
+                            <h5>Ayşe Kaya</h5>
+                            <span>İstanbul → Ankara</span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4 col-md-6">
-                <div class="card p-4 border-0 h-100 rounded-4">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center me-3" style="width:50px;height:50px;">
-                            <span class="fw-bold text-primary">DY</span>
-                        </div>
-                        <div>
-                            <h5 class="mb-0">Deniz Y.</h5>
-                            <small class="text-muted">Parça eşya, Bursa</small>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "Ofis ekipmanlarımız için sigortalı taşıma arıyorduk. Nakliye360 üzerinden 
+                        kurumsal referanslı bir firma bulduk, hafta sonu taşınma kusursuz tamamlandı."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MB</div>
+                        <div class="author-info">
+                            <h5>Mehmet Bal</h5>
+                            <span>Ofis Taşıma, İzmir</span>
                         </div>
                     </div>
-                    <div class="mb-3 d-flex">
-                        <i class="fa fa-quote-left fa-2x text-body text-opacity-15"></i>
-                        <div class="p-3">
-                            <div class="text-warning d-flex mb-2">
-                                <i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star me-1"></i><i class="fa fa-star"></i>
-                            </div>
-                            Sadece birkaç parça eşyamı gönderecektim, klasik firmalar ilgilenmiyordu.
-                            eTaşın üzerinden uygun fiyatlı parça eşya taşıma buldum, aynı gün teslim ettiler.
-                        </div>
-                        <div class="d-flex align-items-end">
-                            <i class="fa fa-quote-right fa-2x text-body text-opacity-15"></i>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "Sadece birkaç parça eşyamı gönderecektim, klasik firmalar ilgilenmiyordu. 
+                        Uygun fiyatlı parça eşya taşıma buldum, aynı gün teslim ettiler."
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">DY</div>
+                        <div class="author-info">
+                            <h5>Deniz Yılmaz</h5>
+                            <span>Parça Eşya, Bursa</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- NEWS / BLOG -->
-<div class="py-5" style="background-color:#f5f7fb;">
-    <div class="container-xxl p-3 p-lg-5">
-        <div class="text-center mb-5">
-            <h1 class="mb-3 text-center">Haberler</h1>
-            <p class="fs-6 text-body text-opacity-75 text-center mb-0">
-                Taşınma sürecini kolaylaştıracak ipuçları, trendler ve güncel içerikler. <br />
-                Evden eve nakliyat, parça eşya ve depolama hakkında bilmen gerekenleri burada topladık.
+<!-- FAQ SECTION -->
+<section class="faq-section" id="sss">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0" data-aos="fade-right">
+                <span class="section-badge">
+                    <i class="fas fa-question-circle"></i>
+                    SSS
+                </span>
+                <h2 class="section-title">Sık Sorulan <span>Sorular</span></h2>
+                <p class="text-muted mb-4">
+                    Nakliye360 hakkında merak ettiğiniz tüm soruların cevapları burada. 
+                    Başka sorularınız varsa bize ulaşın.
+                </p>
+                <a href="#" class="btn btn-outline-custom">
+                    <i class="fas fa-headset me-2"></i>
+                    Destek Alın
+                </a>
+            </div>
+            
+            <div class="col-lg-8" data-aos="fade-left">
+                <div class="accordion accordion-custom" id="faqAccordion">
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                Nakliye360 nasıl çalışır?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body accordion-body-custom">
+                                Nakliye360, taşınma ihtiyacınızı tek form ile onlarca nakliye firmasına iletir. 
+                                Firmalar size fiyat teklifleri gönderir, siz de fiyat, puan ve yorumları karşılaştırarak 
+                                en uygun firmayı seçersiniz. Güvenli ödeme ve sigortalı taşıma garantisi sunuyoruz.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Teklif almak ücretli mi?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body accordion-body-custom">
+                                Hayır, Nakliye360 üzerinden teklif almak tamamen ücretsizdir. 
+                                Dilediğiniz kadar teklif alabilir, karşılaştırabilir ve beğendiğiniz firmayı seçebilirsiniz. 
+                                Herhangi bir teklifi kabul etmek zorunda değilsiniz.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                Nakliye firmaları nasıl onaylanıyor?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body accordion-body-custom">
+                                Tüm firmalar K1, K2 yetki belgeleri, sigorta poliçeleri, vergi levhası ve ticaret sicil belgelerini 
+                                sunmak zorundadır. Belgeler manuel olarak kontrol edilir. Ayrıca müşteri yorumları ve şikayetler 
+                                sürekli takip edilir.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                Ödeme nasıl yapılır?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body accordion-body-custom">
+                                Teklifi kabul ettikten sonra toplam tutarın %10'u kadar kapora ödemesi yaparsınız. 
+                                Kalan tutar taşınma tamamlandıktan sonra firmaya ödenir. Kredi kartı, banka havalesi 
+                                veya nakit ödeme seçenekleri mevcuttur.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item accordion-item-custom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                Eşyalarım sigortalı mı taşınıyor?
+                            </button>
+                        </h2>
+                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body accordion-body-custom">
+                                Evet, platformumuzda yer alan tüm firmalar nakliyat sigortasına sahiptir. 
+                                Taşınma sırasında oluşabilecek hasarlar sigorta kapsamında karşılanır. 
+                                Ek güvence için kapsamlı sigorta paketi de tercih edebilirsiniz.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BLOG SECTION -->
+<section class="blog-section">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">
+                <i class="fas fa-newspaper"></i>
+                Blog
+            </span>
+            <h2 class="section-title">Taşınma <span>Rehberi</span></h2>
+            <p class="section-subtitle">
+                Taşınma sürecinizi kolaylaştıracak ipuçları ve güncel bilgiler
             </p>
         </div>
-        <div class="row g-3 g-xl-4 mb-4">
-            <div class="col-xl-3 col-lg-4 col-sm-6">
-                <div class="d-flex flex-column h-100 rounded-4 overflow-hidden shadow-sm mb-4 bg-white">
-                    <div class="ratio ratio-16x9 bg-light">
-                        <img src="~/img/1.jpg" alt="Taşınma hazırlıkları" class="w-100 h-100 object-fit-cover" />
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="blog-card">
+                    <div class="blog-image">
+                        <i class="fas fa-box-open"></i>
                     </div>
-                    <div class="flex-1 p-3 pb-0">
-                        <div class="mb-2">
-                            <span class="bg-theme bg-opacity-15 text-theme px-2 py-1 rounded small fw-bold">Ev Taşıma</span>
+                    <div class="blog-content">
+                        <span class="blog-category">Ev Taşıma</span>
+                        <h4 class="blog-title">Taşınmadan Önce Yapılması Gereken 10 Hazırlık</h4>
+                        <p class="blog-excerpt">Taşınma günü stresini azaltmak için paketleme, adres bildirimi ve nakliyeci seçimi adımlarını önden planlayın.</p>
+                        <div class="blog-meta">
+                            <span><i class="fas fa-calendar me-1"></i> 15 Aralık 2025</span>
+                            <span><i class="fas fa-clock me-1"></i> 5 dk okuma</span>
                         </div>
-                        <h5>Taşınmadan Önce Yapılması Gereken 10 Hazırlık</h5>
-                        <p class="mb-0">Taşınma günü stresini azaltmak için paketleme, adres bildirimi ve nakliyeci seçimi adımlarını önden planla.</p>
                     </div>
-                    <div class="p-3 pt-0 text-body text-opacity-50">Kasım 2025</div>
                 </div>
             </div>
-            <div class="col-xl-3 col-lg-4 col-sm-6">
-                <div class="d-flex flex-column h-100 rounded-4 overflow-hidden shadow-sm mb-4 bg-white">
-                    <div class="ratio ratio-16x9 bg-light">
-                        <img src="~/img/2.jpg" alt="Parça eşya gönderme" class="w-100 h-100 object-fit-cover" />
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="blog-card">
+                    <div class="blog-image">
+                        <i class="fas fa-hand-holding-usd"></i>
                     </div>
-                    <div class="flex-1 p-3 pb-0">
-                        <div class="mb-2">
-                            <span class="bg-theme bg-opacity-15 text-theme px-2 py-1 rounded small fw-bold">Parça Eşya</span>
+                    <div class="blog-content">
+                        <span class="blog-category">Fiyat Rehberi</span>
+                        <h4 class="blog-title">2025 Evden Eve Nakliyat Fiyatları</h4>
+                        <p class="blog-excerpt">Şehir içi ve şehirlerarası nakliyat fiyatlarını etkileyen faktörler ve ortalama maliyet tablosu.</p>
+                        <div class="blog-meta">
+                            <span><i class="fas fa-calendar me-1"></i> 10 Aralık 2025</span>
+                            <span><i class="fas fa-clock me-1"></i> 7 dk okuma</span>
                         </div>
-                        <h5>Uygun Fiyatlı Parça Eşya Gönderme Rehberi</h5>
-                        <p class="mb-0">Tek koliden ofis mobilyasına kadar, en uygun parça eşya seçeneklerini nasıl bulacağını keşfet.</p>
                     </div>
-                    <div class="p-3 pt-0 text-body text-opacity-50">Kasım 2025</div>
                 </div>
             </div>
-            <div class="col-xl-3 col-lg-4 col-sm-6">
-                <div class="d-flex flex-column h-100 rounded-4 overflow-hidden shadow-sm mb-4 bg-white">
-                    <div class="ratio ratio-16x9 bg-light">
-                        <img src="~/img/3.jpg" alt="Depolama" class="w-100 h-100 object-fit-cover" />
+            
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="blog-card">
+                    <div class="blog-image">
+                        <i class="fas fa-search"></i>
                     </div>
-                    <div class="flex-1 p-3 pb-0">
-                        <div class="mb-2">
-                            <span class="bg-theme bg-opacity-15 text-theme px-2 py-1 rounded small fw-bold">Depolama</span>
+                    <div class="blog-content">
+                        <span class="blog-category">Nakliyeci Seçimi</span>
+                        <h4 class="blog-title">Güvenilir Nakliyeci Nasıl Seçilir?</h4>
+                        <p class="blog-excerpt">Puan, yorum ve evrak kontrolleriyle en doğru firmayı seçmek için dikkat etmeniz gerekenler.</p>
+                        <div class="blog-meta">
+                            <span><i class="fas fa-calendar me-1"></i> 5 Aralık 2025</span>
+                            <span><i class="fas fa-clock me-1"></i> 4 dk okuma</span>
                         </div>
-                        <h5>Eşyalarınızı Depolarken Dikkat Etmeniz Gerekenler</h5>
-                        <p class="mb-0">Nem, sigorta ve güvenlik konularına dikkat ederek eşyalarınızı uzun süre güvenle saklayın.</p>
                     </div>
-                    <div class="p-3 pt-0 text-body text-opacity-50">Ekim 2025</div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-4 col-sm-6">
-                <div class="d-flex flex-column h-100 rounded-4 overflow-hidden shadow-sm mb-4 bg-white">
-                    <div class="ratio ratio-16x9 bg-light">
-                        <img src="~/img/4.jpg" alt="Nakliyeci seçimi" class="w-100 h-100 object-fit-cover" />
-                    </div>
-                    <div class="flex-1 p-3 pb-0">
-                        <div class="mb-2">
-                            <span class="bg-theme bg-opacity-15 text-theme px-2 py-1 rounded small fw-bold">Nakliyeci Seçimi</span>
-                        </div>
-                        <h5>Güvenilir Nakliyeci Nasıl Seçilir?</h5>
-                        <p class="mb-0">Puan, yorum ve evrak kontrolleriyle en doğru firmayı seçmek için nelere bakmalısın?</p>
-                    </div>
-                    <div class="p-3 pt-0 text-body text-opacity-50">Eylül 2025</div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="cta-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mb-4 mb-lg-0" data-aos="fade-right">
+                <h2 class="cta-title">Taşınmaya Hazır mısınız?</h2>
+                <p class="cta-subtitle">Hemen ücretsiz teklif alın, en uygun nakliye firmasını bulun!</p>
+            </div>
+            <div class="col-lg-4 text-lg-end" data-aos="fade-left">
+                <a href="#" class="btn btn-white-custom me-3" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">
+                    <i class="fas fa-calculator me-2"></i>
+                    Teklif Al
+                </a>
+                <a href="tel:08501234567" class="btn btn-outline-custom" style="border-color: #fff; color: #fff;">
+                    <i class="fas fa-phone me-2"></i>
+                    Bizi Arayın
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 
 @section Scripts {
     <script>
+        // Tab switching
+        document.querySelectorAll('.quote-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.quote-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const moveTypeMap = {
+                    'home': 'Home',
+                    'office': 'Office',
+                    'storage': 'Storage',
+                    'partial': 'Partial'
+                };
+                
+                document.getElementById('moveType').value = moveTypeMap[this.dataset.tab];
+            });
+        });
+        
+        // Location autocomplete
         async function searchLocation(term) {
             const response = await fetch(`/Home/SearchLocation?term=${encodeURIComponent(term)}`);
             if (!response.ok) return [];
             return await response.json();
         }
-
+        
         function setupLocationAutocomplete(inputId, suggestionsId, cityHiddenId, districtHiddenId, neighborhoodHiddenId) {
             const input = document.getElementById(inputId);
             const suggestions = document.getElementById(suggestionsId);
             const cityInput = document.getElementById(cityHiddenId);
             const districtInput = document.getElementById(districtHiddenId);
             const neighborhoodInput = document.getElementById(neighborhoodHiddenId);
-
+            
             if (!input || !suggestions || !cityInput || !districtInput || !neighborhoodInput) return;
-
+            
             let currentTimeout = null;
-
-            input.addEventListener('input', function () {
+            
+            input.addEventListener('input', function() {
                 const term = input.value.trim();
                 cityInput.value = '';
                 districtInput.value = '';
                 neighborhoodInput.value = '';
-                suggestions.innerHTML = '';
-
+                
                 if (term.length < 2) {
+                    suggestions.style.display = 'none';
+                    suggestions.innerHTML = '';
                     return;
                 }
-
+                
                 if (currentTimeout) {
                     clearTimeout(currentTimeout);
                 }
-
+                
                 currentTimeout = setTimeout(async () => {
                     const results = await searchLocation(term);
                     suggestions.innerHTML = '';
-
+                    
+                    if (results.length === 0) {
+                        suggestions.style.display = 'none';
+                        return;
+                    }
+                    
                     results.forEach(r => {
-                        const item = document.createElement('button');
-                        item.type = 'button';
-                        item.className = 'list-group-item list-group-item-action';
-                        item.textContent = r.display ?? r.Display;
-                        item.addEventListener('click', function () {
-                            input.value = item.textContent;
+                        const item = document.createElement('div');
+                        item.className = 'location-suggestion-item';
+                        item.innerHTML = `<i class="fas fa-map-marker-alt"></i><span>${r.display ?? r.Display}</span>`;
+                        item.addEventListener('click', function() {
+                            input.value = r.display ?? r.Display;
                             cityInput.value = r.cityId ?? r.CityId;
                             districtInput.value = r.districtId ?? r.DistrictId;
                             neighborhoodInput.value = r.neighborhoodId ?? r.NeighborhoodId;
+                            suggestions.style.display = 'none';
                             suggestions.innerHTML = '';
                         });
                         suggestions.appendChild(item);
                     });
+                    
+                    suggestions.style.display = 'block';
                 }, 250);
             });
-
-            document.addEventListener('click', function (e) {
+            
+            document.addEventListener('click', function(e) {
                 if (!suggestions.contains(e.target) && e.target !== input) {
-                    suggestions.innerHTML = '';
+                    suggestions.style.display = 'none';
                 }
             });
         }
-
-        document.addEventListener('DOMContentLoaded', function () {
+        
+        document.addEventListener('DOMContentLoaded', function() {
             setupLocationAutocomplete('fromLocationText', 'fromLocationSuggestions', 'fromCityId', 'fromDistrictId', 'fromNeighborhoodId');
             setupLocationAutocomplete('toLocationText', 'toLocationSuggestions', 'toCityId', 'toDistrictId', 'toNeighborhoodId');
-            setupLocationAutocomplete('fromLocationTextPartial', 'fromLocationSuggestionsPartial', 'fromCityIdPartial', 'fromDistrictIdPartial', 'fromNeighborhoodIdPartial');
-            setupLocationAutocomplete('toLocationTextPartial', 'toLocationSuggestionsPartial', 'toCityIdPartial', 'toDistrictIdPartial', 'toNeighborhoodIdPartial');
-            setupLocationAutocomplete('fromLocationTextOffice', 'fromLocationSuggestionsOffice', 'fromCityIdOffice', 'fromDistrictIdOffice', 'fromNeighborhoodIdOffice');
-            setupLocationAutocomplete('toLocationTextOffice', 'toLocationSuggestionsOffice', 'toCityIdOffice', 'toDistrictIdOffice', 'toNeighborhoodIdOffice');
-            setupLocationAutocomplete('fromLocationTextStorage', 'fromLocationSuggestionsStorage', 'fromCityIdStorage', 'fromDistrictIdStorage', 'fromNeighborhoodIdStorage');
-            setupLocationAutocomplete('toLocationTextStorage', 'toLocationSuggestionsStorage', 'toCityIdStorage', 'toDistrictIdStorage', 'toNeighborhoodIdStorage');
-            setupLocationAutocomplete('fromLocationTextInternational', 'fromLocationSuggestionsInternational', 'fromCityIdInternational', 'fromDistrictIdInternational', 'fromNeighborhoodIdInternational');
-            setupLocationAutocomplete('toLocationTextInternational', 'toLocationSuggestionsInternational', 'toCityIdInternational', 'toDistrictIdInternational', 'toNeighborhoodIdInternational');
+            
+            // Form submit loading state
+            const quoteForm = document.querySelector('form[action="/Home/Index"]');
+            const quoteSubmitBtn = document.getElementById('quoteSubmitBtn');
+            if (quoteForm && quoteSubmitBtn) {
+                quoteForm.addEventListener('submit', function() {
+                    const submitText = quoteSubmitBtn.querySelector('.submit-text');
+                    const loadingText = quoteSubmitBtn.querySelector('.loading-text');
+                    if (submitText && loadingText) {
+                        submitText.style.display = 'none';
+                        loadingText.style.display = 'inline';
+                        quoteSubmitBtn.disabled = true;
+                    }
+                });
+            }
         });
     </script>
 }

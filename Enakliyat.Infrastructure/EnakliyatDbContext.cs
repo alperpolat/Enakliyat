@@ -26,6 +26,10 @@ public class EnakliyatDbContext : DbContext
     public DbSet<District> Districts => Set<District>();
     public DbSet<Neighborhood> Neighborhoods => Set<Neighborhood>();
     public DbSet<CarrierUser> CarrierUsers => Set<CarrierUser>();
+    public DbSet<SystemSetting> SystemSettings => Set<SystemSetting>();
+    public DbSet<NotificationTemplate> NotificationTemplates => Set<NotificationTemplate>();
+    public DbSet<Message> Messages => Set<Message>();
+    public DbSet<OfferTemplate> OfferTemplates => Set<OfferTemplate>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -99,16 +103,26 @@ public class EnakliyatDbContext : DbContext
             entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
             entity.Property(x => x.CompanyName).HasMaxLength(200);
             entity.Property(x => x.PhoneNumber).HasMaxLength(20).IsRequired();
+            entity.Property(x => x.LandlinePhone).HasMaxLength(20);
             entity.Property(x => x.Email).HasMaxLength(200);
+            entity.Property(x => x.Website).HasMaxLength(500);
             entity.Property(x => x.LicenseNumber).HasMaxLength(100);
             entity.Property(x => x.VehicleInfo).HasMaxLength(200);
             entity.Property(x => x.ServiceAreas).HasMaxLength(500);
             entity.Property(x => x.Description).HasMaxLength(1000);
+            entity.Property(x => x.TaxOffice).HasMaxLength(200);
+            entity.Property(x => x.TaxNumber).HasMaxLength(50);
+            entity.Property(x => x.InvoiceAddress).HasMaxLength(500);
             entity.Property(x => x.IsApproved);
             entity.Property(x => x.IsRejected);
             entity.Property(x => x.IsSuspended);
             entity.Property(x => x.AverageRating);
             entity.Property(x => x.ReviewCount);
+
+            entity.HasOne(c => c.District)
+                  .WithMany()
+                  .HasForeignKey(c => c.DistrictId)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<CarrierDocument>(entity =>
@@ -245,6 +259,63 @@ public class EnakliyatDbContext : DbContext
             entity.Property(x => x.Email).HasMaxLength(200).IsRequired();
             entity.Property(x => x.Password).HasMaxLength(200).IsRequired();
             entity.Property(x => x.IsAdmin).HasDefaultValue(false);
+        });
+
+        modelBuilder.Entity<SystemSetting>(entity =>
+        {
+            entity.Property(x => x.Key).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Value).HasMaxLength(2000);
+            entity.Property(x => x.Description).HasMaxLength(500);
+            entity.Property(x => x.Category).HasMaxLength(100).IsRequired();
+            entity.HasIndex(x => x.Key).IsUnique();
+        });
+
+        modelBuilder.Entity<NotificationTemplate>(entity =>
+        {
+            entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Type).HasMaxLength(50).IsRequired();
+            entity.Property(x => x.EventType).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.Subject).HasMaxLength(500);
+            entity.Property(x => x.Body).HasMaxLength(5000);
+            entity.Property(x => x.Variables).HasMaxLength(2000);
+            entity.HasIndex(x => new { x.Type, x.EventType }).IsUnique();
+        });
+
+        modelBuilder.Entity<Message>(entity =>
+        {
+            entity.Property(x => x.Content).HasMaxLength(2000).IsRequired();
+            entity.Property(x => x.AttachmentPath).HasMaxLength(500);
+            
+            entity.HasOne(m => m.MoveRequest)
+                  .WithMany()
+                  .HasForeignKey(m => m.MoveRequestId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            
+            entity.HasOne(m => m.FromUser)
+                  .WithMany()
+                  .HasForeignKey(m => m.FromUserId)
+                  .OnDelete(DeleteBehavior.SetNull);
+            
+            entity.HasOne(m => m.FromCarrier)
+                  .WithMany()
+                  .HasForeignKey(m => m.FromCarrierId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<OfferTemplate>(entity =>
+        {
+            entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Description).HasMaxLength(500);
+            entity.Property(x => x.NoteTemplate).HasMaxLength(1000);
+            entity.Property(x => x.BasePrice).HasColumnType("decimal(18,2)");
+            entity.Property(x => x.PricePerKm).HasColumnType("decimal(18,2)");
+            entity.Property(x => x.PricePerRoom).HasColumnType("decimal(18,2)");
+            entity.Property(x => x.PricePerFloor).HasColumnType("decimal(18,2)");
+            
+            entity.HasOne(t => t.Carrier)
+                  .WithMany()
+                  .HasForeignKey(t => t.CarrierId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

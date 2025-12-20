@@ -81,9 +81,16 @@ namespace Enakliyat.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<int?>("DistrictId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("InvoiceAddress")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
@@ -93,6 +100,10 @@ namespace Enakliyat.Infrastructure.Migrations
 
                     b.Property<bool>("IsSuspended")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LandlinePhone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("LicenseNumber")
                         .HasMaxLength(100)
@@ -115,6 +126,14 @@ namespace Enakliyat.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<string>("TaxNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("TaxOffice")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -122,7 +141,13 @@ namespace Enakliyat.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("Website")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("DistrictId");
 
                     b.ToTable("Carriers");
                 });
@@ -298,6 +323,52 @@ namespace Enakliyat.Infrastructure.Migrations
                     b.HasIndex("CityId");
 
                     b.ToTable("Districts");
+                });
+
+            modelBuilder.Entity("Enakliyat.Domain.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AttachmentPath")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("FromCarrierId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FromUserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MoveRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FromCarrierId");
+
+                    b.HasIndex("FromUserId");
+
+                    b.HasIndex("MoveRequestId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Enakliyat.Domain.MoveRequest", b =>
@@ -503,6 +574,60 @@ namespace Enakliyat.Infrastructure.Migrations
                     b.ToTable("Neighborhoods");
                 });
 
+            modelBuilder.Entity("Enakliyat.Domain.NotificationTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Variables")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Type", "EventType")
+                        .IsUnique();
+
+                    b.ToTable("NotificationTemplates");
+                });
+
             modelBuilder.Entity("Enakliyat.Domain.Offer", b =>
                 {
                     b.Property<int>("Id")
@@ -541,6 +666,58 @@ namespace Enakliyat.Infrastructure.Migrations
                     b.HasIndex("MoveRequestId");
 
                     b.ToTable("Offers");
+                });
+
+            modelBuilder.Entity("Enakliyat.Domain.OfferTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("BasePrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CarrierId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("NoteTemplate")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<decimal?>("PricePerFloor")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("PricePerKm")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("PricePerRoom")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarrierId");
+
+                    b.ToTable("OfferTemplates");
                 });
 
             modelBuilder.Entity("Enakliyat.Domain.Payment", b =>
@@ -702,6 +879,49 @@ namespace Enakliyat.Infrastructure.Migrations
                     b.ToTable("ServicePackageItems");
                 });
 
+            modelBuilder.Entity("Enakliyat.Domain.SystemSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsEncrypted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Value")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.ToTable("SystemSettings");
+                });
+
             modelBuilder.Entity("Enakliyat.Domain.User", b =>
                 {
                     b.Property<int>("Id")
@@ -748,6 +968,16 @@ namespace Enakliyat.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Enakliyat.Domain.Carrier", b =>
+                {
+                    b.HasOne("Enakliyat.Domain.District", "District")
+                        .WithMany()
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("District");
                 });
 
             modelBuilder.Entity("Enakliyat.Domain.CarrierDocument", b =>
@@ -800,6 +1030,31 @@ namespace Enakliyat.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("City");
+                });
+
+            modelBuilder.Entity("Enakliyat.Domain.Message", b =>
+                {
+                    b.HasOne("Enakliyat.Domain.Carrier", "FromCarrier")
+                        .WithMany()
+                        .HasForeignKey("FromCarrierId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Enakliyat.Domain.User", "FromUser")
+                        .WithMany()
+                        .HasForeignKey("FromUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Enakliyat.Domain.MoveRequest", "MoveRequest")
+                        .WithMany()
+                        .HasForeignKey("MoveRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FromCarrier");
+
+                    b.Navigation("FromUser");
+
+                    b.Navigation("MoveRequest");
                 });
 
             modelBuilder.Entity("Enakliyat.Domain.MoveRequest", b =>
@@ -877,6 +1132,17 @@ namespace Enakliyat.Infrastructure.Migrations
                     b.Navigation("Carrier");
 
                     b.Navigation("MoveRequest");
+                });
+
+            modelBuilder.Entity("Enakliyat.Domain.OfferTemplate", b =>
+                {
+                    b.HasOne("Enakliyat.Domain.Carrier", "Carrier")
+                        .WithMany()
+                        .HasForeignKey("CarrierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Carrier");
                 });
 
             modelBuilder.Entity("Enakliyat.Domain.Payment", b =>

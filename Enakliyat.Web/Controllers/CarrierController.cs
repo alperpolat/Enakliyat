@@ -1,6 +1,7 @@
 using Enakliyat.Domain;
 using Enakliyat.Infrastructure;
 using Enakliyat.Web.Models;
+using Enakliyat.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,12 @@ namespace Enakliyat.Web.Controllers;
 public class CarrierController : Controller
 {
     private readonly EnakliyatDbContext _context;
+    private readonly INotificationService _notificationService;
 
-    public CarrierController(EnakliyatDbContext context)
+    public CarrierController(EnakliyatDbContext context, INotificationService notificationService)
     {
         _context = context;
+        _notificationService = notificationService;
     }
 
     [HttpGet]
@@ -265,6 +268,12 @@ public class CarrierController : Controller
         ViewBag.NewOffersCount = offers
             .Count(o => o.Status == "Beklemede" && o.CreatedAt >= since);
 
+        // Yeni teklif sayısı (bildirim badge için)
+        ViewBag.NewOffersCount = offers.Count(o => o.Status == "Beklemede" && o.CreatedAt >= since);
+        
+        // Bekleyen teklifler (kabul/red bekliyor)
+        ViewBag.PendingOffersCount = offers.Count(o => o.Status == "Beklemede");
+
         return View(offers);
     }
 
@@ -324,6 +333,9 @@ public class CarrierController : Controller
 
         await _context.Offers.AddAsync(offer);
         await _context.SaveChangesAsync();
+
+        // Bildirim gönder
+        await _notificationService.NotifyNewOfferToUserAsync(offer);
 
         TempData["Success"] = "Teklifiniz oluşturuldu.";
         return RedirectToAction(nameof(LeadDetails), new { id = moveRequestId });
@@ -506,5 +518,288 @@ public class CarrierController : Controller
         await _context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Offers), new { status = statusFilter });
+    }
+
+    // Mesajlaşma
+    public async Task<IActionResult> Messages(int moveRequestId)
+    {
+        var carrierIdClaim = User.FindFirst("CarrierId");
+        if (carrierIdClaim == null || !int.TryParse(carrierIdClaim.Value, out var carrierId))
+        {
+            return Unauthorized();
+        }
+
+        var request = await _context.MoveRequests
+            .Include(r => r.User)
+            .FirstOrDefaultAsync(r => r.Id == moveRequestId);
+
+        if (request == null) return NotFound();
+
+        var messages = await _context.Messages
+            .Include(m => m.FromUser)
+            .Include(m => m.FromCarrier)
+            .Where(m => m.MoveRequestId == moveRequestId)
+            .OrderBy(m => m.CreatedAt)
+            .ToListAsync();
+
+        // Okunmamış mesajları okundu olarak işaretle
+        var unreadMessages = messages.Where(m => !m.IsRead && m.FromUserId.HasValue).ToList();
+        foreach (var msg in unreadMessages)
+        {
+            msg.IsRead = true;
+        }
+        await _context.SaveChangesAsync();
+
+        ViewBag.Request = request;
+        return View(messages);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SendMessage(int moveRequestId, string content, IFormFile? attachment)
+    {
+        var carrierIdClaim = User.FindFirst("CarrierId");
+        if (carrierIdClaim == null || !int.TryParse(carrierIdClaim.Value, out var carrierId))
+        {
+            return Unauthorized();
+        }
+
+        var request = await _context.MoveRequests.FirstOrDefaultAsync(r => r.Id == moveRequestId);
+        if (request == null) return NotFound();
+
+        string? attachmentPath = null;
+        if (attachment != null && attachment.Length > 0)
+        {
+            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "messages");
+            Directory.CreateDirectory(uploadsPath);
+            var fileName = $"{Guid.NewGuid()}_{attachment.FileName}";
+            var filePath = Path.Combine(uploadsPath, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await attachment.CopyToAsync(stream);
+            }
+            attachmentPath = $"messages/{fileName}";
+        }
+
+        var message = new Message
+        {
+            MoveRequestId = moveRequestId,
+            FromCarrierId = carrierId,
+            Content = content,
+            AttachmentPath = attachmentPath
+        };
+
+        _context.Messages.Add(message);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Messages), new { moveRequestId });
+    }
+
+    // Teklif Şablonları
+    public async Task<IActionResult> OfferTemplates()
+    {
+        var carrierIdClaim = User.FindFirst("CarrierId");
+        if (carrierIdClaim == null || !int.TryParse(carrierIdClaim.Value, out var carrierId))
+        {
+            return Unauthorized();
+        }
+
+        var templates = await _context.OfferTemplates
+            .Where(t => t.CarrierId == carrierId)
+            .OrderByDescending(t => t.IsDefault)
+            .ThenBy(t => t.Name)
+            .ToListAsync();
+
+        return View(templates);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateOfferTemplate(OfferTemplate template)
+    {
+        var carrierIdClaim = User.FindFirst("CarrierId");
+        if (carrierIdClaim == null || !int.TryParse(carrierIdClaim.Value, out var carrierId))
+        {
+            return Unauthorized();
+        }
+
+        template.CarrierId = carrierId;
+        
+        if (template.IsDefault)
+        {
+            // Diğer default'ları kaldır
+            var otherDefaults = await _context.OfferTemplates
+                .Where(t => t.CarrierId == carrierId && t.IsDefault)
+                .ToListAsync();
+            foreach (var t in otherDefaults)
+            {
+                t.IsDefault = false;
+            }
+        }
+
+        _context.OfferTemplates.Add(template);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Şablon oluşturuldu.";
+        return RedirectToAction(nameof(OfferTemplates));
+    }
+
+    // Fiyat Hesaplayıcı
+    [HttpPost]
+    public async Task<IActionResult> CalculatePrice(int moveRequestId, int? templateId)
+    {
+        var carrierIdClaim = User.FindFirst("CarrierId");
+        if (carrierIdClaim == null || !int.TryParse(carrierIdClaim.Value, out var carrierId))
+        {
+            return Unauthorized();
+        }
+
+        var request = await _context.MoveRequests.FirstOrDefaultAsync(r => r.Id == moveRequestId);
+        if (request == null) return NotFound();
+
+        decimal calculatedPrice = 0;
+
+        if (templateId.HasValue)
+        {
+            var template = await _context.OfferTemplates
+                .FirstOrDefaultAsync(t => t.Id == templateId.Value && t.CarrierId == carrierId);
+            
+            if (template != null)
+            {
+                calculatedPrice = template.BasePrice ?? 0;
+                
+                // Mesafe hesaplama (basit - gerçekte API kullanılabilir)
+                if (template.PricePerKm.HasValue && request.FromCityId.HasValue && request.ToCityId.HasValue)
+                {
+                    // Basit mesafe tahmini (şehirler arası ortalama)
+                    var estimatedKm = 200; // Varsayılan
+                    calculatedPrice += template.PricePerKm.Value * estimatedKm;
+                }
+                
+                // Oda sayısı
+                if (template.PricePerRoom.HasValue && !string.IsNullOrEmpty(request.RoomType))
+                {
+                    var roomCount = request.RoomType.Contains("1+1") ? 1 : 
+                                   request.RoomType.Contains("2+1") ? 2 :
+                                   request.RoomType.Contains("3+1") ? 3 : 4;
+                    calculatedPrice += template.PricePerRoom.Value * roomCount;
+                }
+                
+                // Kat
+                if (template.PricePerFloor.HasValue)
+                {
+                    if (request.FromFloor.HasValue) calculatedPrice += template.PricePerFloor.Value * request.FromFloor.Value;
+                    if (request.ToFloor.HasValue) calculatedPrice += template.PricePerFloor.Value * request.ToFloor.Value;
+                }
+            }
+        }
+
+        return Json(new { price = calculatedPrice });
+    }
+
+    // Müşteri Geçmişi
+    public async Task<IActionResult> CustomerHistory(int userId)
+    {
+        var carrierIdClaim = User.FindFirst("CarrierId");
+        if (carrierIdClaim == null || !int.TryParse(carrierIdClaim.Value, out var carrierId))
+        {
+            return Unauthorized();
+        }
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null) return NotFound();
+
+        var requests = await _context.MoveRequests
+            .Where(r => r.UserId == userId)
+            .Include(r => r.User)
+            .OrderByDescending(r => r.CreatedAt)
+            .ToListAsync();
+
+        var offers = await _context.Offers
+            .Where(o => o.CarrierId == carrierId && requests.Select(r => r.Id).Contains(o.MoveRequestId))
+            .ToListAsync();
+
+        ViewBag.User = user;
+        ViewBag.Requests = requests;
+        ViewBag.Offers = offers;
+
+        return View();
+    }
+
+    // Toplu Teklif
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BulkCreateOffers(int[] moveRequestIds, decimal price, string? note)
+    {
+        var carrierIdClaim = User.FindFirst("CarrierId");
+        if (carrierIdClaim == null || !int.TryParse(carrierIdClaim.Value, out var carrierId))
+        {
+            return Unauthorized();
+        }
+
+        var createdCount = 0;
+        foreach (var requestId in moveRequestIds)
+        {
+            var exists = await _context.Offers
+                .AnyAsync(o => o.MoveRequestId == requestId && o.CarrierId == carrierId);
+            
+            if (!exists)
+            {
+                var offer = new Offer
+                {
+                    MoveRequestId = requestId,
+                    CarrierId = carrierId,
+                    Price = price,
+                    Note = note,
+                    Status = "Beklemede"
+                };
+                _context.Offers.Add(offer);
+                createdCount++;
+            }
+        }
+
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = $"{createdCount} teklif oluşturuldu.";
+        return RedirectToAction(nameof(Leads));
+    }
+
+    // Raporlama
+    public async Task<IActionResult> Reports(DateTime? startDate, DateTime? endDate)
+    {
+        var carrierIdClaim = User.FindFirst("CarrierId");
+        if (carrierIdClaim == null || !int.TryParse(carrierIdClaim.Value, out var carrierId))
+        {
+            return Unauthorized();
+        }
+
+        var start = startDate ?? DateTime.UtcNow.AddMonths(-1);
+        var end = endDate ?? DateTime.UtcNow;
+
+        var offers = await _context.Offers
+            .Include(o => o.MoveRequest)
+            .Where(o => o.CarrierId == carrierId && o.CreatedAt >= start && o.CreatedAt <= end)
+            .ToListAsync();
+
+        var acceptedOffers = offers.Where(o => o.Status == "Kabul Edildi").ToList();
+        var totalRevenue = acceptedOffers.Sum(o => o.Price);
+        var completedMoves = await _context.MoveRequests
+            .Where(r => r.Status.Contains("Tamamlandı") && r.AcceptedOfferId != null)
+            .Join(_context.Offers.Where(o => o.CarrierId == carrierId),
+                r => r.AcceptedOfferId,
+                o => o.Id,
+                (r, o) => r)
+            .Where(r => r.CompletedAt >= start && r.CompletedAt <= end)
+            .CountAsync();
+
+        ViewBag.StartDate = start;
+        ViewBag.EndDate = end;
+        ViewBag.TotalOffers = offers.Count;
+        ViewBag.AcceptedOffers = acceptedOffers.Count;
+        ViewBag.TotalRevenue = totalRevenue;
+        ViewBag.CompletedMoves = completedMoves;
+        ViewBag.Offers = offers;
+
+        return View();
     }
 }

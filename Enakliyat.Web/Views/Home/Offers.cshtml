@@ -21,7 +21,7 @@
             <div class="col-12 col-lg-10">
                 <div class="card border-0 shadow-lg rounded-4">
                     <div class="card-body p-4 p-lg-5">
-                        <form asp-action="Offers" method="post" enctype="multipart/form-data">
+                        <form asp-action="Offers" method="post" enctype="multipart/form-data" id="offerForm">
                             @Html.AntiForgeryToken()
                             <input type="hidden" asp-for="MoveRequestId" />
 
@@ -151,7 +151,15 @@
                                 }
 
                                 <div class="col-12 d-flex justify-content-end mt-3">
-                                    <button type="submit" class="btn btn-primary btn-lg px-4">Teklifleri Al</button>
+                                    <button type="submit" class="btn btn-primary btn-lg px-4" id="submitBtn">
+                                        <span class="submit-text">
+                                            <i class="fas fa-paper-plane me-2"></i>Teklifleri Al
+                                        </span>
+                                        <span class="loading-text" style="display: none;">
+                                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                            Gönderiliyor...
+                                        </span>
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -204,5 +212,20 @@
             notesLabel.textContent = notesText;
             notesTextarea.setAttribute('placeholder', notesPlaceholder);
         })();
+
+        // Form submit loading state
+        const offerForm = document.getElementById('offerForm');
+        const submitBtn = document.getElementById('submitBtn');
+        if (offerForm && submitBtn) {
+            offerForm.addEventListener('submit', function() {
+                const submitText = submitBtn.querySelector('.submit-text');
+                const loadingText = submitBtn.querySelector('.loading-text');
+                if (submitText && loadingText) {
+                    submitText.style.display = 'none';
+                    loadingText.style.display = 'inline';
+                    submitBtn.disabled = true;
+                }
+            });
+        }
     </script>
 }

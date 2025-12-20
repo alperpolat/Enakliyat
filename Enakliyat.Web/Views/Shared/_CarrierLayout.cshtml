@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Firma Paneli</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --header-height: 64px;
+            --primary-color: #f97316;
+            --primary-light: #fb923c;
+            --primary-dark: #ea580c;
+            --sidebar-bg: #18181b;
+            --sidebar-hover: #27272a;
+            --text-muted: #a1a1aa;
+        }
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: #fafafa;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .carrier-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s;
+        }
+        
+        .sidebar-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+        
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.25rem;
+        }
+        
+        .sidebar-logo-text {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #fff;
+        }
+        
+        .sidebar-logo-text span {
+            color: var(--primary-light);
+        }
+        
+        .sidebar-badge {
+            margin-left: auto;
+            background: var(--primary-color);
+            color: #fff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.625rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .sidebar-menu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 0;
+        }
+        
+        .menu-section {
+            padding: 0.5rem 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .menu-section-title {
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+        
+        .menu-item:hover {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+        
+        .menu-item.active {
+            background: rgba(249,115,22,0.15);
+            color: var(--primary-light);
+            border-left-color: var(--primary-color);
+        }
+        
+        .menu-item i {
+            width: 20px;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .menu-item .badge {
+            margin-left: auto;
+            font-size: 0.6875rem;
+            padding: 0.25rem 0.5rem;
+            font-weight: 600;
+        }
+        
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--sidebar-hover);
+            border-radius: 10px;
+        }
+        
+        .sidebar-user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+        }
+        
+        .sidebar-user-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .sidebar-user-name {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .sidebar-user-role {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+        
+        /* Main Content */
+        .carrier-main {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .carrier-header {
+            height: var(--header-height);
+            background: #fff;
+            border-bottom: 1px solid #e4e4e7;
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1040;
+        }
+        
+        .carrier-header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #18181b;
+            margin: 0;
+        }
+        
+        .carrier-header-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .header-icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #f4f4f5;
+            border: none;
+            color: #71717a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .header-icon-btn:hover {
+            background: #e4e4e7;
+            color: var(--primary-color);
+        }
+        
+        .header-icon-btn .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+        
+        .carrier-content {
+            flex: 1;
+            padding: 1.5rem;
+        }
+        
+        /* Cards */
+        .carrier-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #e4e4e7;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .carrier-card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #e4e4e7;
+            display: flex;
+            align-items: center;
+        }
+        
+        .carrier-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #18181b;
+            margin: 0;
+        }
+        
+        .carrier-card-body {
+            padding: 1.5rem;
+        }
+        
+        /* Stats Cards */
+        .carrier-stat-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: #fff;
+        }
+        
+        .carrier-stat-card.blue {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+        
+        .carrier-stat-card.green {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        
+        .carrier-stat-card.purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+        
+        .carrier-stat-card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .carrier-stat-card-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+        
+        .carrier-stat-card-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+        
+        /* Tables */
+        .carrier-table {
+            margin: 0;
+        }
+        
+        .carrier-table thead th {
+            background: #fafafa;
+            border: none;
+            padding: 0.875rem 1rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #71717a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .carrier-table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-color: #e4e4e7;
+            color: #52525b;
+        }
+        
+        .carrier-table tbody tr:hover {
+            background: #fafafa;
+        }
+        
+        /* Buttons */
+        .btn-carrier-primary {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-carrier-primary:hover {
+            background: var(--primary-dark);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        
+        .btn-carrier-light {
+            background: #f4f4f5;
+            color: #52525b;
+            border: none;
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-carrier-light:hover {
+            background: #e4e4e7;
+            color: var(--primary-color);
+        }
+        
+        /* Mobile */
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: #52525b;
+            margin-right: 1rem;
+        }
+        
+        @@media (max-width: 991.98px) {
+            .carrier-sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .carrier-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .carrier-main {
+                margin-left: 0;
+            }
+            
+            .sidebar-toggle {
+                display: block;
+            }
+            
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 1049;
+                display: none;
+            }
+            
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <!-- Sidebar -->
+    <aside class="carrier-sidebar" id="carrierSidebar">
+        <div class="sidebar-header">
+            <a href="@Url.Action("Dashboard", "Carrier")" class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <i class="fas fa-truck-moving"></i>
+                </div>
+                <span class="sidebar-logo-text">Nakliye<span>360</span></span>
+            </a>
+            <span class="sidebar-badge">Firma</span>
+        </div>
+        
+        <nav class="sidebar-menu">
+            <div class="menu-section">
+                <div class="menu-section-title">Ana Menü</div>
+            </div>
+            <a href="@Url.Action("Dashboard", "Carrier")" class="menu-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <div class="menu-section">
+                <div class="menu-section-title">İş Yönetimi</div>
+            </div>
+            <a href="@Url.Action("Leads", "Carrier")" class="menu-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Leads" ? "active" : "")">
+                <i class="fas fa-bullhorn"></i>
+                <span>Talepler (Leads)</span>
+            </a>
+            <a href="@Url.Action("Offers", "Carrier")" class="menu-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Offers" ? "active" : "")">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Tekliflerim</span>
+                @if (ViewBag.PendingOffersCount != null && ViewBag.PendingOffersCount > 0)
+                {
+                    <span class="badge bg-warning text-dark">@ViewBag.PendingOffersCount</span>
+                }
+            </a>
+            <a href="@Url.Action("Reservations", "Carrier")" class="menu-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Reservations" ? "active" : "")">
+                <i class="fas fa-calendar-check"></i>
+                <span>Rezervasyonlar</span>
+            </a>
+            <a href="@Url.Action("ReservationsCalendar", "Carrier")" class="menu-item @(ViewContext.RouteData.Values["action"]?.ToString() == "ReservationsCalendar" ? "active" : "")">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Takvim</span>
+            </a>
+            
+            <div class="menu-section">
+                <div class="menu-section-title">Finans & Değerlendirme</div>
+            </div>
+            <a href="@Url.Action("Payments", "Carrier")" class="menu-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Payments" ? "active" : "")">
+                <i class="fas fa-wallet"></i>
+                <span>Ödemeler</span>
+            </a>
+            <a href="@Url.Action("Reviews", "Carrier")" class="menu-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Reviews" ? "active" : "")">
+                <i class="fas fa-star"></i>
+                <span>Değerlendirmeler</span>
+            </a>
+            
+            <div class="menu-section">
+                <div class="menu-section-title">Hesap</div>
+            </div>
+            <a href="@Url.Action("Profile", "Carrier")" class="menu-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Profile" ? "active" : "")">
+                <i class="fas fa-user-cog"></i>
+                <span>Firma Profili</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name">@User.Identity?.Name</div>
+                    <div class="sidebar-user-role">Nakliyeci Firma</div>
+                </div>
+            </div>
+            <form asp-controller="CarrierAccount" asp-action="Logout" method="post" class="mt-2">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-carrier-light w-100">
+                    <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                </button>
+            </form>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="carrier-main">
+        <header class="carrier-header">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="carrier-header-title">@ViewData["Title"]</h1>
+            <div class="carrier-header-actions">
+                <a href="@Url.Action("Leads", "Carrier")" class="header-icon-btn" title="Yeni Talepler">
+                    <i class="fas fa-inbox"></i>
+                    <span class="badge-dot"></span>
+                </a>
+                <a href="@Url.Action("Index", "Home")" class="header-icon-btn" title="Siteye Git">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+        </header>
+        
+        <div class="carrier-content">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 10px; border: none;">
+                    <i class="fas fa-check-circle me-2"></i>
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 10px; border: none;">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            
+            @RenderBody()
+        </div>
+    </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            document.getElementById('carrierSidebar').classList.toggle('show');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        });
+        
+        document.getElementById('sidebarOverlay')?.addEventListener('click', function() {
+            document.getElementById('carrierSidebar').classList.remove('show');
+            this.classList.remove('show');
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+

@@ -1,0 +1,75 @@
+@model List<Enakliyat.Domain.NotificationTemplate>
+@{
+    ViewData["Title"] = "Bildirim Yönetimi";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Bildirim Şablonları</h2>
+    <a href="@Url.Action("NotificationTemplate", "Admin")" class="btn btn-admin-primary">
+        <i class="fas fa-plus me-2"></i>Yeni Şablon
+    </a>
+</div>
+
+<div class="admin-card">
+    <div class="admin-card-body">
+        <div class="table-responsive">
+            <table class="table admin-table">
+                <thead>
+                    <tr>
+                        <th>Ad</th>
+                        <th>Tip</th>
+                        <th>Olay Tipi</th>
+                        <th>Durum</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var template in Model)
+                        {
+                            <tr>
+                                <td><strong>@template.Name</strong></td>
+                                <td>
+                                    <span class="badge bg-info">@template.Type</span>
+                                </td>
+                                <td>@template.EventType</td>
+                                <td>
+                                    @if (template.IsActive)
+                                    {
+                                        <span class="badge bg-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Pasif</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("NotificationTemplate", "Admin", new { id = template.Id })" class="btn btn-sm btn-admin-light me-2">
+                                        <i class="fas fa-edit"></i> Düzenle
+                                    </a>
+                                    <form asp-action="DeleteNotificationTemplate" method="post" class="d-inline" onsubmit="return confirm('Bu şablonu silmek istediğinizden emin misiniz?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@template.Id" />
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> Sil
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                Henüz şablon eklenmemiş.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

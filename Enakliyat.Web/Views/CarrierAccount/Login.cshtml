@@ -1,29 +1,323 @@
 @{
-    ViewData["Title"] = "Nakliyeci Giriş";
+    ViewData["Title"] = "Firma Girişi";
+    Layout = "_Layout";
 }
 
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-md-4">
-            <h3 class="mb-3 text-center">Nakliyeci Giriş</h3>
-            <form asp-action="Login" method="post">
-                @Html.AntiForgeryToken()
-                <div class="mb-3">
-                    <label class="form-label" for="email">E-posta</label>
-                    <input type="email" name="email" class="form-control" required />
+<style>
+    .carrier-auth-section {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        padding: 3rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .carrier-auth-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -25%;
+        width: 80%;
+        height: 150%;
+        background: linear-gradient(135deg, rgba(249,115,22,0.15) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+    
+    .carrier-auth-container {
+        display: flex;
+        background: #fff;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 25px 100px rgba(0,0,0,0.3);
+        max-width: 1000px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .carrier-auth-image {
+        flex: 1;
+        background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .carrier-auth-image::before {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: -30%;
+        width: 80%;
+        height: 80%;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+    }
+    
+    .carrier-auth-image-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .carrier-auth-image h2 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 1rem;
+    }
+    
+    .carrier-auth-image p {
+        color: rgba(255,255,255,0.9);
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+    
+    .carrier-features {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .carrier-features li {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: rgba(255,255,255,0.95);
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+    
+    .carrier-features li i {
+        color: #fff;
+        font-size: 0.875rem;
+        width: 24px;
+        height: 24px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .carrier-auth-form {
+        flex: 1;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .carrier-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .carrier-logo-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.5rem;
+    }
+    
+    .carrier-logo-text {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #1e293b;
+    }
+    
+    .carrier-logo-text span {
+        color: #f97316;
+    }
+    
+    .carrier-auth-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .carrier-auth-subtitle {
+        color: #64748b;
+        margin-bottom: 2rem;
+    }
+    
+    .form-label-custom {
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control-custom {
+        padding: 0.875rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        background: #f8fafc;
+    }
+    
+    .form-control-custom:focus {
+        border-color: #f97316;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(249,115,22,0.1);
+    }
+    
+    .btn-carrier-primary {
+        width: 100%;
+        padding: 0.875rem;
+        background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 700;
+        transition: all 0.3s;
+    }
+    
+    .btn-carrier-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(249,115,22,0.3);
+        color: #fff;
+    }
+    
+    .carrier-auth-footer {
+        text-align: center;
+        margin-top: 2rem;
+        color: #64748b;
+    }
+    
+    .carrier-auth-footer a {
+        color: #f97316;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    
+    .carrier-auth-footer a:hover {
+        text-decoration: underline;
+    }
+    
+    .alert-carrier {
+        border: none;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        background: #fef2f2;
+        color: #dc2626;
+    }
+    
+    .carrier-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(249,115,22,0.1);
+        color: #ea580c;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+    
+    @@media (max-width: 991.98px) {
+        .carrier-auth-image {
+            display: none;
+        }
+        
+        .carrier-auth-form {
+            padding: 2rem;
+        }
+    }
+</style>
+
+<section class="carrier-auth-section">
+    <div class="container">
+        <div class="carrier-auth-container">
+            <div class="carrier-auth-image">
+                <div class="carrier-auth-image-content">
+                    <h2>Firma Paneli</h2>
+                    <p>
+                        Nakliye360 iş ortağı olarak platformumuza giriş yapın. 
+                        Yeni talepleri görüntüleyin, teklif verin ve işinizi büyütün.
+                    </p>
+                    <ul class="carrier-features">
+                        <li><i class="fas fa-chart-line"></i> Gerçek zamanlı talep bildirimleri</li>
+                        <li><i class="fas fa-file-invoice-dollar"></i> Kolay teklif yönetimi</li>
+                        <li><i class="fas fa-calendar-alt"></i> Rezervasyon takvimi</li>
+                        <li><i class="fas fa-star"></i> Müşteri değerlendirmeleri</li>
+                        <li><i class="fas fa-wallet"></i> Gelir takibi ve raporlar</li>
+                    </ul>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label" for="password">Şifre</label>
-                    <input type="password" name="password" class="form-control" required />
+            </div>
+            
+            <div class="carrier-auth-form">
+                <div class="carrier-logo">
+                    <div class="carrier-logo-icon">
+                        <i class="fas fa-truck-moving"></i>
+                    </div>
+                    <span class="carrier-logo-text">Nakliye<span>360</span></span>
                 </div>
-                <div class="text-danger mb-2">
-                    @Html.ValidationSummary()
+                
+                <div class="carrier-badge">
+                    <i class="fas fa-briefcase"></i>
+                    Firma Girişi
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
-            </form>
-            <p class="mt-3 text-center">
-                Henüz üye değil misiniz? <a asp-action="Register">Nakliyeci başvurusu yapın</a>.
-            </p>
+                
+                <h1 class="carrier-auth-title">Hoş Geldiniz</h1>
+                <p class="carrier-auth-subtitle">Firma hesabınıza giriş yaparak devam edin</p>
+                
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert-carrier">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        @Html.ValidationSummary()
+                    </div>
+                }
+                
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success" style="border-radius: 10px;">
+                        <i class="fas fa-check-circle me-2"></i>
+                        @TempData["Success"]
+                    </div>
+                }
+                
+                <form asp-action="Login" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="mb-3">
+                        <label class="form-label form-label-custom" for="email">E-posta Adresi</label>
+                        <input type="email" id="email" name="email" class="form-control form-control-custom" placeholder="firma@email.com" required />
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label form-label-custom" for="password">Şifre</label>
+                        <input type="password" id="password" name="password" class="form-control form-control-custom" placeholder="••••••••" required />
+                    </div>
+                    
+                    <button type="submit" class="btn btn-carrier-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Giriş Yap
+                    </button>
+                </form>
+                
+                <div class="carrier-auth-footer">
+                    <p class="mb-2">Henüz kayıtlı değil misiniz? <a asp-action="Register">Firma Başvurusu Yapın</a></p>
+                    <p class="mb-0"><a asp-controller="Account" asp-action="Login">Müşteri Girişi</a></p>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</section>

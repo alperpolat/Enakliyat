@@ -1,220 +1,869 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Enakliyat.Web</title>
-    <script type="importmap"></script>
-    <!-- dist theme css -->
-    <link href="~/dist/assets/css/vendor.min.css" rel="stylesheet" />
-    <link href="~/dist/assets/css/app.min.css" rel="stylesheet" />
-    <!-- legacy bootstrap/site css (varsa) -->
+    <meta name="description" content="Türkiye'nin lider nakliyat platformu. Evden eve nakliyat, ofis taşıma, depolama ve parça eşya taşıma hizmetlerinde güvenilir firmalardan anında teklif alın." />
+    <meta name="keywords" content="nakliyat, evden eve nakliyat, ofis taşıma, depolama, parça eşya, taşınma, nakliye firması" />
+    <title>@ViewData["Title"] - Nakliye360 | Türkiye'nin Nakliyat Platformu</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
     <style>
+        :root {
+            --primary: #0052CC;
+            --primary-dark: #003d99;
+            --primary-light: #4C9AFF;
+            --secondary: #FF6B35;
+            --secondary-dark: #e55a2b;
+            --success: #36B37E;
+            --warning: #FFAB00;
+            --dark: #172B4D;
+            --gray-100: #F4F5F7;
+            --gray-200: #EBECF0;
+            --gray-300: #DFE1E6;
+            --gray-400: #C1C7D0;
+            --gray-500: #97A0AF;
+            --gray-600: #6B778C;
+            --gray-700: #505F79;
+            --gray-800: #344563;
+            --white: #FFFFFF;
+            --gradient-primary: linear-gradient(135deg, #0052CC 0%, #4C9AFF 100%);
+            --gradient-secondary: linear-gradient(135deg, #FF6B35 0%, #FF8F6B 100%);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+            --shadow-xl: 0 24px 60px rgba(0,0,0,0.15);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
         body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--dark);
+            background: var(--white);
             overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* ===== NAVBAR ===== */
+        .navbar-main {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            padding: 0.75rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-main.scrolled {
+            box-shadow: var(--shadow-md);
+            padding: 0.5rem 0;
+        }
+        
+        .navbar-brand-custom {
+            font-size: 1.75rem;
+            font-weight: 800;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.25rem;
+        }
+        
+        .brand-text {
+            color: var(--dark);
+        }
+        
+        .brand-text span {
+            color: var(--primary);
+        }
+        
+        .nav-link-custom {
+            color: var(--gray-700) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        
+        .nav-link-custom:hover {
+            color: var(--primary) !important;
+            background: var(--gray-100);
+        }
+        
+        .nav-link-custom.active {
+            color: var(--primary) !important;
+        }
+        
+        .btn-nav-primary {
+            background: var(--gradient-primary);
+            color: var(--white) !important;
+            border: none;
+            padding: 0.6rem 1.5rem !important;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-nav-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,82,204,0.3);
+            color: var(--white) !important;
+        }
+        
+        .btn-nav-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary) !important;
+            padding: 0.5rem 1.25rem !important;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+        
+        .btn-nav-outline:hover {
+            background: var(--primary);
+            color: var(--white) !important;
+        }
+        
+        .dropdown-menu-custom {
+            border: none;
+            box-shadow: var(--shadow-lg);
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        
+        .dropdown-item-custom {
+            padding: 0.6rem 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            color: var(--gray-700);
+            transition: all 0.2s ease;
+        }
+        
+        .dropdown-item-custom:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+        
+        .dropdown-item-custom i {
+            width: 20px;
+            color: var(--gray-500);
+        }
+        
+        /* ===== BUTTONS ===== */
+        .btn-primary-custom {
+            background: var(--gradient-primary);
+            border: none;
+            color: var(--white);
+            padding: 0.875rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,82,204,0.35);
+            color: var(--white);
+        }
+        
+        .btn-secondary-custom {
+            background: var(--gradient-secondary);
+            border: none;
+            color: var(--white);
+            padding: 0.875rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255,107,53,0.35);
+            color: var(--white);
+        }
+        
+        .btn-outline-custom {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-custom:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        .btn-white-custom {
+            background: var(--white);
+            border: none;
+            color: var(--primary);
+            padding: 0.875rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-white-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* ===== SECTION TITLES ===== */
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0,82,204,0.08);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title span {
+            color: var(--primary);
+        }
+        
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* ===== CARDS ===== */
+        .card-custom {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card-custom:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer-main {
+            background: var(--dark);
+            color: var(--gray-300);
+            padding: 5rem 0 2rem;
+        }
+        
+        .footer-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+        
+        .footer-brand span {
+            color: var(--primary-light);
+        }
+        
+        .footer-desc {
+            color: var(--gray-400);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .footer-social a {
+            width: 42px;
+            height: 42px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-300);
+            transition: all 0.3s ease;
+        }
+        
+        .footer-social a:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+        
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+        
+        .footer-links a:hover {
+            color: var(--white);
+            padding-left: 5px;
+        }
+        
+        .footer-contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-contact-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-light);
+            flex-shrink: 0;
+        }
+        
+        .footer-contact-text {
+            font-size: 0.95rem;
+        }
+        
+        .footer-contact-text strong {
+            color: var(--white);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-copyright {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+        
+        .footer-bottom-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: flex-end;
+        }
+        
+        .footer-bottom-links a {
+            color: var(--gray-500);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .footer-bottom-links a:hover {
+            color: var(--white);
+        }
+        
+        /* ===== ANIMATIONS ===== */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        @@keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @@keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* ===== SPACING ===== */
+        .section-padding {
+            padding: 6rem 0;
+        }
+        
+        .pt-navbar {
+            padding-top: 80px;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @@media (max-width: 991.98px) {
+            .navbar-collapse {
+                background: var(--white);
+                padding: 1rem;
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-lg);
+                margin-top: 1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .section-padding {
+                padding: 4rem 0;
+            }
+        }
+        
+        @@media (max-width: 767.98px) {
+            .section-title {
+                font-size: 1.75rem;
+            }
+            
+            .footer-bottom-links {
+                justify-content: flex-start;
+                margin-top: 1rem;
+            }
+        }
+        
+        /* ===== ALERTS ===== */
+        .alert-custom {
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 1rem 1.25rem;
+            font-weight: 500;
+        }
+        
+        /* ===== WHATSAPP BUTTON ===== */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.75rem;
+            box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(37,211,102,0.5);
+            color: var(--white);
+        }
+        
+        /* ===== BACK TO TOP ===== */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 45px;
+            height: 45px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            text-decoration: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            color: var(--white);
+            transform: translateY(-5px);
         }
     </style>
 </head>
 <body>
-    <div id="app" class="app">
-        <div id="header" class="app-header navbar navbar-expand-lg p-0 bg-gray-800 text-body text-opacity-75" data-bs-theme="dark">
-            <div class="container-xxl px-3 px-lg-5">
-                <button class="navbar-toggler border-0 p-0 me-3 fs-24px shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                    <span class="h-2px w-25px bg-gray-500 d-block mb-1"></span>
-                    <span class="h-2px w-25px bg-gray-500 d-block"></span>
-                </button>
-                <a class="navbar-brand d-flex align-items-center position-relative me-auto text-decoration-none" asp-controller="Home" asp-action="Index">
-                    <span class="fw-bold" style="font-size: 24px; letter-spacing: 0.5px;">
-                        <span style="color:#1a73e8;">N</span>
-                        <span style="color:#34a853;">a</span>
-                        <span style="color:#fbbc05;">k</span>
-                        <span style="color:#ea4335;">l</span>
-                        <span style="color:#34a853;">i</span>
-                        <span style="color:#1a73e8;">y</span>
-                        <span style="color:#ea4335;">e</span>
-                        <span style="color:#fbbc05;">3</span>
-                        <span style="color:#34a853;">6</span>
-                        <span style="color:#1a73e8;">0</span>
-                    </span>
-                </a>
-                <div class="collapse navbar-collapse" id="navbarContent">
-                    <div class="navbar-nav ms-auto mb-2 mb-lg-0 fw-500 align-items-lg-center">
-                        <div class="nav-item me-2">
-                            <a asp-controller="Home" asp-action="Index" class="nav-link">Teklif Al</a>
-                        </div>
-                        <div class="nav-item me-2">
-                            <a asp-controller="Home" asp-action="Requests" class="nav-link">Taleplerim</a>
-                        </div>
-                        @if (User.HasClaim("IsAdmin", "True"))
-                        {
-                            <div class="nav-item dropdown me-2">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Admin</a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" asp-controller="Admin" asp-action="Dashboard">Dashboard</a>
-                                    <a class="dropdown-item" asp-controller="Admin" asp-action="Requests">Talepler</a>
-                                    <a class="dropdown-item" asp-controller="Admin" asp-action="Reservations">Rezervasyonlar</a>
-                                    <a class="dropdown-item" asp-controller="Admin" asp-action="Carriers">Nakliyeciler</a>
-                                    <a class="dropdown-item" asp-controller="Admin" asp-action="Users">Kullanıcılar</a>
-                                    <a class="dropdown-item" asp-controller="Admin" asp-action="AddOnServices">Ek Hizmetler</a>
-                                    <a class="dropdown-item" asp-controller="Admin" asp-action="Reviews">Yorumlar</a>
-                                </div>
-                            </div>
-                        }
-                        @if (User.HasClaim("IsCarrier", "True"))
-                        {
-                            <div class="nav-item dropdown me-2">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Nakliyeci Paneli</a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Profile">Profil & Belgeler</a>
-                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Dashboard">Dashboard</a>
-                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Leads">Talepler (Leads)</a>
-                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Offers">Tekliflerim</a>
-                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Reservations">Rezervasyonlarım (Liste)</a>
-                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="ReservationsCalendar">Rezervasyon Takvimi</a>
-                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Reviews">Yorumlarım</a>
-                                    <a class="dropdown-item" asp-controller="Carrier" asp-action="Payments">Ödemeler</a>
-                                    <div class="dropdown-divider"></div>
-                                    <form asp-controller="CarrierAccount" asp-action="Logout" method="post" class="px-3 py-1">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-main" id="mainNavbar">
+        <div class="container">
+            <a class="navbar-brand-custom" asp-controller="Home" asp-action="Index">
+                <div class="brand-icon">
+                    <i class="fas fa-truck-moving"></i>
+                </div>
+                <span class="brand-text">Nakliye<span>360</span></span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                <i class="fas fa-bars text-dark"></i>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link nav-link-custom dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="fas fa-th-large me-1"></i> Hizmetlerimiz
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-custom">
+                            <li><a class="dropdown-item dropdown-item-custom" asp-controller="Home" asp-action="EvTasima"><i class="fas fa-home me-2"></i> Evden Eve Nakliyat</a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" asp-controller="Home" asp-action="OfisTasima"><i class="fas fa-building me-2"></i> Ofis Taşıma</a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" asp-controller="Home" asp-action="Depolama"><i class="fas fa-warehouse me-2"></i> Depolama</a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" asp-controller="Home" asp-action="ParcaEsya"><i class="fas fa-box me-2"></i> Parça Eşya Taşıma</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item dropdown-item-custom" asp-controller="Home" asp-action="SehirlerArasi"><i class="fas fa-route me-2"></i> Şehirlerarası Nakliyat</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="#nasil-calisir">Nasıl Çalışır?</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="#avantajlar">Avantajlar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="#yorumlar">Müşteri Yorumları</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="#sss">SSS</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center gap-2">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="dropdown">
+                            <a href="#" class="nav-link nav-link-custom dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-2"></i>
+                                @User.Identity.Name
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-custom dropdown-menu-end">
+                                <li><a class="dropdown-item dropdown-item-custom" asp-controller="Home" asp-action="Requests"><i class="fas fa-list-alt me-2"></i> Taleplerim</a></li>
+                                <li><a class="dropdown-item dropdown-item-custom" asp-controller="Home" asp-action="Payments"><i class="fas fa-credit-card me-2"></i> Ödemelerim</a></li>
+                                @if (User.HasClaim("IsAdmin", "True"))
+                                {
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" asp-controller="Admin" asp-action="Dashboard"><i class="fas fa-tachometer-alt me-2"></i> Admin Panel</a></li>
+                                }
+                                @if (User.HasClaim("IsCarrier", "True"))
+                                {
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item dropdown-item-custom" asp-controller="Carrier" asp-action="Dashboard"><i class="fas fa-truck me-2"></i> Nakliyeci Paneli</a></li>
+                                }
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-link p-0">Çıkış</button>
+                                        <button type="submit" class="dropdown-item dropdown-item-custom text-danger">
+                                            <i class="fas fa-sign-out-alt me-2"></i> Çıkış Yap
+                                        </button>
                                     </form>
-                                </div>
-                            </div>
-                        }
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <div class="nav-item dropdown ms-lg-3">
-                                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
-                                    <span class="me-2">@User.Identity.Name</span>
-                                    <i class="fa fa-user-circle"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <form asp-controller="Account" asp-action="Logout" method="post" class="px-3 py-1">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-link p-0">Çıkış</button>
-                                    </form>
-                                </div>
-                            </div>
-                        }
-                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" class="nav-link nav-link-custom">
+                            <i class="fas fa-sign-in-alt me-1"></i> Giriş
+                        </a>
+                        <a asp-controller="CarrierAccount" asp-action="Login" class="btn btn-nav-outline">
+                            Firma Girişi
+                        </a>
+                    }
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-nav-primary">
+                        <i class="fas fa-calculator me-1"></i> Teklif Al
+                    </a>
                 </div>
             </div>
         </div>
+    </nav>
 
-        <div class="mt-3">
-            <main role="main">
-            @if (TempData["Success"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+    <!-- MAIN CONTENT -->
+    <main class="pt-navbar">
+        @if (TempData["Success"] != null)
+        {
+            <div class="container mt-3">
+                <div class="alert alert-success alert-custom alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
                     @TempData["Success"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
-            @if (TempData["Error"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
-                    @TempData["Error"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
-            @if (TempData["Info"] != null)
-            {
-                <div class="alert alert-info alert-dismissible fade show mt-2" role="alert">
-                    @TempData["Info"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
-
-            @RenderBody()
-        </main>
-        </div>
-
-    <footer class="py-5 bg-gray-800 text-body text-opacity-75" data-bs-theme="dark">
-        <div class="container-xxl px-3 px-lg-5">
-            <div class="row gx-lg-5 gx-3 gy-lg-4 gy-3">
-                <div class="col-lg-3 col-md-6">
-                    <div class="mb-3">
-                        <span class="fw-bold text-white" style="font-size: 24px; letter-spacing: 0.5px;">
-                            <span style="color:#1a73e8;">N</span>
-                            <span style="color:#34a853;">a</span>
-                            <span style="color:#fbbc05;">k</span>
-                            <span style="color:#ea4335;">l</span>
-                            <span style="color:#34a853;">i</span>
-                            <span style="color:#1a73e8;">y</span>
-                            <span style="color:#ea4335;">e</span>
-                            <span style="color:#fbbc05;">3</span>
-                            <span style="color:#34a853;">6</span>
-                            <span style="color:#1a73e8;">0</span>
-                        </span>
-                    </div>
-                    <p class="mb-4">
-                        Nakliye360, Türkiye genelinde onaylı nakliyecilerle güvenli ve şeffaf taşınma deneyimi sunar. Tek form ile onlarca teklif al, yorum ve puanlara göre karşılaştır.
-                    </p>
-                    <h5>Bizi Takip Edin</h5>
-                    <div class="d-flex">
-                        <a href="#" class="me-2 text-body text-opacity-50"><i class="fab fa-lg fa-facebook fa-fw"></i></a>
-                        <a href="#" class="me-2 text-body text-opacity-50"><i class="fab fa-lg fa-instagram fa-fw"></i></a>
-                        <a href="#" class="me-2 text-body text-opacity-50"><i class="fab fa-lg fa-twitter fa-fw"></i></a>
-                        <a href="#" class="me-2 text-body text-opacity-50"><i class="fab fa-lg fa-youtube fa-fw"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5>Hızlı Linkler</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-1"><a asp-controller="Home" asp-action="Index" class="text-decoration-none text-body text-opacity-75">Teklif Al</a></li>
-                        <li class="mb-1"><a asp-controller="Home" asp-action="Requests" class="text-decoration-none text-body text-opacity-75">Taleplerim</a></li>
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Hakkımızda</a></li>
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">İletişim</a></li>
-                        <li class="mb-1"><a asp-controller="CarrierAccount" asp-action="Register" class="text-decoration-none text-body text-opacity-75">Firma Kayıt</a></li>
-                        <li class="mb-1"><a asp-controller="CarrierAccount" asp-action="Login" class="text-decoration-none text-body text-opacity-75">Firma Giriş</a></li>
-                    </ul>
-                    <hr class="text-body text-opacity-50">
-                    <h5>Hizmetler</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Evden Eve Nakliyat</a></li>
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Parça Eşya Taşıma</a></li>
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Şehirler Arası Taşıma</a></li>
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Depolama Hizmeti</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5>Kaynaklar</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Sık Sorulan Sorular</a></li>
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Müşteri Destek</a></li>
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Blog</a></li>
-                    </ul>
-                    <hr class="text-body text-opacity-50">
-                    <h5>Yasal</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-1"><a asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-body text-opacity-75">Gizlilik Politikası</a></li>
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Kullanıcı Sözleşmesi</a></li>
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">KVKK</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5>Yardım Merkezi</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Canlı Destek</a></li>
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">WhatsApp Destek</a></li>
-                        <li class="mb-1"><a href="#" class="text-decoration-none text-body text-opacity-75">Taşınma Rehberi</a></li>
-                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             </div>
-            <hr class="text-body text-opacity-50">
-            <div class="row">
-                <div class="col-sm-6 mb-3 mb-lg-0">
-                    <div class="small">&copy; @DateTime.Now.Year Nakliye360. Tüm hakları saklıdır.</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="container mt-3">
+                <div class="alert alert-danger alert-custom alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-                <div class="col-sm-6 text-sm-end small">
-                    <a href="#" class="text-decoration-none text-body text-opacity-50">Site Haritası</a>
+            </div>
+        }
+        @if (TempData["Info"] != null)
+        {
+            <div class="container mt-3">
+                <div class="alert alert-info alert-custom alert-dismissible fade show" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    @TempData["Info"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        }
+
+        @await Html.PartialAsync("_ErrorMessagesPartial")
+        @RenderBody()
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer-main">
+        <div class="container">
+            <div class="row g-4 g-lg-5">
+                <!-- Brand Column -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer-brand">
+                        <i class="fas fa-truck-moving me-2"></i>Nakliye<span>360</span>
+                    </div>
+                    <p class="footer-desc">
+                        Türkiye'nin en güvenilir nakliyat platformu. 81 ilden onaylı nakliye firmaları ile evden eve nakliyat, 
+                        ofis taşıma, depolama ve parça eşya taşıma hizmetlerinde size özel teklifler sunuyoruz.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Services Column -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="footer-title">Hizmetlerimiz</h5>
+                    <ul class="footer-links">
+                        <li><a asp-controller="Home" asp-action="EvTasima">Evden Eve Nakliyat</a></li>
+                        <li><a asp-controller="Home" asp-action="OfisTasima">Ofis Taşıma</a></li>
+                        <li><a asp-controller="Home" asp-action="Depolama">Depolama Hizmeti</a></li>
+                        <li><a asp-controller="Home" asp-action="ParcaEsya">Parça Eşya Taşıma</a></li>
+                        <li><a asp-controller="Home" asp-action="SehirlerArasi">Şehirlerarası Nakliyat</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Company Column -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="footer-title">Kurumsal</h5>
+                    <ul class="footer-links">
+                        <li><a asp-controller="Home" asp-action="Hakkimizda">Hakkımızda</a></li>
+                        <li><a asp-controller="Home" asp-action="Iletisim">İletişim</a></li>
+                        <li><a href="#">Basında Biz</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a asp-controller="CarrierAccount" asp-action="Register">Firma Başvurusu</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Support Column -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="footer-title">Destek</h5>
+                    <ul class="footer-links">
+                        <li><a href="#sss">Sık Sorulan Sorular</a></li>
+                        <li><a href="#">Yardım Merkezi</a></li>
+                        <li><a asp-controller="Home" asp-action="Privacy">Gizlilik Politikası</a></li>
+                        <li><a href="#">Kullanım Koşulları</a></li>
+                        <li><a href="#">KVKK Aydınlatma</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Column -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="footer-title">İletişim</h5>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="footer-contact-text">
+                            <strong>Telefon</strong>
+                            0850 123 45 67
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="footer-contact-text">
+                            <strong>WhatsApp</strong>
+                            0532 123 45 67
+                        </div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="footer-contact-text">
+                            <strong>E-posta</strong>
+                            info@@nakliye360.com
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="footer-copyright mb-0">
+                            © @DateTime.Now.Year Nakliye360. Tüm hakları saklıdır.
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="footer-bottom-links">
+                            <a href="#">Çerez Politikası</a>
+                            <a href="#">Site Haritası</a>
+                            <a href="#">Erişilebilirlik</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/905321234567" class="whatsapp-float" target="_blank" aria-label="WhatsApp ile iletişim">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top" id="backToTop" aria-label="Yukarı git">
+        <i class="fas fa-chevron-up"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 50
+        });
+        
+        // Navbar scroll effect
+        const navbar = document.getElementById('mainNavbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // Back to top button
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+        
+        backToTop.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+    
     @await RenderSectionAsync("Scripts", required: false)
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    @await Html.PartialAsync("_LoadingSpinnerPartial")
 </body>
 </html>

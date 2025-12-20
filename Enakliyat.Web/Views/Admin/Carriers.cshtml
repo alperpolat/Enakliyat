@@ -1,11 +1,14 @@
 @model IEnumerable<Enakliyat.Domain.Carrier>
 
 @{
-    ViewData["Title"] = "Admin - Nakliyeciler";
+    ViewData["Title"] = "Nakliyeciler";
 }
 
-<div class="container py-4">
-    <h3 class="mb-3">Nakliyeciler</h3>
+<div class="admin-card">
+    <div class="admin-card-header">
+        <h3 class="admin-card-title">Nakliyeciler</h3>
+    </div>
+    <div class="admin-card-body">
 
     @if (ViewBag.PendingCarrierApplications != null && ViewBag.PendingCarrierApplications > 0)
     {
@@ -168,4 +171,5 @@
             </ul>
         </nav>
     }
+    </div>
 </div>
