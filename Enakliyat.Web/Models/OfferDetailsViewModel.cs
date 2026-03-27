@@ -41,7 +41,5 @@ public class OfferDetailsViewModel
     [MaxLength(500)]
     public string? Notes { get; set; }
 
-    public bool KvkkAccepted { get; set; }
-
     public IFormFile[]? Photos { get; set; }
 }

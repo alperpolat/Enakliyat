@@ -142,13 +142,8 @@ public class HomeController : Controller
                 ModelState.AddModelError(string.Empty, "Lütfen nereden ve nereye adreslerini listeden seçin.");
             }
 
-            if (!ModelState.IsValid || !model.KvkkAccepted)
+            if (!ModelState.IsValid)
             {
-                if (!model.KvkkAccepted)
-                {
-                    ModelState.AddModelError(string.Empty, "Lütfen KVKK ve sözleşmeleri onaylayın.");
-                }
-
                 return View(model);
             }
 
