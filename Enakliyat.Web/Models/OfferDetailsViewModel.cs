@@ -7,20 +7,28 @@ public class OfferDetailsViewModel
 {
     public int MoveRequestId { get; set; }
 
+    public int? FromCityId { get; set; }
+    public int? FromDistrictId { get; set; }
+    public int? FromNeighborhoodId { get; set; }
+
+    public int? ToCityId { get; set; }
+    public int? ToDistrictId { get; set; }
+    public int? ToNeighborhoodId { get; set; }
+
     public string FromAddress { get; set; } = string.Empty;
     public string ToAddress { get; set; } = string.Empty;
     public string MoveType { get; set; } = string.Empty;
 
-    [Required]
+    [Required(ErrorMessage = "Lütfen adınızı girin.")]
     public string CustomerName { get; set; } = string.Empty;
 
-    [Required]
+    [Required(ErrorMessage = "Lütfen telefon numaranızı girin.")]
     public string PhoneNumber { get; set; } = string.Empty;
 
-    [EmailAddress]
+    [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi girin.")]
     public string? Email { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Lütfen taşınma tarihini seçin.")]
     public DateTime MoveDate { get; set; } = DateTime.Today.AddDays(1);
 
     public string? RoomType { get; set; }

@@ -379,25 +379,12 @@
             <div class="col-lg-5" data-aos="fade-left">
                 <div class="service-hero-card">
                     <h4><i class="fas fa-building me-2" style="color: #1e3a5f;"></i> Ofis Taşıma Teklifi</h4>
-                    <form asp-controller="Home" asp-action="Index" method="post" class="service-quick-form">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="MoveType" value="Office" />
-                        
-                        <div class="position-relative mb-3">
-                            <i class="fas fa-map-marker-alt form-icon"></i>
-                            <input type="text" class="form-control" name="fromText" placeholder="Mevcut ofis adresi" required />
-                        </div>
-                        
-                        <div class="position-relative mb-3">
-                            <i class="fas fa-flag-checkered form-icon"></i>
-                            <input type="text" class="form-control" name="toText" placeholder="Yeni ofis adresi" required />
-                        </div>
-                        
-                        <button type="submit" class="btn-submit">
+                    <div class="service-quick-form">
+                        <a asp-controller="Home" asp-action="Offers" asp-route-moveType="Office" class="btn-submit d-inline-flex align-items-center justify-content-center text-decoration-none w-100">
                             <i class="fas fa-paper-plane me-2"></i>
                             Ücretsiz Teklif Al
-                        </button>
-                    </form>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

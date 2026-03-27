@@ -420,25 +420,12 @@
             <div class="col-lg-5" data-aos="fade-left">
                 <div class="service-hero-card">
                     <h4><i class="fas fa-warehouse me-2" style="color: #7C3AED;"></i> Depolama Teklifi</h4>
-                    <form asp-controller="Home" asp-action="Index" method="post" class="service-quick-form">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="MoveType" value="Storage" />
-                        
-                        <div class="position-relative mb-3">
-                            <i class="fas fa-map-marker-alt form-icon"></i>
-                            <input type="text" class="form-control" name="fromText" placeholder="Eşyaların bulunduğu adres" required />
-                        </div>
-                        
-                        <div class="position-relative mb-3">
-                            <i class="fas fa-calendar form-icon"></i>
-                            <input type="text" class="form-control" name="duration" placeholder="Depolama süresi (ör: 3 ay)" />
-                        </div>
-                        
-                        <button type="submit" class="btn-submit">
+                    <div class="service-quick-form">
+                        <a asp-controller="Home" asp-action="Offers" asp-route-moveType="Storage" class="btn-submit d-inline-flex align-items-center justify-content-center text-decoration-none w-100">
                             <i class="fas fa-paper-plane me-2"></i>
                             Ücretsiz Teklif Al
-                        </button>
-                    </form>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -4,15 +4,40 @@
     ViewData["Title"] = "Teklif Formu";
 }
 
+<style>
+    .location-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        z-index: 100;
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 4px;
+    }
+    .location-suggestion-item {
+        padding: 0.875rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .location-suggestion-item:last-child { border-bottom: none; }
+    .location-suggestion-item:hover { background: #f8fafc; }
+    .location-suggestion-item i { color: #0052CC; }
+</style>
+
 <div class="py-5" style="background-color:#f5f7fb;">
     <div class="container-xxl p-3 p-lg-5" data-move-type="@Model.MoveType">
         <div class="row justify-content-center mb-4">
             <div class="col-12 col-lg-10">
-                <h2 class="h4 h-lg-3 fw-semibold mb-2">
-                    @Model.FromAddress
-                    <span class="mx-2">&rarr;</span>
-                    @Model.ToAddress
-                </h2>
+                <h1 class="h4 fw-semibold mb-2">Ücretsiz teklif formu</h1>
                 <p class="text-body-secondary mb-0">Taşıma tipi: <strong>@Model.MoveType</strong></p>
             </div>
         </div>
@@ -24,8 +49,36 @@
                         <form asp-action="Offers" method="post" enctype="multipart/form-data" id="offerForm">
                             @Html.AntiForgeryToken()
                             <input type="hidden" asp-for="MoveRequestId" />
+                            <input type="hidden" asp-for="MoveType" />
+
+                            <div asp-validation-summary="All" class="text-danger small mb-2"></div>
 
                             <div class="row g-3 g-lg-4">
+                                <div class="col-12">
+                                    <label class="form-label">Nereden taşınacak?</label>
+                                    <div class="position-relative">
+                                        <i class="fas fa-map-marker-alt position-absolute text-muted" style="left:1rem; top:50%; transform:translateY(-50%); z-index:1; pointer-events:none;"></i>
+                                        <input type="text" class="form-control form-control-lg ps-5" id="fromLocationText"
+                                               value="@Model.FromAddress" placeholder="İl, ilçe veya mahalle arayın..." autocomplete="off" />
+                                        <input type="hidden" asp-for="FromCityId" id="fromCityId" />
+                                        <input type="hidden" asp-for="FromDistrictId" id="fromDistrictId" />
+                                        <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodId" />
+                                        <div id="fromLocationSuggestions" class="location-suggestions" style="display: none;"></div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Nereye taşınacak?</label>
+                                    <div class="position-relative">
+                                        <i class="fas fa-flag-checkered position-absolute text-muted" style="left:1rem; top:50%; transform:translateY(-50%); z-index:1; pointer-events:none;"></i>
+                                        <input type="text" class="form-control form-control-lg ps-5" id="toLocationText"
+                                               value="@Model.ToAddress" placeholder="İl, ilçe veya mahalle arayın..." autocomplete="off" />
+                                        <input type="hidden" asp-for="ToCityId" id="toCityId" />
+                                        <input type="hidden" asp-for="ToDistrictId" id="toDistrictId" />
+                                        <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodId" />
+                                        <div id="toLocationSuggestions" class="location-suggestions" style="display: none;"></div>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-6">
                                     <label asp-for="CustomerName" class="form-label">İsminiz</label>
                                     <input asp-for="CustomerName" class="form-control form-control-lg" />
@@ -217,7 +270,15 @@
         const offerForm = document.getElementById('offerForm');
         const submitBtn = document.getElementById('submitBtn');
         if (offerForm && submitBtn) {
-            offerForm.addEventListener('submit', function() {
+            offerForm.addEventListener('submit', function () {
+                if (window.jQuery) {
+                    var $f = window.jQuery(offerForm);
+                    if ($f.data('validator') && !$f.valid()) {
+                        return;
+                    }
+                } else if (!offerForm.checkValidity()) {
+                    return;
+                }
                 const submitText = submitBtn.querySelector('.submit-text');
                 const loadingText = submitBtn.querySelector('.loading-text');
                 if (submitText && loadingText) {
@@ -227,5 +288,67 @@
                 }
             });
         }
+
+        async function searchLocation(term) {
+            const response = await fetch(`/Home/SearchLocation?term=${encodeURIComponent(term)}`);
+            if (!response.ok) return [];
+            return await response.json();
+        }
+
+        function setupLocationAutocomplete(inputId, suggestionsId, cityHiddenId, districtHiddenId, neighborhoodHiddenId) {
+            const input = document.getElementById(inputId);
+            const suggestions = document.getElementById(suggestionsId);
+            const cityInput = document.getElementById(cityHiddenId);
+            const districtInput = document.getElementById(districtHiddenId);
+            const neighborhoodInput = document.getElementById(neighborhoodHiddenId);
+            if (!input || !suggestions || !cityInput || !districtInput || !neighborhoodInput) return;
+
+            let currentTimeout = null;
+            input.addEventListener('input', function() {
+                const term = input.value.trim();
+                cityInput.value = '';
+                districtInput.value = '';
+                neighborhoodInput.value = '';
+                if (term.length < 2) {
+                    suggestions.style.display = 'none';
+                    suggestions.innerHTML = '';
+                    return;
+                }
+                if (currentTimeout) clearTimeout(currentTimeout);
+                currentTimeout = setTimeout(async () => {
+                    const results = await searchLocation(term);
+                    suggestions.innerHTML = '';
+                    if (results.length === 0) {
+                        suggestions.style.display = 'none';
+                        return;
+                    }
+                    results.forEach(r => {
+                        const item = document.createElement('div');
+                        item.className = 'location-suggestion-item';
+                        item.innerHTML = `<i class="fas fa-map-marker-alt"></i><span>${r.display ?? r.Display}</span>`;
+                        item.addEventListener('click', function() {
+                            input.value = r.display ?? r.Display;
+                            cityInput.value = r.cityId ?? r.CityId;
+                            districtInput.value = r.districtId ?? r.DistrictId;
+                            neighborhoodInput.value = r.neighborhoodId ?? r.NeighborhoodId;
+                            suggestions.style.display = 'none';
+                            suggestions.innerHTML = '';
+                        });
+                        suggestions.appendChild(item);
+                    });
+                    suggestions.style.display = 'block';
+                }, 250);
+            });
+            document.addEventListener('click', function(e) {
+                if (!suggestions.contains(e.target) && e.target !== input) {
+                    suggestions.style.display = 'none';
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupLocationAutocomplete('fromLocationText', 'fromLocationSuggestions', 'fromCityId', 'fromDistrictId', 'fromNeighborhoodId');
+            setupLocationAutocomplete('toLocationText', 'toLocationSuggestions', 'toCityId', 'toDistrictId', 'toNeighborhoodId');
+        });
     </script>
 }

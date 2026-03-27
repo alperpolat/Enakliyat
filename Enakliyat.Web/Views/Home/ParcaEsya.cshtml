@@ -413,25 +413,12 @@
             <div class="col-lg-5" data-aos="fade-left">
                 <div class="service-hero-card">
                     <h4><i class="fas fa-box me-2" style="color: #059669;"></i> Parça Eşya Teklifi</h4>
-                    <form asp-controller="Home" asp-action="Index" method="post" class="service-quick-form">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="MoveType" value="Partial" />
-                        
-                        <div class="position-relative mb-3">
-                            <i class="fas fa-map-marker-alt form-icon"></i>
-                            <input type="text" class="form-control" name="fromText" placeholder="Nereden alınacak?" required />
-                        </div>
-                        
-                        <div class="position-relative mb-3">
-                            <i class="fas fa-flag-checkered form-icon"></i>
-                            <input type="text" class="form-control" name="toText" placeholder="Nereye teslim?" required />
-                        </div>
-                        
-                        <button type="submit" class="btn-submit">
+                    <div class="service-quick-form">
+                        <a asp-controller="Home" asp-action="Offers" asp-route-moveType="Partial" class="btn-submit d-inline-flex align-items-center justify-content-center text-decoration-none w-100">
                             <i class="fas fa-paper-plane me-2"></i>
                             Ücretsiz Teklif Al
-                        </button>
-                    </form>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -38,86 +38,76 @@ public class HomeController : Controller
         return View(new MoveRequestViewModel());
     }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Index(MoveRequestViewModel model)
+    [HttpGet]
+    public IActionResult Offers(int? id, string? moveType = null)
     {
-        if (!ModelState.IsValid)
+        ViewBag.AddOnServices = _context.AddOnServices
+            .Where(s => s.IsActive)
+            .OrderBy(s => s.Name)
+            .ToList();
+
+        var normalizedMoveType = NormalizeOfferMoveType(moveType);
+        int? userId = TryGetCustomerUserId();
+
+        if (!id.HasValue || id.Value <= 0)
         {
-            ViewBag.Cities = _context.Cities.OrderBy(c => c.Name).ToList();
-            return View(model);
-        }
-
-        // Adresleri seçilen il/ilçe/mahallelerden oluştur
-        string fromAddress = BuildAddress(model.FromCityId, model.FromDistrictId, model.FromNeighborhoodId);
-        string toAddress = BuildAddress(model.ToCityId, model.ToDistrictId, model.ToNeighborhoodId);
-
-        var userIdClaim = User.FindFirst("UserId");
-        int? userId = null;
-        if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var parsedId))
-        {
-            userId = parsedId;
-        }
-
-        string customerName = string.Empty;
-        string phoneNumber = string.Empty;
-        string email = string.Empty;
-
-        if (userId.HasValue)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId.Value);
-            if (user != null)
+            var emptyVm = new OfferDetailsViewModel
             {
-                customerName = user.Name ?? string.Empty;
-                phoneNumber = user.PhoneNumber ?? string.Empty;
-                email = user.Email;
+                MoveRequestId = 0,
+                MoveType = normalizedMoveType,
+                MoveDate = DateTime.Today.AddDays(1)
+            };
+
+            if (userId.HasValue)
+            {
+                var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+                if (user != null)
+                {
+                    emptyVm.CustomerName = user.Name ?? string.Empty;
+                    emptyVm.PhoneNumber = user.PhoneNumber ?? string.Empty;
+                    emptyVm.Email = user.Email;
+                }
             }
+
+            return View(emptyVm);
         }
 
-        var moveRequest = new MoveRequest
-        {
-            FromAddress = fromAddress,
-            ToAddress = toAddress,
-            FromCityId = model.FromCityId,
-            FromDistrictId = model.FromDistrictId,
-            FromNeighborhoodId = model.FromNeighborhoodId,
-            ToCityId = model.ToCityId,
-            ToDistrictId = model.ToDistrictId,
-            ToNeighborhoodId = model.ToNeighborhoodId,
-            MoveDate = DateTime.UtcNow,
-            CustomerName = customerName,
-            PhoneNumber = phoneNumber,
-            Email = email,
-            MoveType = model.MoveType.ToString(),
-            UserId = userId,
-            Status = "Taslak"
-        };
-
-        await _context.MoveRequests.AddAsync(moveRequest);
-        await _context.SaveChangesAsync();
-
-        TempData["Success"] = $"Talebiniz başarıyla oluşturuldu! Talep numaranız: #{moveRequest.Id}. Şimdi detayları tamamlayarak teklif alabilirsiniz.";
-        return RedirectToAction(nameof(Offers), new { id = moveRequest.Id });
-    }
-
-    [Authorize]
-    public IActionResult Offers(int id)
-    {
-        var userIdClaim = User.FindFirst("UserId");
-        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
-        {
-            return Unauthorized();
-        }
-
-        var request = _context.MoveRequests.FirstOrDefault(x => x.Id == id && x.UserId == userId);
+        var request = _context.MoveRequests.FirstOrDefault(x => x.Id == id.Value);
         if (request == null)
         {
             return NotFound();
         }
 
+        if (userId.HasValue)
+        {
+            if (request.UserId != userId.Value)
+            {
+                return NotFound();
+            }
+        }
+        else
+        {
+            if (request.UserId != null)
+            {
+                return Challenge();
+            }
+
+            var sessionOfferId = HttpContext.Session.GetInt32(AnonymousOfferSessionKey);
+            if (!sessionOfferId.HasValue || sessionOfferId.Value != request.Id)
+            {
+                return NotFound();
+            }
+        }
+
         var vm = new OfferDetailsViewModel
         {
             MoveRequestId = request.Id,
+            FromCityId = request.FromCityId,
+            FromDistrictId = request.FromDistrictId,
+            FromNeighborhoodId = request.FromNeighborhoodId,
+            ToCityId = request.ToCityId,
+            ToDistrictId = request.ToDistrictId,
+            ToNeighborhoodId = request.ToNeighborhoodId,
             FromAddress = request.FromAddress,
             ToAddress = request.ToAddress,
             MoveType = request.MoveType,
@@ -132,140 +122,194 @@ public class HomeController : Controller
             ToHasElevator = request.ToHasElevator,
             Notes = request.Notes
         };
-        ViewBag.AddOnServices = _context.AddOnServices
-            .Where(s => s.IsActive)
-            .OrderBy(s => s.Name)
-            .ToList();
 
         return View(vm);
     }
 
     [HttpPost]
-    [Authorize]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Offers(OfferDetailsViewModel model)
     {
+        ViewBag.AddOnServices = _context.AddOnServices
+            .Where(s => s.IsActive)
+            .OrderBy(s => s.Name)
+            .ToList();
+
         try
         {
+            if (!model.FromCityId.HasValue || !model.ToCityId.HasValue)
+            {
+                ModelState.AddModelError(string.Empty, "Lütfen nereden ve nereye adreslerini listeden seçin.");
+            }
+
             if (!ModelState.IsValid || !model.KvkkAccepted)
             {
                 if (!model.KvkkAccepted)
                 {
                     ModelState.AddModelError(string.Empty, "Lütfen KVKK ve sözleşmeleri onaylayın.");
                 }
-                ViewBag.AddOnServices = _context.AddOnServices
-                    .Where(s => s.IsActive)
-                    .OrderBy(s => s.Name)
-                    .ToList();
+
                 return View(model);
             }
 
-            var userIdClaim = User.FindFirst("UserId");
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+            int? userId = TryGetCustomerUserId();
+            var fromAddress = BuildAddress(model.FromCityId, model.FromDistrictId, model.FromNeighborhoodId);
+            var toAddress = BuildAddress(model.ToCityId, model.ToDistrictId, model.ToNeighborhoodId);
+
+            MoveRequest request;
+            var isNew = model.MoveRequestId <= 0;
+
+            if (isNew)
             {
-                TempData["Error"] = "Oturum bilgileriniz bulunamadı. Lütfen tekrar giriş yapın.";
-                return RedirectToAction(nameof(Index));
+                request = new MoveRequest { UserId = userId };
+                await _context.MoveRequests.AddAsync(request);
             }
-
-            var request = await _context.MoveRequests.FirstOrDefaultAsync(x => x.Id == model.MoveRequestId && x.UserId == userId);
-            if (request == null)
+            else
             {
-                TempData["Error"] = "Talep bulunamadı veya bu talebe erişim yetkiniz yok.";
-                return RedirectToAction(nameof(Requests));
-            }
-
-        request.CustomerName = model.CustomerName;
-        request.PhoneNumber = model.PhoneNumber;
-        request.Email = model.Email;
-        request.MoveDate = model.MoveDate;
-        request.RoomType = model.RoomType;
-        request.FromFloor = model.FromFloor;
-        request.FromHasElevator = model.FromHasElevator;
-        request.ToFloor = model.ToFloor;
-        request.ToHasElevator = model.ToHasElevator;
-        request.Notes = model.Notes;
-        request.Status = "Teklif Bekliyor";
-
-        // Update selected add-ons
-        var selectedIds = HttpContext.Request.Form["SelectedAddOnIds"].ToList();
-        var intIds = selectedIds
-            .Select(x => int.TryParse(x, out var id) ? id : (int?)null)
-            .Where(id => id.HasValue)
-            .Select(id => id!.Value)
-            .ToList();
-
-        var existingAddOnIds = await _context.AddOnServices
-            .Where(a => intIds.Contains(a.Id))
-            .Select(a => a.Id)
-            .ToListAsync();
-
-        var existingAddOns = _context.MoveRequestAddOns
-            .Where(a => a.MoveRequestId == request.Id)
-            .ToList();
-
-        _context.MoveRequestAddOns.RemoveRange(existingAddOns);
-
-        foreach (var addOnId in existingAddOnIds.Distinct())
-        {
-            var addOn = new MoveRequestAddOn
-            {
-                MoveRequestId = request.Id,
-                AddOnServiceId = addOnId
-            };
-            await _context.MoveRequestAddOns.AddAsync(addOn);
-        }
-
-        await _context.SaveChangesAsync();
-
-        // Save uploaded photos
-        if (model.Photos != null && model.Photos.Length > 0)
-        {
-            var uploadRoot = Path.Combine(_env.WebRootPath, "uploads", "requests", request.Id.ToString());
-            Directory.CreateDirectory(uploadRoot);
-
-            foreach (var file in model.Photos)
-            {
-                if (file == null || file.Length == 0) continue;
-
-                // File validation
-                var validationError = Enakliyat.Web.Helpers.FileUploadHelper.GetFileValidationError(file, isImage: true);
-                if (!string.IsNullOrEmpty(validationError))
+                var loaded = await _context.MoveRequests.FirstOrDefaultAsync(x => x.Id == model.MoveRequestId);
+                if (loaded == null)
                 {
-                    _logger.LogWarning("Invalid file upload attempt: {Error}", validationError);
-                    continue; // Skip invalid files
+                    TempData["Error"] = "Talep bulunamadı.";
+                    return RedirectToAction(nameof(Offers), new { moveType = model.MoveType });
                 }
 
-                var uniqueName = Enakliyat.Web.Helpers.FileUploadHelper.GenerateSafeFileName(file.FileName);
-                var physicalPath = Path.Combine(uploadRoot, uniqueName);
+                request = loaded;
 
-                using (var stream = new FileStream(physicalPath, FileMode.Create))
+                if (userId.HasValue)
                 {
-                    await file.CopyToAsync(stream);
+                    if (request.UserId != userId.Value)
+                    {
+                        TempData["Error"] = "Bu talebe erişim yetkiniz yok.";
+                        return RedirectToAction(nameof(Requests));
+                    }
                 }
+                else
+                {
+                    if (request.UserId != null)
+                    {
+                        TempData["Error"] = "Bu talebi düzenlemek için giriş yapın.";
+                        return RedirectToAction("Login", "Account");
+                    }
 
-                var relativePath = $"/uploads/requests/{request.Id}/{uniqueName}";
-                var photo = new MoveRequestPhoto
+                    var sessionOfferId = HttpContext.Session.GetInt32(AnonymousOfferSessionKey);
+                    if (!sessionOfferId.HasValue || sessionOfferId.Value != request.Id)
+                    {
+                        TempData["Error"] = "Talep bulunamadı.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+
+            request.FromAddress = fromAddress;
+            request.ToAddress = toAddress;
+            request.FromCityId = model.FromCityId;
+            request.FromDistrictId = model.FromDistrictId;
+            request.FromNeighborhoodId = model.FromNeighborhoodId;
+            request.ToCityId = model.ToCityId;
+            request.ToDistrictId = model.ToDistrictId;
+            request.ToNeighborhoodId = model.ToNeighborhoodId;
+            request.CustomerName = model.CustomerName;
+            request.PhoneNumber = model.PhoneNumber;
+            request.Email = model.Email;
+            request.MoveDate = model.MoveDate;
+            request.MoveType = string.IsNullOrWhiteSpace(model.MoveType) ? "Home" : model.MoveType;
+            request.RoomType = model.RoomType;
+            request.FromFloor = model.FromFloor;
+            request.FromHasElevator = model.FromHasElevator;
+            request.ToFloor = model.ToFloor;
+            request.ToHasElevator = model.ToHasElevator;
+            request.Notes = model.Notes;
+            request.Status = "Teklif Bekliyor";
+
+            await _context.SaveChangesAsync();
+
+            if (isNew && !userId.HasValue)
+            {
+                HttpContext.Session.SetInt32(AnonymousOfferSessionKey, request.Id);
+            }
+
+            var selectedIds = HttpContext.Request.Form["SelectedAddOnIds"].ToList();
+            var intIds = selectedIds
+                .Select(x => int.TryParse(x, out var addonId) ? addonId : (int?)null)
+                .Where(addonId => addonId.HasValue)
+                .Select(addonId => addonId!.Value)
+                .ToList();
+
+            var existingAddOnIds = await _context.AddOnServices
+                .Where(a => intIds.Contains(a.Id))
+                .Select(a => a.Id)
+                .ToListAsync();
+
+            var existingAddOns = _context.MoveRequestAddOns
+                .Where(a => a.MoveRequestId == request.Id)
+                .ToList();
+
+            _context.MoveRequestAddOns.RemoveRange(existingAddOns);
+
+            foreach (var addOnId in existingAddOnIds.Distinct())
+            {
+                var addOn = new MoveRequestAddOn
                 {
                     MoveRequestId = request.Id,
-                    FilePath = relativePath
+                    AddOnServiceId = addOnId
                 };
-                await _context.MoveRequestPhotos.AddAsync(photo);
+                await _context.MoveRequestAddOns.AddAsync(addOn);
             }
 
             await _context.SaveChangesAsync();
-        }
 
-            TempData["Success"] = "Talebiniz başarıyla güncellendi.";
-            return RedirectToAction(nameof(Requests));
+            if (model.Photos != null && model.Photos.Length > 0)
+            {
+                var uploadRoot = Path.Combine(_env.WebRootPath, "uploads", "requests", request.Id.ToString());
+                Directory.CreateDirectory(uploadRoot);
+
+                foreach (var file in model.Photos)
+                {
+                    if (file == null || file.Length == 0) continue;
+
+                    var validationError = Enakliyat.Web.Helpers.FileUploadHelper.GetFileValidationError(file, isImage: true);
+                    if (!string.IsNullOrEmpty(validationError))
+                    {
+                        _logger.LogWarning("Invalid file upload attempt: {Error}", validationError);
+                        continue;
+                    }
+
+                    var uniqueName = Enakliyat.Web.Helpers.FileUploadHelper.GenerateSafeFileName(file.FileName);
+                    var physicalPath = Path.Combine(uploadRoot, uniqueName);
+
+                    await using (var stream = new FileStream(physicalPath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    var relativePath = $"/uploads/requests/{request.Id}/{uniqueName}";
+                    var photo = new MoveRequestPhoto
+                    {
+                        MoveRequestId = request.Id,
+                        FilePath = relativePath
+                    };
+                    await _context.MoveRequestPhotos.AddAsync(photo);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            if (userId.HasValue)
+            {
+                TempData["Success"] = isNew
+                    ? $"Talebiniz oluşturuldu. Talep numaranız: #{request.Id}."
+                    : "Talebiniz başarıyla güncellendi.";
+                return RedirectToAction(nameof(Requests));
+            }
+
+            TempData["Success"] =
+                $"Talebiniz alındı. Talep numaranız: #{request.Id}. Taleplerinizi görmek için giriş yapabilirsiniz.";
+            return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error updating offer details for request {RequestId}", model.MoveRequestId);
-            TempData["Error"] = "Talebiniz güncellenirken bir hata oluştu. Lütfen tekrar deneyin.";
-            ViewBag.AddOnServices = _context.AddOnServices
-                .Where(s => s.IsActive)
-                .OrderBy(s => s.Name)
-                .ToList();
+            _logger.LogError(ex, "Error saving offer details for request {RequestId}", model.MoveRequestId);
+            TempData["Error"] = "Talebiniz kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.";
             return View(model);
         }
     }
@@ -722,6 +766,36 @@ public class HomeController : Controller
 
         TempData["Success"] = "Değerlendirmeniz kaydedildi.";
         return RedirectToAction(nameof(Details), new { id = model.MoveRequestId });
+    }
+
+    private const string AnonymousOfferSessionKey = "AnonymousOfferId";
+
+    private int? TryGetCustomerUserId()
+    {
+        var userIdClaim = User.FindFirst("UserId");
+        if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var uid))
+        {
+            return uid;
+        }
+
+        return null;
+    }
+
+    private static string NormalizeOfferMoveType(string? moveType)
+    {
+        if (string.IsNullOrWhiteSpace(moveType))
+        {
+            return "Home";
+        }
+
+        return moveType.Trim().ToLowerInvariant() switch
+        {
+            "office" => "Office",
+            "storage" => "Storage",
+            "partial" => "Partial",
+            "international" => "International",
+            _ => "Home"
+        };
     }
 
     private string BuildAddress(int? cityId, int? districtId, int? neighborhoodId)

@@ -1,4 +1,4 @@
-﻿@model Enakliyat.Web.Models.MoveRequestViewModel
+@model Enakliyat.Web.Models.MoveRequestViewModel
 
 @{
     ViewData["Title"] = "Evden Eve Nakliyat | Güvenilir Nakliye Firmaları";
@@ -1177,38 +1177,8 @@
                     </div>
                     
                     <div class="quote-form-body">
-                        <form asp-action="Index" method="post" id="quoteForm">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="MoveType" id="moveType" value="Home" />
-                            
-                            <div class="form-floating-custom" style="position: relative;">
-                                <i class="fas fa-map-marker-alt form-icon"></i>
-                                <input type="text" 
-                                       class="form-control-custom" 
-                                       id="fromLocationText" 
-                                       placeholder="Nereden taşınacak?" 
-                                       autocomplete="off"
-                                       required />
-                                <input type="hidden" asp-for="FromCityId" id="fromCityId" />
-                                <input type="hidden" asp-for="FromDistrictId" id="fromDistrictId" />
-                                <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodId" />
-                                <div id="fromLocationSuggestions" class="location-suggestions" style="display: none;"></div>
-                            </div>
-                            
-                            <div class="form-floating-custom" style="position: relative;">
-                                <i class="fas fa-flag-checkered form-icon"></i>
-                                <input type="text" 
-                                       class="form-control-custom" 
-                                       id="toLocationText" 
-                                       placeholder="Nereye taşınacak?" 
-                                       autocomplete="off"
-                                       required />
-                                <input type="hidden" asp-for="ToCityId" id="toCityId" />
-                                <input type="hidden" asp-for="ToDistrictId" id="toDistrictId" />
-                                <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodId" />
-                                <div id="toLocationSuggestions" class="location-suggestions" style="display: none;"></div>
-                            </div>
-                            
+                        <form asp-action="Offers" method="get" id="quoteForm">
+                            <input type="hidden" name="moveType" id="moveType" value="Home" />
                             <button type="submit" class="btn-quote-submit">
                                 <i class="fas fa-paper-plane"></i>
                                 Ücretsiz Teklif Al
@@ -1823,95 +1793,6 @@
                 
                 document.getElementById('moveType').value = moveTypeMap[this.dataset.tab];
             });
-        });
-        
-        // Location autocomplete
-        async function searchLocation(term) {
-            const response = await fetch(`/Home/SearchLocation?term=${encodeURIComponent(term)}`);
-            if (!response.ok) return [];
-            return await response.json();
-        }
-        
-        function setupLocationAutocomplete(inputId, suggestionsId, cityHiddenId, districtHiddenId, neighborhoodHiddenId) {
-            const input = document.getElementById(inputId);
-            const suggestions = document.getElementById(suggestionsId);
-            const cityInput = document.getElementById(cityHiddenId);
-            const districtInput = document.getElementById(districtHiddenId);
-            const neighborhoodInput = document.getElementById(neighborhoodHiddenId);
-            
-            if (!input || !suggestions || !cityInput || !districtInput || !neighborhoodInput) return;
-            
-            let currentTimeout = null;
-            
-            input.addEventListener('input', function() {
-                const term = input.value.trim();
-                cityInput.value = '';
-                districtInput.value = '';
-                neighborhoodInput.value = '';
-                
-                if (term.length < 2) {
-                    suggestions.style.display = 'none';
-                    suggestions.innerHTML = '';
-                    return;
-                }
-                
-                if (currentTimeout) {
-                    clearTimeout(currentTimeout);
-                }
-                
-                currentTimeout = setTimeout(async () => {
-                    const results = await searchLocation(term);
-                    suggestions.innerHTML = '';
-                    
-                    if (results.length === 0) {
-                        suggestions.style.display = 'none';
-                        return;
-                    }
-                    
-                    results.forEach(r => {
-                        const item = document.createElement('div');
-                        item.className = 'location-suggestion-item';
-                        item.innerHTML = `<i class="fas fa-map-marker-alt"></i><span>${r.display ?? r.Display}</span>`;
-                        item.addEventListener('click', function() {
-                            input.value = r.display ?? r.Display;
-                            cityInput.value = r.cityId ?? r.CityId;
-                            districtInput.value = r.districtId ?? r.DistrictId;
-                            neighborhoodInput.value = r.neighborhoodId ?? r.NeighborhoodId;
-                            suggestions.style.display = 'none';
-                            suggestions.innerHTML = '';
-                        });
-                        suggestions.appendChild(item);
-                    });
-                    
-                    suggestions.style.display = 'block';
-                }, 250);
-            });
-            
-            document.addEventListener('click', function(e) {
-                if (!suggestions.contains(e.target) && e.target !== input) {
-                    suggestions.style.display = 'none';
-                }
-            });
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            setupLocationAutocomplete('fromLocationText', 'fromLocationSuggestions', 'fromCityId', 'fromDistrictId', 'fromNeighborhoodId');
-            setupLocationAutocomplete('toLocationText', 'toLocationSuggestions', 'toCityId', 'toDistrictId', 'toNeighborhoodId');
-            
-            // Form submit loading state
-            const quoteForm = document.querySelector('form[action="/Home/Index"]');
-            const quoteSubmitBtn = document.getElementById('quoteSubmitBtn');
-            if (quoteForm && quoteSubmitBtn) {
-                quoteForm.addEventListener('submit', function() {
-                    const submitText = quoteSubmitBtn.querySelector('.submit-text');
-                    const loadingText = quoteSubmitBtn.querySelector('.loading-text');
-                    if (submitText && loadingText) {
-                        submitText.style.display = 'none';
-                        loadingText.style.display = 'inline';
-                        quoteSubmitBtn.disabled = true;
-                    }
-                });
-            }
         });
     </script>
 }

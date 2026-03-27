@@ -32,35 +32,65 @@
 </style>
 
 <script>
-    // Form submit'lerde loading göster
-    document.addEventListener('DOMContentLoaded', function() {
-        const forms = document.querySelectorAll('form');
-        forms.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                // Validation geçtiyse loading göster
-                if (form.checkValidity()) {
+    (function () {
+        function hideGlobalSpinner() {
+            const spinner = document.getElementById('loadingSpinner');
+            if (spinner) {
+                spinner.style.display = 'none';
+            }
+        }
+
+        /** jQuery unobtrusive novalidate kullandığı için checkValidity() yeterli de değil */
+        function formPassesClientValidation(form) {
+            if (window.jQuery) {
+                var $form = window.jQuery(form);
+                if ($form.data('validator')) {
+                    return $form.valid();
+                }
+            }
+            return form.checkValidity();
+        }
+
+        function fetchArgLooksLikeSearchLocation(arg) {
+            if (typeof arg === 'string') {
+                return arg.indexOf('SearchLocation') !== -1;
+            }
+            if (typeof Request !== 'undefined' && arg instanceof Request) {
+                return arg.url.indexOf('SearchLocation') !== -1;
+            }
+            return false;
+        }
+
+        window.addEventListener('pageshow', hideGlobalSpinner);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            hideGlobalSpinner();
+
+            document.querySelectorAll('form').forEach(function (form) {
+                form.addEventListener('submit', function () {
+                    if (!formPassesClientValidation(form)) {
+                        return;
+                    }
                     const spinner = document.getElementById('loadingSpinner');
                     if (spinner) {
                         spinner.style.display = 'flex';
                     }
-                }
-            });
-        });
-        
-        // AJAX isteklerinde loading göster
-        const originalFetch = window.fetch;
-        window.fetch = function(...args) {
-            const spinner = document.getElementById('loadingSpinner');
-            if (spinner && !args[0].includes('SearchLocation')) {
-                spinner.style.display = 'flex';
-            }
-            return originalFetch.apply(this, args)
-                .finally(() => {
-                    if (spinner) {
-                        spinner.style.display = 'none';
-                    }
                 });
-        };
-    });
+            });
+
+            const originalFetch = window.fetch;
+            window.fetch = function () {
+                const spinner = document.getElementById('loadingSpinner');
+                const first = arguments[0];
+                const skipSpinner = fetchArgLooksLikeSearchLocation(first);
+                if (spinner && !skipSpinner) {
+                    spinner.style.display = 'flex';
+                }
+                return originalFetch.apply(this, arguments).finally(function () {
+                    hideGlobalSpinner();
+                });
+            };
+        });
+    })();
 </script>
 
