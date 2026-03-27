@@ -41,10 +41,7 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult Offers(int? id, string? moveType = null)
     {
-        ViewBag.AddOnServices = _context.AddOnServices
-            .Where(s => s.IsActive)
-            .OrderBy(s => s.Name)
-            .ToList();
+        LoadOfferFormViewBag();
 
         var normalizedMoveType = NormalizeOfferMoveType(moveType);
         int? userId = TryGetCustomerUserId();
@@ -130,10 +127,7 @@ public class HomeController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Offers(OfferDetailsViewModel model)
     {
-        ViewBag.AddOnServices = _context.AddOnServices
-            .Where(s => s.IsActive)
-            .OrderBy(s => s.Name)
-            .ToList();
+        LoadOfferFormViewBag();
 
         try
         {
@@ -305,9 +299,25 @@ public class HomeController : Controller
         {
             _logger.LogError(ex, "Error saving offer details for request {RequestId}", model.MoveRequestId);
             TempData["Error"] = "Talebiniz kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.";
+            LoadOfferFormViewBag();
             return View(model);
         }
     }
+
+    private void LoadOfferFormViewBag()
+    {
+        const string sadeceAracName = "Sadece Araç";
+        var active = _context.AddOnServices
+            .Where(s => s.IsActive)
+            .OrderBy(s => s.Name)
+            .ToList();
+        var sadeceArac = active.FirstOrDefault(s => s.Name == sadeceAracName);
+        ViewBag.AddOnServices = sadeceArac == null
+            ? active
+            : active.Where(s => s.Id != sadeceArac.Id).ToList();
+        ViewBag.SadeceAracAddOn = sadeceArac;
+    }
+
     [Authorize]
     public IActionResult Requests()
     {

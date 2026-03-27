@@ -168,6 +168,18 @@ app.UseMiddleware<Enakliyat.Web.Middleware.GlobalExceptionHandlerMiddleware>();
 
            try
            {
+               Log.Information("Varsayılan ek hizmetler seed işlemi başlatılıyor...");
+               await DataSeeder.SeedDefaultAddOnServicesAsync(context);
+               Log.Information("Varsayılan ek hizmetler seed tamamlandı.");
+           }
+           catch (Exception ex)
+           {
+               Log.Error(ex, "Varsayılan ek hizmetler seed hatası!");
+               logger.LogError(ex, "Varsayılan ek hizmetler seed hatası!");
+           }
+
+           try
+           {
                Log.Information("Notification templates seed işlemi başlatılıyor...");
                await DataSeeder.SeedNotificationTemplatesAsync(context);
                Log.Information("Notification templates seed tamamlandı.");

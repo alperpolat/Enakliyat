@@ -518,6 +518,25 @@ public static class DataSeeder
         }
     }
 
+    public static async Task SeedDefaultAddOnServicesAsync(EnakliyatDbContext context)
+    {
+        const string sadeceAracName = "Sadece Araç";
+        if (await context.AddOnServices.AnyAsync(a => a.Name == sadeceAracName))
+        {
+            return;
+        }
+
+        await context.AddOnServices.AddAsync(new AddOnService
+        {
+            Name = sadeceAracName,
+            Description = "Yükleme-boşaltma ve ek personel olmadan yalnızca araç temini.",
+            IsActive = true,
+            PricingType = AddOnPricingType.Included,
+            DefaultPrice = null
+        });
+        await context.SaveChangesAsync();
+    }
+
     private record CityDto(string sehir_id, string sehir_adi);
     private record DistrictDto(string ilce_id, string ilce_adi, string sehir_id, string sehir_adi);
     private record NeighborhoodDto(string mahalle_id, string mahalle_adi, string ilce_id, string ilce_adi, string sehir_id, string sehir_adi);

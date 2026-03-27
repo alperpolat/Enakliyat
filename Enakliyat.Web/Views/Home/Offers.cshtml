@@ -174,22 +174,22 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="SelectedAddOnIds" value="1002" id="addon_custom_2" />
-                                                    <label class="form-check-label" for="addon_custom_2">
-                                                        Taşıma Sonrası Temizlik
-                                                    </label>
+                                            @if (ViewBag.SadeceAracAddOn != null)
+                                            {
+                                                var sa = (Enakliyat.Domain.AddOnService)ViewBag.SadeceAracAddOn;
+                                                <div class="col-md-4">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="SelectedAddOnIds" value="@sa.Id" id="addon_sadece_arac" />
+                                                        <label class="form-check-label" for="addon_sadece_arac">
+                                                            @sa.Name
+                                                            @if (sa.DefaultPrice.HasValue)
+                                                            {
+                                                                <span class="text-muted">(@sa.DefaultPrice.Value.ToString("N2") TL)</span>
+                                                            }
+                                                        </label>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="SelectedAddOnIds" value="1003" id="addon_custom_3" />
-                                                    <label class="form-check-label" for="addon_custom_3">
-                                                        Taşınma Öncesi Temizlik
-                                                    </label>
-                                                </div>
-                                            </div>
+                                            }
                                         </div>
                                     </div>
                                 }
