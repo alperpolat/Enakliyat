@@ -48,7 +48,10 @@ builder.Services.AddDbContext<EnakliyatDbContext>(options =>
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.Configure<SmsSettings>(builder.Configuration.GetSection("Sms"));
-builder.Services.AddHttpClient<ISmsService, IletimXSmsService>();
+builder.Services.AddHttpClient<ISmsService, IletimXSmsService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
 builder.Services.AddScoped<IReservationNotificationService, SmtpReservationNotificationService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 

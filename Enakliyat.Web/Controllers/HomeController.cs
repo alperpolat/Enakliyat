@@ -223,10 +223,7 @@ public class HomeController : Controller
             request.Notes = model.Notes;
             request.Status = "Teklif Bekliyor";
 
-            if (!userId.HasValue)
-            {
-                EnsureGuestTrackingToken(request);
-            }
+            EnsureTrackingToken(request);
 
             await _context.SaveChangesAsync();
 
@@ -301,16 +298,8 @@ public class HomeController : Controller
                 await _context.SaveChangesAsync();
             }
 
-            if (userId.HasValue)
-            {
-                TempData["Success"] = isNew
-                    ? $"Talebiniz oluşturuldu. Talep numaranız: #{request.Id}."
-                    : "Talebiniz başarıyla güncellendi.";
-                return RedirectToAction(nameof(Requests));
-            }
-
             var smsGonderildi = false;
-            if (!userId.HasValue && !string.IsNullOrEmpty(request.TrackingToken))
+            if (!string.IsNullOrEmpty(request.TrackingToken))
             {
                 var baseUrl = GetPublicSiteBaseUrl();
                 if (!string.IsNullOrEmpty(baseUrl))
@@ -321,18 +310,33 @@ public class HomeController : Controller
                     smsGonderildi = smsResult.Ok;
                     if (!smsResult.Ok)
                     {
-                        _logger.LogWarning("Misafir talep SMS gonderilemedi: {Detail}", smsResult.Detail);
+                        _logger.LogWarning(
+                            "Takip SMS gonderilemedi. Talep={Id}, Detay={Detail}. Kontrol: Sms:Enabled=true, IletimX kullanici/sifre/bayi/baslik, kredi, log.",
+                            request.Id,
+                            smsResult.Detail);
                     }
                 }
                 else
                 {
-                    _logger.LogWarning("Takip SMS linki uretilemedi: Sms:PublicBaseUrl bos ve istek hostu yok.");
+                    _logger.LogWarning("Takip SMS linki uretilemedi: host yok ve Sms:PublicBaseUrl bos.");
                 }
             }
 
+            if (userId.HasValue)
+            {
+                TempData["Success"] = smsGonderildi
+                    ? (isNew
+                        ? $"Talebiniz oluşturuldu (#{request.Id}). Takip linki cep telefonunuza SMS ile gönderildi."
+                        : $"Talebiniz güncellendi (#{request.Id}). Takip linki SMS ile gönderildi.")
+                    : (isNew
+                        ? $"Talebiniz oluşturuldu. Talep numaranız: #{request.Id}."
+                        : "Talebiniz başarıyla güncellendi.");
+                return RedirectToAction(nameof(Requests));
+            }
+
             TempData["Success"] = smsGonderildi
-                ? $"Talebiniz alındı. Talep no: #{request.Id}. Takip bağlantısı cep telefonunuza SMS ile gönderildi."
-                : $"Talebiniz alındı. Talep no: #{request.Id}. Taleplerinizi görmek için giriş yapabilirsiniz.";
+                ? $"Talebiniz alındı. Talep numaranız: #{request.Id}. Takip bağlantısı cep telefonunuza SMS ile iletildi."
+                : $"Talebiniz alındı. Talep numaranız: #{request.Id}.";
             return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
@@ -374,7 +378,7 @@ public class HomeController : Controller
         return View(vm);
     }
 
-    private void EnsureGuestTrackingToken(MoveRequest request)
+    private void EnsureTrackingToken(MoveRequest request)
     {
         if (!string.IsNullOrEmpty(request.TrackingToken))
         {

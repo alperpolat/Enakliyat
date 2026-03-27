@@ -24,8 +24,8 @@ public class IletimXSmsService : ISmsService
     {
         if (!_settings.Enabled)
         {
-            _logger.LogInformation("SMS gönderilmedi: Sms.Enabled=false");
-            return new SmsSendResult(true, "disabled");
+            _logger.LogInformation("SMS gönderilmedi: Sms.Enabled=false (appsettings içinde true yapın)");
+            return new SmsSendResult(false, "disabled");
         }
 
         var cleanPhone = CleanPhoneNumber(phoneNumber);
@@ -70,7 +70,7 @@ public class IletimXSmsService : ISmsService
                 return new SmsSendResult(false, $"http_{(int)response.StatusCode}:{responseString}");
             }
 
-            if (responseString.StartsWith("ID:", StringComparison.Ordinal))
+            if (responseString.StartsWith("ID:", StringComparison.OrdinalIgnoreCase))
             {
                 return new SmsSendResult(true, responseString);
             }
