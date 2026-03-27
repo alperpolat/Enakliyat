@@ -6,6 +6,8 @@ using Enakliyat.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Security.Cryptography;
 
 namespace Enakliyat.Web.Controllers;
 
@@ -16,14 +18,25 @@ public class HomeController : Controller
     private readonly IReservationNotificationService _notificationService;
     private readonly INotificationService _generalNotificationService;
     private readonly IWebHostEnvironment _env;
+    private readonly ISmsService _smsService;
+    private readonly IOptions<SmsSettings> _smsSettings;
 
-    public HomeController(ILogger<HomeController> logger, EnakliyatDbContext context, IReservationNotificationService notificationService, INotificationService generalNotificationService, IWebHostEnvironment env)
+    public HomeController(
+        ILogger<HomeController> logger,
+        EnakliyatDbContext context,
+        IReservationNotificationService notificationService,
+        INotificationService generalNotificationService,
+        IWebHostEnvironment env,
+        ISmsService smsService,
+        IOptions<SmsSettings> smsSettings)
     {
         _logger = logger;
         _context = context;
         _notificationService = notificationService;
         _generalNotificationService = generalNotificationService;
         _env = env;
+        _smsService = smsService;
+        _smsSettings = smsSettings;
     }
 
     [HttpGet]
@@ -210,6 +223,11 @@ public class HomeController : Controller
             request.Notes = model.Notes;
             request.Status = "Teklif Bekliyor";
 
+            if (!userId.HasValue)
+            {
+                EnsureGuestTrackingToken(request);
+            }
+
             await _context.SaveChangesAsync();
 
             if (isNew && !userId.HasValue)
@@ -291,8 +309,30 @@ public class HomeController : Controller
                 return RedirectToAction(nameof(Requests));
             }
 
-            TempData["Success"] =
-                $"Talebiniz alındı. Talep numaranız: #{request.Id}. Taleplerinizi görmek için giriş yapabilirsiniz.";
+            var smsGonderildi = false;
+            if (!userId.HasValue && !string.IsNullOrEmpty(request.TrackingToken))
+            {
+                var baseUrl = GetPublicSiteBaseUrl();
+                if (!string.IsNullOrEmpty(baseUrl))
+                {
+                    var link = $"{baseUrl}/Home/TalepTakip?t={Uri.EscapeDataString(request.TrackingToken)}";
+                    var smsText = $"Nakliye360: Talebiniz alindi. No:{request.Id} Takip:{link}";
+                    var smsResult = await _smsService.SendAsync(request.PhoneNumber, smsText);
+                    smsGonderildi = smsResult.Ok;
+                    if (!smsResult.Ok)
+                    {
+                        _logger.LogWarning("Misafir talep SMS gonderilemedi: {Detail}", smsResult.Detail);
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning("Takip SMS linki uretilemedi: Sms:PublicBaseUrl bos ve istek hostu yok.");
+                }
+            }
+
+            TempData["Success"] = smsGonderildi
+                ? $"Talebiniz alındı. Talep no: #{request.Id}. Takip bağlantısı cep telefonunuza SMS ile gönderildi."
+                : $"Talebiniz alındı. Talep no: #{request.Id}. Taleplerinizi görmek için giriş yapabilirsiniz.";
             return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
@@ -302,6 +342,75 @@ public class HomeController : Controller
             LoadOfferFormViewBag();
             return View(model);
         }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> TalepTakip(string? t, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(t))
+        {
+            return NotFound();
+        }
+
+        var req = await _context.MoveRequests.AsNoTracking()
+            .FirstOrDefaultAsync(m => m.TrackingToken == t, cancellationToken);
+        if (req == null)
+        {
+            return NotFound();
+        }
+
+        var teklifSayisi = await _context.Offers.CountAsync(o => o.MoveRequestId == req.Id, cancellationToken);
+
+        var vm = new TalepTakipViewModel
+        {
+            Id = req.Id,
+            Status = req.Status,
+            FromAddress = req.FromAddress,
+            ToAddress = req.ToAddress,
+            MoveType = req.MoveType,
+            MoveDate = req.MoveDate,
+            TeklifSayisi = teklifSayisi
+        };
+        return View(vm);
+    }
+
+    private void EnsureGuestTrackingToken(MoveRequest request)
+    {
+        if (!string.IsNullOrEmpty(request.TrackingToken))
+        {
+            return;
+        }
+
+        for (var attempt = 0; attempt < 12; attempt++)
+        {
+            var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(16));
+            if (!_context.MoveRequests.Any(m => m.TrackingToken == token))
+            {
+                request.TrackingToken = token;
+                return;
+            }
+        }
+
+        throw new InvalidOperationException("Takip kodu üretilemedi.");
+    }
+
+    /// <summary>
+    /// SMS / paylaşım için kök URL. Önce <c>Sms:PublicBaseUrl</c> (canlı alan adı sabitlemek veya reverse proxy için); boşsa mevcut isteğin hostu.
+    /// </summary>
+    private string? GetPublicSiteBaseUrl()
+    {
+        var configured = (_smsSettings.Value.PublicBaseUrl ?? string.Empty).Trim().TrimEnd('/');
+        if (!string.IsNullOrEmpty(configured))
+        {
+            return configured;
+        }
+
+        if (Request.Host.HasValue)
+        {
+            return $"{Request.Scheme}://{Request.Host.Value}".TrimEnd('/');
+        }
+
+        return null;
     }
 
     private void LoadOfferFormViewBag()

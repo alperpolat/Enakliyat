@@ -33,4 +33,7 @@ public class MoveRequest : BaseEntity
     public int? AcceptedOfferId { get; set; }
     public int? UserId { get; set; }
     public User? User { get; set; }
+
+    /// <summary>Misafir taleplerde SMS ile gönderilen gizli takip bağlantısı anahtarı.</summary>
+    public string? TrackingToken { get; set; }
 }

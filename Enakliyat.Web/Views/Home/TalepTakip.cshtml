@@ -1,0 +1,43 @@
+@model Enakliyat.Web.Models.TalepTakipViewModel
+@{
+    ViewData["Title"] = "Talep takibi";
+}
+
+<div class="py-5" style="background-color:#f5f7fb; min-height: 70vh;">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <div class="card border-0 shadow rounded-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <h1 class="h4 fw-semibold mb-3">Talep #@Model.Id</h1>
+                        <p class="text-body-secondary mb-4">Bu sayfayı yalnızca size SMS ile gönderilen bağlantı üzerinden açın; linki paylaşmayın.</p>
+
+                        <dl class="row mb-0 small">
+                            <dt class="col-sm-4 col-md-3">Durum</dt>
+                            <dd class="col-sm-8 col-md-9"><strong>@Model.Status</strong></dd>
+
+                            <dt class="col-sm-4 col-md-3">Taşıma</dt>
+                            <dd class="col-sm-8 col-md-9">@Model.FromAddress &rarr; @Model.ToAddress</dd>
+
+                            <dt class="col-sm-4 col-md-3">Tip</dt>
+                            <dd class="col-sm-8 col-md-9">@Model.MoveType</dd>
+
+                            <dt class="col-sm-4 col-md-3">Tarih</dt>
+                            <dd class="col-sm-8 col-md-9">@Model.MoveDate.ToString("dd.MM.yyyy")</dd>
+
+                            <dt class="col-sm-4 col-md-3">Teklif</dt>
+                            <dd class="col-sm-8 col-md-9">@Model.TeklifSayisi teklif</dd>
+                        </dl>
+
+                        <hr class="my-4" />
+                        <p class="small text-muted mb-3">
+                            Tüm teklifleri karşılaştırmak ve işlemleri yönetmek için hesabınızla giriş yapabilirsiniz.
+                        </p>
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary">Giriş yap</a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-link">Ana sayfa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

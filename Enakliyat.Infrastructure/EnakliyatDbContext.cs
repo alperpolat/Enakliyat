@@ -54,6 +54,10 @@ public class EnakliyatDbContext : DbContext
             entity.Property(x => x.EstimatedArrivalTime);
             entity.Property(x => x.CompletedAt);
             entity.Property(x => x.AcceptedOfferId);
+            entity.Property(x => x.TrackingToken).HasMaxLength(64);
+            entity.HasIndex(x => x.TrackingToken)
+                .IsUnique()
+                .HasFilter("[TrackingToken] IS NOT NULL");
             entity.HasOne(x => x.User)
                   .WithMany(u => u.MoveRequests)
                   .HasForeignKey(x => x.UserId)

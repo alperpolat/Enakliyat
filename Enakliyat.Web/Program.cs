@@ -47,6 +47,8 @@ builder.Services.AddDbContext<EnakliyatDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.Configure<SmsSettings>(builder.Configuration.GetSection("Sms"));
+builder.Services.AddHttpClient<ISmsService, IletimXSmsService>();
 builder.Services.AddScoped<IReservationNotificationService, SmtpReservationNotificationService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 
