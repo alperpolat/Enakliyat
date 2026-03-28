@@ -1,8 +1,11 @@
 using Enakliyat.Domain;
 using Enakliyat.Infrastructure;
+using Enakliyat.Web.Models;
+using Enakliyat.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Enakliyat.Web.Controllers;
 
@@ -10,10 +13,67 @@ namespace Enakliyat.Web.Controllers;
 public class TestController : Controller
 {
     private readonly EnakliyatDbContext _context;
+    private readonly ISmsService _smsService;
+    private readonly SmsSettings _smsSettings;
+    private readonly IWebHostEnvironment _environment;
 
-    public TestController(EnakliyatDbContext context)
+    public TestController(
+        EnakliyatDbContext context,
+        ISmsService smsService,
+        IOptions<SmsSettings> smsSettings,
+        IWebHostEnvironment environment)
     {
         _context = context;
+        _smsService = smsService;
+        _smsSettings = smsSettings.Value;
+        _environment = environment;
+    }
+
+    /// <summary>
+    /// Yalnızca Development: İletimX ile tek SMS dener. Örnek: <c>/Test/SmsPing?phone=05321234567</c>
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> SmsPing([FromQuery] string phone, [FromQuery] string? msg = null, CancellationToken cancellationToken = default)
+    {
+        if (!_environment.IsDevelopment())
+        {
+            return NotFound();
+        }
+
+        if (string.IsNullOrWhiteSpace(phone))
+        {
+            return BadRequest(new { error = "phone parametresi gerekli (örn. 05xx ile başlayan cep)." });
+        }
+
+        var message = string.IsNullOrWhiteSpace(msg)
+            ? "Road of Home SMS test — " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+            : msg.Trim();
+
+        var result = await _smsService.SendAsync(phone, message, cancellationToken);
+
+        return Ok(new
+        {
+            environment = _environment.EnvironmentName,
+            result = new { ok = result.Ok, detail = result.Detail },
+            request = new { phoneInput = phone, messageLength = message.Length },
+            config = new
+            {
+                enabled = _smsSettings.Enabled,
+                publicBaseUrl = string.IsNullOrWhiteSpace(_smsSettings.PublicBaseUrl) ? "(boş — istek hostu kullanılır)" : _smsSettings.PublicBaseUrl,
+                apiGatewayUrl = _smsSettings.ApiGatewayUrl,
+                kullaniciAdiSet = !string.IsNullOrWhiteSpace(_smsSettings.KullaniciAdi),
+                sifreSet = !string.IsNullOrWhiteSpace(_smsSettings.Sifre),
+                bayiKoduSet = !string.IsNullOrWhiteSpace(_smsSettings.BayiKodu),
+                baslik = string.IsNullOrWhiteSpace(_smsSettings.Baslik) ? "(boş)" : _smsSettings.Baslik
+            },
+            hints = new
+            {
+                enabledFalse = "Sms:Enabled false ise gönderim yapılmaz; appsettings Development içinde true deneyin.",
+                iletimx = "not_configured: ApiGatewayUrl, KullaniciAdi, Sifre, BayiKodu, Baslik eksik.",
+                invalid_phone = "10 hane 5xxxxxxxxx olmalı (0 ve 90 olmadan normalize edilir).",
+                disabled = "Sms.Enabled kapalı."
+            }
+        });
     }
 
     [HttpGet]
