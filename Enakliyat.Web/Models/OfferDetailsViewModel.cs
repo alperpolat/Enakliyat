@@ -16,7 +16,10 @@ public class OfferDetailsViewModel : IValidatableObject
     public int? ToDistrictId { get; set; }
     public int? ToNeighborhoodId { get; set; }
 
+    [MaxLength(500, ErrorMessage = "Çıkış adresi en fazla 500 karakter olabilir.")]
     public string FromAddress { get; set; } = string.Empty;
+
+    [MaxLength(500, ErrorMessage = "Varış adresi en fazla 500 karakter olabilir.")]
     public string ToAddress { get; set; } = string.Empty;
     public string MoveType { get; set; } = string.Empty;
 

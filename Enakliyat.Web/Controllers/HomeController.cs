@@ -153,17 +153,35 @@ public class HomeController : Controller
 
         try
         {
+            const int minFreeAddressChars = 10;
             var vehicleOnly = string.Equals(model.MoveType, "VehicleOnly", StringComparison.OrdinalIgnoreCase);
+            var fromFree = (model.FromAddress ?? string.Empty).Trim();
+            var toFree = (model.ToAddress ?? string.Empty).Trim();
+
             if (vehicleOnly)
             {
-                if (!model.ToCityId.HasValue)
+                var toOk = model.ToCityId.HasValue || toFree.Length >= minFreeAddressChars;
+                if (!toOk)
                 {
-                    ModelState.AddModelError(string.Empty, "Lütfen aracın geleceği adresi listeden seçin.");
+                    ModelState.AddModelError(nameof(model.ToAddress),
+                        "Aracın geleceği yer için listeden seçim yapın veya en az 10 karakter adres yazın.");
                 }
             }
-            else if (!model.FromCityId.HasValue || !model.ToCityId.HasValue)
+            else
             {
-                ModelState.AddModelError(string.Empty, "Lütfen nereden ve nereye adreslerini listeden seçin.");
+                var fromOk = model.FromCityId.HasValue || fromFree.Length >= minFreeAddressChars;
+                var toOk = model.ToCityId.HasValue || toFree.Length >= minFreeAddressChars;
+                if (!fromOk)
+                {
+                    ModelState.AddModelError(nameof(model.FromAddress),
+                        "Çıkış adresi için listeden seçim yapın veya en az 10 karakter yazın.");
+                }
+
+                if (!toOk)
+                {
+                    ModelState.AddModelError(nameof(model.ToAddress),
+                        "Varış adresi için listeden seçim yapın veya en az 10 karakter yazın.");
+                }
             }
 
             if (!ModelState.IsValid)
@@ -194,12 +212,18 @@ public class HomeController : Controller
             if (vehicleOnly)
             {
                 fromAddress = "Sadece araç — çıkış adresi belirtilmedi";
-                toAddress = BuildAddress(model.ToCityId, model.ToDistrictId, model.ToNeighborhoodId);
+                toAddress = model.ToCityId.HasValue
+                    ? BuildAddress(model.ToCityId, model.ToDistrictId, model.ToNeighborhoodId)
+                    : toFree;
             }
             else
             {
-                fromAddress = BuildAddress(model.FromCityId, model.FromDistrictId, model.FromNeighborhoodId);
-                toAddress = BuildAddress(model.ToCityId, model.ToDistrictId, model.ToNeighborhoodId);
+                fromAddress = model.FromCityId.HasValue
+                    ? BuildAddress(model.FromCityId, model.FromDistrictId, model.FromNeighborhoodId)
+                    : fromFree;
+                toAddress = model.ToCityId.HasValue
+                    ? BuildAddress(model.ToCityId, model.ToDistrictId, model.ToNeighborhoodId)
+                    : toFree;
             }
 
             MoveRequest request;
@@ -248,12 +272,52 @@ public class HomeController : Controller
 
             request.FromAddress = fromAddress;
             request.ToAddress = toAddress;
-            request.FromCityId = vehicleOnly ? null : model.FromCityId;
-            request.FromDistrictId = vehicleOnly ? null : model.FromDistrictId;
-            request.FromNeighborhoodId = vehicleOnly ? null : model.FromNeighborhoodId;
-            request.ToCityId = model.ToCityId;
-            request.ToDistrictId = model.ToDistrictId;
-            request.ToNeighborhoodId = model.ToNeighborhoodId;
+            if (vehicleOnly)
+            {
+                request.FromCityId = null;
+                request.FromDistrictId = null;
+                request.FromNeighborhoodId = null;
+                if (model.ToCityId.HasValue)
+                {
+                    request.ToCityId = model.ToCityId;
+                    request.ToDistrictId = model.ToDistrictId;
+                    request.ToNeighborhoodId = model.ToNeighborhoodId;
+                }
+                else
+                {
+                    request.ToCityId = null;
+                    request.ToDistrictId = null;
+                    request.ToNeighborhoodId = null;
+                }
+            }
+            else
+            {
+                if (model.FromCityId.HasValue)
+                {
+                    request.FromCityId = model.FromCityId;
+                    request.FromDistrictId = model.FromDistrictId;
+                    request.FromNeighborhoodId = model.FromNeighborhoodId;
+                }
+                else
+                {
+                    request.FromCityId = null;
+                    request.FromDistrictId = null;
+                    request.FromNeighborhoodId = null;
+                }
+
+                if (model.ToCityId.HasValue)
+                {
+                    request.ToCityId = model.ToCityId;
+                    request.ToDistrictId = model.ToDistrictId;
+                    request.ToNeighborhoodId = model.ToNeighborhoodId;
+                }
+                else
+                {
+                    request.ToCityId = null;
+                    request.ToDistrictId = null;
+                    request.ToNeighborhoodId = null;
+                }
+            }
             request.CustomerName = model.CustomerName;
             request.PhoneNumber = model.PhoneNumber;
             request.Email = model.Email;

@@ -59,16 +59,18 @@
                                 @if (!vehicleOnly)
                                 {
                                 <div class="col-12">
-                                    <label class="form-label">Nereden taşınacak?</label>
+                                    <label class="form-label" asp-for="FromAddress">Nereden taşınacak?</label>
                                     <div class="position-relative">
                                         <i class="fas fa-map-marker-alt position-absolute text-muted" style="left:1rem; top:50%; transform:translateY(-50%); z-index:1; pointer-events:none;"></i>
-                                        <input type="text" class="form-control form-control-lg ps-5" id="fromLocationText"
-                                               value="@Model.FromAddress" placeholder="İl, ilçe veya mahalle arayın..." autocomplete="off" />
+                                        <input asp-for="FromAddress" type="text" class="form-control form-control-lg ps-5" id="fromLocationText"
+                                               placeholder="İl, ilçe arayın veya adresi doğrudan yazın" autocomplete="off" />
                                         <input type="hidden" asp-for="FromCityId" id="fromCityId" />
                                         <input type="hidden" asp-for="FromDistrictId" id="fromDistrictId" />
                                         <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodId" />
                                         <div id="fromLocationSuggestions" class="location-suggestions" style="display: none;"></div>
                                     </div>
+                                    <div class="form-text">Listeden seçebilir veya adresinizi serbest yazabilirsiniz.</div>
+                                    <span asp-validation-for="FromAddress" class="text-danger"></span>
                                 </div>
                                 }
                                 else
@@ -78,16 +80,18 @@
                                     <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodId" />
                                 }
                                 <div class="col-12">
-                                    <label class="form-label">@(vehicleOnly ? "Araç nereye gelecek?" : "Nereye taşınacak?")</label>
+                                    <label class="form-label" asp-for="ToAddress">@(vehicleOnly ? "Araç nereye gelecek?" : "Nereye taşınacak?")</label>
                                     <div class="position-relative">
                                         <i class="fas fa-flag-checkered position-absolute text-muted" style="left:1rem; top:50%; transform:translateY(-50%); z-index:1; pointer-events:none;"></i>
-                                        <input type="text" class="form-control form-control-lg ps-5" id="toLocationText"
-                                               value="@Model.ToAddress" placeholder="İl, ilçe veya mahalle arayın..." autocomplete="off" />
+                                        <input asp-for="ToAddress" type="text" class="form-control form-control-lg ps-5" id="toLocationText"
+                                               placeholder="İl, ilçe arayın veya adresi doğrudan yazın" autocomplete="off" />
                                         <input type="hidden" asp-for="ToCityId" id="toCityId" />
                                         <input type="hidden" asp-for="ToDistrictId" id="toDistrictId" />
                                         <input type="hidden" asp-for="ToNeighborhoodId" id="toNeighborhoodId" />
                                         <div id="toLocationSuggestions" class="location-suggestions" style="display: none;"></div>
                                     </div>
+                                    <div class="form-text">Listeden seçebilir veya adresinizi serbest yazabilirsiniz.</div>
+                                    <span asp-validation-for="ToAddress" class="text-danger"></span>
                                 </div>
 
                                 <div class="col-md-6">
