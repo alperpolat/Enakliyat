@@ -54,6 +54,7 @@ builder.Services.AddHttpClient<ISmsService, IletimXSmsService>(client =>
 });
 builder.Services.AddScoped<IReservationNotificationService, SmtpReservationNotificationService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IPublicSiteContact, PublicSiteContactService>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -169,6 +170,17 @@ app.UseMiddleware<Enakliyat.Web.Middleware.GlobalExceptionHandlerMiddleware>();
            {
                Log.Error(ex, "System settings seed hatası!");
                logger.LogError(ex, "System settings seed hatası!");
+           }
+
+           try
+           {
+               await DataSeeder.EnsureQuoteCallHotlineSettingAsync(context);
+               Log.Information("QuoteCallHotline ayarı kontrol edildi.");
+           }
+           catch (Exception ex)
+           {
+               Log.Error(ex, "QuoteCallHotline ayar hatası!");
+               logger.LogError(ex, "QuoteCallHotline ayar hatası!");
            }
 
            try

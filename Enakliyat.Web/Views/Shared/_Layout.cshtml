@@ -1,3 +1,4 @@
+@inject Enakliyat.Web.Services.IPublicSiteContact SiteContact
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -744,7 +745,21 @@
                         </div>
                         <div class="footer-contact-text">
                             <strong>Telefon</strong>
-                            0850 123 45 67
+                            @if (!string.IsNullOrWhiteSpace(SiteContact.PhoneDisplay))
+                            {
+                                @if (!string.IsNullOrEmpty(SiteContact.QuoteCallTelHref))
+                                {
+                                    <a href="@SiteContact.QuoteCallTelHref" class="text-decoration-underline" style="color: var(--gray-400);">@SiteContact.PhoneDisplay</a>
+                                }
+                                else
+                                {
+                                    <span style="color: var(--gray-400);">@SiteContact.PhoneDisplay</span>
+                                }
+                            }
+                            else
+                            {
+                                <span style="color: var(--gray-500);">—</span>
+                            }
                         </div>
                     </div>
                     <div class="footer-contact-item">
@@ -753,7 +768,18 @@
                         </div>
                         <div class="footer-contact-text">
                             <strong>WhatsApp</strong>
-                            0532 123 45 67
+                            @if (!string.IsNullOrEmpty(SiteContact.WhatsAppUrl) && !string.IsNullOrWhiteSpace(SiteContact.PhoneDisplay))
+                            {
+                                <a href="@SiteContact.WhatsAppUrl" class="text-decoration-underline" style="color: var(--gray-400);" target="_blank" rel="noopener">@SiteContact.PhoneDisplay</a>
+                            }
+                            else if (!string.IsNullOrWhiteSpace(SiteContact.PhoneDisplay))
+                            {
+                                <span style="color: var(--gray-400);">@SiteContact.PhoneDisplay</span>
+                            }
+                            else
+                            {
+                                <span style="color: var(--gray-500);">—</span>
+                            }
                         </div>
                     </div>
                     <div class="footer-contact-item">
@@ -787,10 +813,13 @@
         </div>
     </footer>
 
-    <!-- WhatsApp Button -->
-    <a href="https://wa.me/905321234567" class="whatsapp-float" target="_blank" aria-label="WhatsApp ile iletişim">
-        <i class="fab fa-whatsapp"></i>
-    </a>
+    <!-- WhatsApp Button (numara: Admin → Sistem Ayarları → QuoteCallHotline / SupportPhone) -->
+    @if (!string.IsNullOrEmpty(SiteContact.WhatsAppUrl))
+    {
+        <a href="@SiteContact.WhatsAppUrl" class="whatsapp-float" target="_blank" rel="noopener" aria-label="WhatsApp ile iletişim">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    }
 
     <!-- Back to Top -->
     <a href="#" class="back-to-top" id="backToTop" aria-label="Yukarı git">

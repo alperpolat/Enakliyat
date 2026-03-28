@@ -22,6 +22,7 @@ public class HomeController : Controller
     private readonly IWebHostEnvironment _env;
     private readonly ISmsService _smsService;
     private readonly IOptions<SmsSettings> _smsSettings;
+    private readonly IPublicSiteContact _publicSiteContact;
 
     public HomeController(
         ILogger<HomeController> logger,
@@ -30,7 +31,8 @@ public class HomeController : Controller
         INotificationService generalNotificationService,
         IWebHostEnvironment env,
         ISmsService smsService,
-        IOptions<SmsSettings> smsSettings)
+        IOptions<SmsSettings> smsSettings,
+        IPublicSiteContact publicSiteContact)
     {
         _logger = logger;
         _context = context;
@@ -39,6 +41,7 @@ public class HomeController : Controller
         _env = env;
         _smsService = smsService;
         _smsSettings = smsSettings;
+        _publicSiteContact = publicSiteContact;
     }
 
     [HttpGet]
@@ -49,6 +52,9 @@ public class HomeController : Controller
             .ToList();
 
         ViewBag.Cities = cities;
+
+        ViewBag.QuoteCallTelHref = _publicSiteContact.QuoteCallTelHref;
+        ViewBag.QuoteCallPhoneLabel = _publicSiteContact.PhoneDisplay;
 
         return View(new MoveRequestViewModel());
     }

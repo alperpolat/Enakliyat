@@ -391,6 +391,22 @@ public static class DataSeeder
         await context.SaveChangesAsync();
     }
 
+    /// <summary>Mevcut kurulumlara ana sayfa teklif hattı ayarını bir kez ekler.</summary>
+    public static async Task EnsureQuoteCallHotlineSettingAsync(EnakliyatDbContext context)
+    {
+        if (await context.SystemSettings.AnyAsync(s => s.Key == "QuoteCallHotline"))
+            return;
+
+        await context.SystemSettings.AddAsync(new SystemSetting
+        {
+            Key = "QuoteCallHotline",
+            Value = "+90 532 123 45 67",
+            Description = "Ana sayfa teklif hattı: «Hemen Ara», WhatsApp (sağ alt) ve footer; yoksa SupportPhone kullanılır.",
+            Category = "General"
+        });
+        await context.SaveChangesAsync();
+    }
+
     public static async Task SeedNotificationTemplatesAsync(EnakliyatDbContext context)
     {
         if (context.NotificationTemplates.Any())
