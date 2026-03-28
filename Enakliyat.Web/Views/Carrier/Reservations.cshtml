@@ -40,7 +40,7 @@
                     <td>@(r.User?.Email ?? "-")</td>
                     <td>@r.FromAddress</td>
                     <td>@r.ToAddress</td>
-                    <td>@r.MoveDate.ToLocalTime().ToString("g")</td>
+                    <td>@MoveDateFormatting.ToTurkishRangeDisplay(r.MoveDate.ToLocalTime(), r.MoveDateEnd?.ToLocalTime())</td>
                     <td>@(r.AssignedTeam ?? "-")</td>
                     <td>@(r.EstimatedArrivalTime.HasValue ? r.EstimatedArrivalTime.Value.ToLocalTime().ToString("g") : "-")</td>
                     <td>@r.Status</td>

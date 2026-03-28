@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
 namespace Enakliyat.Web.Models;
 
-public class OfferDetailsViewModel
+public class OfferDetailsViewModel : IValidatableObject
 {
     public int MoveRequestId { get; set; }
 
@@ -28,8 +29,11 @@ public class OfferDetailsViewModel
     [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi girin.")]
     public string? Email { get; set; }
 
-    [Required(ErrorMessage = "Lütfen taşınma tarihini seçin.")]
+    [Required(ErrorMessage = "Lütfen taşınma başlangıç tarihini seçin.")]
     public DateTime MoveDate { get; set; } = DateTime.Today.AddDays(1);
+
+    /// <summary>Taşınmanın en geç yapılabileceği gün; boş veya başlangıçla aynı ise tek gün.</summary>
+    public DateTime? MoveDateEnd { get; set; }
 
     public string? RoomType { get; set; }
 
@@ -42,4 +46,14 @@ public class OfferDetailsViewModel
     public string? Notes { get; set; }
 
     public IFormFile[]? Photos { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (MoveDateEnd.HasValue && MoveDateEnd.Value.Date < MoveDate.Date)
+        {
+            yield return new ValidationResult(
+                "Bitiş tarihi başlangıçtan önce olamaz.",
+                new[] { nameof(MoveDateEnd) });
+        }
+    }
 }

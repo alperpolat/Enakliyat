@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Mail;
 using Enakliyat.Domain;
 using Enakliyat.Infrastructure;
+using Enakliyat.Web.Helpers;
 using Enakliyat.Web.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -97,7 +98,7 @@ public class NotificationService : INotificationService
     <strong>Nereden:</strong> {request.FromAddress}<br/>
     <strong>Nereye:</strong> {request.ToAddress}<br/>
     <strong>Taşınma Tipi:</strong> {request.MoveType}<br/>
-    <strong>Taşınma Tarihi:</strong> {request.MoveDate:dd.MM.yyyy}
+    <strong>Taşınma Tarihi:</strong> {MoveDateFormatting.ToTurkishRangeDisplay(request.MoveDate, request.MoveDateEnd)}
 </p>
 <p><a href='{PublicSiteBaseUrl}/Carrier/Leads'>Teklif vermek için tıklayın</a></p>";
 
@@ -148,7 +149,7 @@ public class NotificationService : INotificationService
     <strong>Nereden:</strong> {request.FromAddress}<br/>
     <strong>Nereye:</strong> {request.ToAddress}<br/>
     <strong>Fiyat:</strong> {offer.Price:N2} TL<br/>
-    <strong>Taşınma Tarihi:</strong> {request.MoveDate:dd.MM.yyyy}
+    <strong>Taşınma Tarihi:</strong> {MoveDateFormatting.ToTurkishRangeDisplay(request.MoveDate, request.MoveDateEnd)}
 </p>
 <p><a href='{PublicSiteBaseUrl}/Carrier/Reservations'>Rezervasyonları görüntülemek için tıklayın</a></p>";
 

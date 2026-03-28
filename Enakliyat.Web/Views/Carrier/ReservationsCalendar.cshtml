@@ -50,7 +50,12 @@
                                 else
                                 {
                                     var date = new DateTime(year, month, day);
-                                    var dayReservations = reservations.Where(r => r.MoveDate.Date == date.Date).ToList();
+                                    var dayReservations = reservations.Where(r =>
+                                    {
+                                        var start = r.MoveDate.Date;
+                                        var end = (r.MoveDateEnd ?? r.MoveDate).Date;
+                                        return date.Date >= start && date.Date <= end;
+                                    }).ToList();
                                     <td class="text-start" style="min-width: 120px;">
                                         <div class="fw-bold small mb-1">@day</div>
                                         @if (dayReservations.Any())

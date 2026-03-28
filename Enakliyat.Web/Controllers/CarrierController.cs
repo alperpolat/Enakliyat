@@ -392,7 +392,8 @@ public class CarrierController : Controller
         var lastDay = firstDay.AddMonths(1);
 
         var reservations = await _context.MoveRequests
-            .Where(r => r.AcceptedOfferId != null && r.MoveDate >= firstDay && r.MoveDate < lastDay)
+            .Where(r => r.AcceptedOfferId != null && r.MoveDate < lastDay &&
+                        (r.MoveDateEnd ?? r.MoveDate) >= firstDay)
             .Join(_context.Offers,
                 r => r.AcceptedOfferId,
                 o => o.Id,

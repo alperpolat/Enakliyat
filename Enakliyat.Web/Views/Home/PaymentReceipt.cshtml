@@ -75,7 +75,7 @@
                         <dd class="col-7">@request.ToAddress</dd>
 
                         <dt class="col-5">Taşınma Tarihi</dt>
-                        <dd class="col-7">@request.MoveDate.ToLocalTime().ToString("d")</dd>
+                        <dd class="col-7">@MoveDateFormatting.ToTurkishRangeDisplay(request.MoveDate.ToLocalTime(), request.MoveDateEnd?.ToLocalTime())</dd>
 
                         <dt class="col-5">Toplam Teklif</dt>
                         <dd class="col-7">@offer.Price.ToString("N2") TL</dd>

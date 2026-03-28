@@ -54,7 +54,7 @@
                                                 <td>#@x.Id</td>
                                                 <td><strong>@x.Status</strong></td>
                                                 <td>@x.FromAddress → @x.ToAddress</td>
-                                                <td>@x.MoveDate.ToString("dd.MM.yyyy")</td>
+                                                <td>@MoveDateFormatting.ToTurkishRangeDisplay(x.MoveDate, x.MoveDateEnd)</td>
                                                 <td>@x.TeklifSayisi</td>
                                                 <td class="text-end">
                                                     <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@x.Id" asp-route-t="@Model.KullaniciId">Detay</a>

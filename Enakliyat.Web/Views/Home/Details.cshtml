@@ -66,7 +66,7 @@
                         </div>
                         <div class="col-sm-6 col-lg-4">
                             <div class="small text-body text-opacity-50 text-uppercase">Taşınma tarihi</div>
-                            <div class="fw-semibold">@Model.Request.MoveDate.ToString("dd.MM.yyyy")</div>
+                            <div class="fw-semibold">@MoveDateFormatting.ToTurkishRangeDisplay(Model.Request.MoveDate, Model.Request.MoveDateEnd)</div>
                         </div>
                         <div class="col-sm-6 col-lg-4">
                             <div class="small text-body text-opacity-50 text-uppercase">Oda tipi</div>

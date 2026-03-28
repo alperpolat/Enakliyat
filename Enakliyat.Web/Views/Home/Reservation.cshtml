@@ -12,7 +12,7 @@
         <strong>Taşıma Tipi:</strong> @Model.Request.MoveType<br />
         <strong>Nereden:</strong> @Model.Request.FromAddress<br />
         <strong>Nereye:</strong> @Model.Request.ToAddress<br />
-        <strong>Taşınma Tarihi:</strong> @Model.Request.MoveDate.ToLocalTime().ToString("d")<br />
+        <strong>Taşınma Tarihi:</strong> @MoveDateFormatting.ToTurkishRangeDisplay(Model.Request.MoveDate.ToLocalTime(), Model.Request.MoveDateEnd?.ToLocalTime())<br />
         <strong>Durum:</strong> @Model.Request.Status<br />
         @if (!string.IsNullOrWhiteSpace(Model.Request.AssignedTeam))
         {

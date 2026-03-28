@@ -5,6 +5,7 @@
 }
 
 <style>
+    @@import url("https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css");
     .location-suggestions {
         position: absolute;
         top: 100%;
@@ -96,9 +97,17 @@
                                     <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6">
-                                    <label asp-for="MoveDate" class="form-label">Taşınma tarihini seçin</label>
-                                    <input asp-for="MoveDate" type="date" class="form-control form-control-lg" />
+                                    <label class="form-label" for="moveDateRangeDisplay">Taşınma tarihi</label>
+                                    <div class="position-relative">
+                                        <i class="fas fa-calendar-alt position-absolute text-muted" style="left:1rem; top:50%; transform:translateY(-50%); z-index:2; pointer-events:none;"></i>
+                                        <input type="text" class="form-control form-control-lg ps-5" id="moveDateRangeDisplay"
+                                               placeholder="Başlangıç ve bitiş seçin" autocomplete="off" readonly />
+                                    </div>
+                                    <div class="form-text">Tek gün: aynı güne iki kez tıklayın veya yalnızca bir gün seçip uygulayın.</div>
+                                    <input type="hidden" asp-for="MoveDate" id="offerMoveDate" asp-format="{0:yyyy-MM-dd}" />
+                                    <input type="hidden" asp-for="MoveDateEnd" id="offerMoveDateEnd" asp-format="{0:yyyy-MM-dd}" />
                                     <span asp-validation-for="MoveDate" class="text-danger"></span>
+                                    <span asp-validation-for="MoveDateEnd" class="text-danger"></span>
                                 </div>
 
                                 <div class="col-md-6">
@@ -208,6 +217,8 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/tr.js"></script>
     <script>
         (function () {
             const container = document.querySelector('[data-move-type]');
@@ -329,9 +340,68 @@
             });
         }
 
+        function offerToYmd(d) {
+            var y = d.getFullYear();
+            var m = String(d.getMonth() + 1).padStart(2, '0');
+            var day = String(d.getDate()).padStart(2, '0');
+            return y + '-' + m + '-' + day;
+        }
+
+        function offerParseIsoDate(s) {
+            if (!s) return null;
+            var p = s.trim().split('-');
+            if (p.length !== 3) return null;
+            var d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+            return isNaN(d.getTime()) ? null : d;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             setupLocationAutocomplete('fromLocationText', 'fromLocationSuggestions', 'fromCityId', 'fromDistrictId', 'fromNeighborhoodId');
             setupLocationAutocomplete('toLocationText', 'toLocationSuggestions', 'toCityId', 'toDistrictId', 'toNeighborhoodId');
+
+            var displayEl = document.getElementById('moveDateRangeDisplay');
+            var startHidden = document.getElementById('offerMoveDate');
+            var endHidden = document.getElementById('offerMoveDateEnd');
+            if (displayEl && startHidden && endHidden && window.flatpickr) {
+                var trLocale = window.flatpickr.l10ns.tr
+                    ? Object.assign({}, window.flatpickr.l10ns.tr, { rangeSeparator: ' – ' })
+                    : { rangeSeparator: ' – ' };
+                var startVal = (startHidden.value || '').trim();
+                var endVal = (endHidden.value || '').trim();
+                var defaultDates = [];
+                var d0 = offerParseIsoDate(startVal);
+                if (d0) {
+                    defaultDates.push(d0);
+                    var d1 = offerParseIsoDate(endVal);
+                    if (d1 && offerToYmd(d1) !== offerToYmd(d0)) {
+                        defaultDates.push(d1);
+                    }
+                }
+                window.flatpickr(displayEl, {
+                    mode: 'range',
+                    dateFormat: 'd.m.Y',
+                    locale: trLocale,
+                    allowInput: false,
+                    showMonths: window.matchMedia('(min-width: 768px)').matches ? 2 : 1,
+                    defaultDate: defaultDates.length ? defaultDates : undefined,
+                    onChange: function(selectedDates) {
+                        if (!selectedDates.length) {
+                            startHidden.value = '';
+                            endHidden.value = '';
+                            return;
+                        }
+                        if (selectedDates.length === 1) {
+                            startHidden.value = offerToYmd(selectedDates[0]);
+                            endHidden.value = '';
+                            return;
+                        }
+                        var a = selectedDates[0];
+                        var b = selectedDates[1];
+                        startHidden.value = offerToYmd(a);
+                        endHidden.value = offerToYmd(a) === offerToYmd(b) ? '' : offerToYmd(b);
+                    }
+                });
+            }
         });
     </script>
 }

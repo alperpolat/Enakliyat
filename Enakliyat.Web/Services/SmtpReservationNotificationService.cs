@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 using Enakliyat.Domain;
+using Enakliyat.Web.Helpers;
 using Enakliyat.Web.Models;
 using Microsoft.Extensions.Options;
 
@@ -40,7 +41,7 @@ public class SmtpReservationNotificationService : IReservationNotificationServic
 <p>
   <strong>Nereden:</strong> {request.FromAddress}<br/>
   <strong>Nereye:</strong> {request.ToAddress}<br/>
-  <strong>Taşınma Tarihi:</strong> {request.MoveDate:dd.MM.yyyy}<br/>
+  <strong>Taşınma Tarihi:</strong> {MoveDateFormatting.ToTurkishRangeDisplay(request.MoveDate, request.MoveDateEnd)}<br/>
   <strong>Durum:</strong> {request.Status}
 </p>
 {offerInfo}

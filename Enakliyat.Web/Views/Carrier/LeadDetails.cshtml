@@ -28,7 +28,7 @@
                         <dt class="col-4">Taşıma Tipi</dt>
                         <dd class="col-8 mb-1">@request.MoveType</dd>
                         <dt class="col-4">Tarih</dt>
-                        <dd class="col-8 mb-1">@request.MoveDate.ToLocalTime().ToString("g")</dd>
+                        <dd class="col-8 mb-1">@MoveDateFormatting.ToTurkishRangeDisplay(request.MoveDate.ToLocalTime(), request.MoveDateEnd?.ToLocalTime())</dd>
                         <dt class="col-4">Müşteri Adı</dt>
                         <dd class="col-8 mb-1">@request.CustomerName</dd>
                         <dt class="col-4">Telefon</dt>

@@ -7,7 +7,11 @@ public class MoveRequest : BaseEntity
     public string? Email { get; set; }
     public string FromAddress { get; set; } = string.Empty;
     public string ToAddress { get; set; } = string.Empty;
+    /// <summary>Taşınma penceresinin başlangıcı (veya tek gün).</summary>
     public DateTime MoveDate { get; set; }
+
+    /// <summary>Taşınma penceresinin son günü; null ise yalnızca <see cref="MoveDate"/> kullanılır.</summary>
+    public DateTime? MoveDateEnd { get; set; }
     public string? Notes { get; set; }
     public string MoveType { get; set; } = string.Empty;
     public string Status { get; set; } = "Yeni";

@@ -127,6 +127,7 @@ public class HomeController : Controller
             PhoneNumber = request.PhoneNumber,
             Email = request.Email,
             MoveDate = request.MoveDate == default ? DateTime.Today.AddDays(1) : request.MoveDate,
+            MoveDateEnd = request.MoveDateEnd,
             RoomType = request.RoomType,
             FromFloor = request.FromFloor,
             FromHasElevator = request.FromHasElevator,
@@ -232,7 +233,10 @@ public class HomeController : Controller
             request.CustomerName = model.CustomerName;
             request.PhoneNumber = model.PhoneNumber;
             request.Email = model.Email;
-            request.MoveDate = model.MoveDate;
+            var moveStart = model.MoveDate.Date;
+            var moveEnd = model.MoveDateEnd?.Date;
+            request.MoveDate = moveStart;
+            request.MoveDateEnd = moveEnd.HasValue && moveEnd.Value > moveStart ? moveEnd : null;
             request.MoveType = string.IsNullOrWhiteSpace(model.MoveType) ? "Home" : model.MoveType;
             request.RoomType = model.RoomType;
             request.FromFloor = model.FromFloor;
@@ -434,6 +438,7 @@ public class HomeController : Controller
                     ToAddress = m.ToAddress,
                     MoveType = m.MoveType,
                     MoveDate = m.MoveDate,
+                    MoveDateEnd = m.MoveDateEnd,
                     TeklifSayisi = _context.Offers.Count(o => o.MoveRequestId == m.Id)
                 })
                 .ToListAsync(cancellationToken);
@@ -480,6 +485,7 @@ public class HomeController : Controller
             ToAddress = req.ToAddress,
             MoveType = req.MoveType,
             MoveDate = req.MoveDate,
+            MoveDateEnd = req.MoveDateEnd,
             TeklifSayisi = teklifSayisi
         };
         return View(vm);

@@ -47,7 +47,7 @@
                     <td>@r.MoveType</td>
                     <td>@r.FromAddress</td>
                     <td>@r.ToAddress</td>
-                    <td>@r.MoveDate.ToLocalTime().ToString("g")</td>
+                    <td>@MoveDateFormatting.ToTurkishRangeDisplay(r.MoveDate.ToLocalTime(), r.MoveDateEnd?.ToLocalTime())</td>
                     <td>@r.Status</td>
                     <td>@(contract?.ContractNumber ?? "-")</td>
                     <td>@(contract?.IsInsuranceIncluded == true ? "Sigortalı" : "-")</td>

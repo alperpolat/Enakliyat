@@ -37,7 +37,7 @@
                             <dd class="col-sm-8 col-md-9">@Model.MoveType</dd>
 
                             <dt class="col-sm-4 col-md-3">Tarih</dt>
-                            <dd class="col-sm-8 col-md-9">@Model.MoveDate.ToString("dd.MM.yyyy")</dd>
+                            <dd class="col-sm-8 col-md-9">@MoveDateFormatting.ToTurkishRangeDisplay(Model.MoveDate, Model.MoveDateEnd)</dd>
 
                             <dt class="col-sm-4 col-md-3">Teklif</dt>
                             <dd class="col-sm-8 col-md-9">@Model.TeklifSayisi teklif</dd>
