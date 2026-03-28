@@ -1,6 +1,8 @@
 using System.Diagnostics;
+using System.Globalization;
 using Enakliyat.Domain;
 using Enakliyat.Infrastructure;
+using Enakliyat.Web.Helpers;
 using Enakliyat.Web.Models;
 using Enakliyat.Web.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -154,7 +156,24 @@ public class HomeController : Controller
                 return View(model);
             }
 
-            int? userId = TryGetCustomerUserId();
+            var claimsUserId = TryGetCustomerUserId();
+            int effectiveUserId;
+            if (claimsUserId.HasValue)
+            {
+                effectiveUserId = claimsUserId.Value;
+            }
+            else
+            {
+                var guestUserId = await EnsurePhoneGuestUserAsync(model.PhoneNumber, model.CustomerName, HttpContext.RequestAborted);
+                if (!guestUserId.HasValue)
+                {
+                    ModelState.AddModelError(string.Empty, "Lütfen geçerli bir cep telefonu girin (örn. 05xx xxx xx xx).");
+                    return View(model);
+                }
+
+                effectiveUserId = guestUserId.Value;
+            }
+
             var fromAddress = BuildAddress(model.FromCityId, model.FromDistrictId, model.FromNeighborhoodId);
             var toAddress = BuildAddress(model.ToCityId, model.ToDistrictId, model.ToNeighborhoodId);
 
@@ -163,7 +182,7 @@ public class HomeController : Controller
 
             if (isNew)
             {
-                request = new MoveRequest { UserId = userId };
+                request = new MoveRequest { UserId = effectiveUserId };
                 await _context.MoveRequests.AddAsync(request);
             }
             else
@@ -177,9 +196,9 @@ public class HomeController : Controller
 
                 request = loaded;
 
-                if (userId.HasValue)
+                if (claimsUserId.HasValue)
                 {
-                    if (request.UserId != userId.Value)
+                    if (request.UserId != claimsUserId.Value)
                     {
                         TempData["Error"] = "Bu talebe erişim yetkiniz yok.";
                         return RedirectToAction(nameof(Requests));
@@ -187,17 +206,17 @@ public class HomeController : Controller
                 }
                 else
                 {
-                    if (request.UserId != null)
-                    {
-                        TempData["Error"] = "Bu talebi düzenlemek için giriş yapın.";
-                        return RedirectToAction("Login", "Account");
-                    }
-
                     var sessionOfferId = HttpContext.Session.GetInt32(AnonymousOfferSessionKey);
                     if (!sessionOfferId.HasValue || sessionOfferId.Value != request.Id)
                     {
                         TempData["Error"] = "Talep bulunamadı.";
                         return RedirectToAction(nameof(Index));
+                    }
+
+                    if (request.UserId != null && request.UserId.Value != effectiveUserId)
+                    {
+                        TempData["Error"] = "Bu talebi düzenlemek için giriş yapın.";
+                        return RedirectToAction("Login", "Account");
                     }
                 }
             }
@@ -222,12 +241,13 @@ public class HomeController : Controller
             request.ToHasElevator = model.ToHasElevator;
             request.Notes = model.Notes;
             request.Status = "Teklif Bekliyor";
+            request.UserId = effectiveUserId;
 
             EnsureTrackingToken(request);
 
             await _context.SaveChangesAsync();
 
-            if (isNew && !userId.HasValue)
+            if (isNew && !claimsUserId.HasValue)
             {
                 HttpContext.Session.SetInt32(AnonymousOfferSessionKey, request.Id);
             }
@@ -298,46 +318,81 @@ public class HomeController : Controller
                 await _context.SaveChangesAsync();
             }
 
+            var listeUrl = BuildPublicTalepTakipUserUrl(effectiveUserId);
             var smsGonderildi = false;
-            if (!string.IsNullOrEmpty(request.TrackingToken))
+            if (!string.IsNullOrEmpty(listeUrl))
             {
-                var baseUrl = GetPublicSiteBaseUrl();
-                if (!string.IsNullOrEmpty(baseUrl))
+                if (_smsSettings.Value.Enabled)
                 {
-                    var link = $"{baseUrl}/Home/TalepTakip?t={Uri.EscapeDataString(request.TrackingToken)}";
-                    var smsText = $"Nakliye360: Talebiniz alindi. No:{request.Id} Takip:{link}";
-                    var smsResult = await _smsService.SendAsync(request.PhoneNumber, smsText);
+                    var smsText = $"Road of Home: Talepleriniz: {listeUrl} Son talep No:{request.Id}";
+                    var smsResult = await _smsService.SendAsync(model.PhoneNumber, smsText);
                     smsGonderildi = smsResult.Ok;
                     if (!smsResult.Ok)
                     {
                         _logger.LogWarning(
-                            "Takip SMS gonderilemedi. Talep={Id}, Detay={Detail}. Kontrol: Sms:Enabled=true, IletimX kullanici/sifre/bayi/baslik, kredi, log.",
+                            "Takip SMS gonderilemedi. Talep={Id}, Detay={Detail}. Kontrol: Sms:Enabled, IletimX ayarlari, kredi, 5xxxxxxxxx format, log.",
                             request.Id,
                             smsResult.Detail);
                     }
                 }
                 else
                 {
-                    _logger.LogWarning("Takip SMS linki uretilemedi: host yok ve Sms:PublicBaseUrl bos.");
+                    _logger.LogInformation("Takip SMS atlandı: Sms:Enabled=false (appsettings'te true yapın).");
                 }
             }
-
-            if (userId.HasValue)
+            else
             {
-                TempData["Success"] = smsGonderildi
-                    ? (isNew
-                        ? $"Talebiniz oluşturuldu (#{request.Id}). Takip linki cep telefonunuza SMS ile gönderildi."
-                        : $"Talebiniz güncellendi (#{request.Id}). Takip linki SMS ile gönderildi.")
-                    : (isNew
-                        ? $"Talebiniz oluşturuldu. Talep numaranız: #{request.Id}."
-                        : "Talebiniz başarıyla güncellendi.");
+                _logger.LogWarning("Talep listesi URL üretilemedi (Sms:PublicBaseUrl veya Host).");
+            }
+
+            if (claimsUserId.HasValue && !isNew)
+            {
+                if (smsGonderildi)
+                {
+                    TempData["Success"] =
+                        $"Talebiniz güncellendi (#{request.Id}). Liste linki SMS ile gönderildi. {listeUrl}";
+                }
+                else if (!string.IsNullOrEmpty(listeUrl))
+                {
+                    TempData["Success"] =
+                        $"Talebiniz güncellendi (#{request.Id}). Talepleriniz: {listeUrl}";
+                }
+                else
+                {
+                    TempData["Success"] = "Talebiniz başarıyla güncellendi.";
+                }
+
                 return RedirectToAction(nameof(Requests));
             }
 
-            TempData["Success"] = smsGonderildi
-                ? $"Talebiniz alındı. Talep numaranız: #{request.Id}. Takip bağlantısı cep telefonunuza SMS ile iletildi."
-                : $"Talebiniz alındı. Talep numaranız: #{request.Id}.";
-            return RedirectToAction(nameof(Index));
+            var linkFragment = string.IsNullOrEmpty(listeUrl)
+                ? string.Empty
+                : $" Taleplerim bağlantısı: {listeUrl}";
+
+            var hesapNotu = claimsUserId.HasValue
+                ? " Giriş yaptığınız hesaptan da tüm taleplerinize ulaşabilirsiniz."
+                : string.Empty;
+
+            if (smsGonderildi)
+            {
+                TempData["Success"] =
+                    "Talebiniz kaydedildi (No #" + request.Id + "). Liste linki cep telefonunuza SMS ile de gönderildi." + linkFragment +
+                    " Aşağıda tüm taleplerinizi görebilirsiniz." + hesapNotu;
+            }
+            else if (_smsSettings.Value.Enabled)
+            {
+                TempData["Warning"] =
+                    "Talebiniz kaydedildi (No #" + request.Id + "). SMS gönderilemedi (SMS ayarları veya numara)." + linkFragment +
+                    hesapNotu;
+            }
+            else
+            {
+                TempData["Info"] =
+                    "Talebiniz kaydedildi (No #" + request.Id + "). SMS şu an kapalı (Sms:Enabled)." + linkFragment +
+                    hesapNotu;
+            }
+
+            return RedirectToAction(nameof(TalepTakip), new { t = effectiveUserId.ToString(CultureInfo.InvariantCulture) });
         }
         catch (Exception ex)
         {
@@ -348,6 +403,7 @@ public class HomeController : Controller
         }
     }
 
+    /// <summary><paramref name="t"/> — kullanıcı Id (tüm talepler) veya eski gizli takip token'ı (tek talep).</summary>
     [HttpGet]
     public async Task<IActionResult> TalepTakip(string? t, CancellationToken cancellationToken)
     {
@@ -356,18 +412,69 @@ public class HomeController : Controller
             return NotFound();
         }
 
+        var trimmed = t.Trim();
+        if (int.TryParse(trimmed, NumberStyles.Integer, CultureInfo.InvariantCulture, out var kullaniciId) &&
+            kullaniciId > 0)
+        {
+            var musteri = await _context.Users.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == kullaniciId && !u.IsAdmin, cancellationToken);
+            if (musteri == null)
+            {
+                return NotFound();
+            }
+
+            var talepler = await _context.MoveRequests.AsNoTracking()
+                .Where(m => m.UserId == kullaniciId)
+                .OrderByDescending(m => m.Id)
+                .Select(m => new MisafirTalepOzetItem
+                {
+                    Id = m.Id,
+                    Status = m.Status,
+                    FromAddress = m.FromAddress,
+                    ToAddress = m.ToAddress,
+                    MoveType = m.MoveType,
+                    MoveDate = m.MoveDate,
+                    TeklifSayisi = _context.Offers.Count(o => o.MoveRequestId == m.Id)
+                })
+                .ToListAsync(cancellationToken);
+
+            var listeVm = new MisafirTaleplerimViewModel
+            {
+                KullaniciId = kullaniciId,
+                MusteriAdi = musteri.Name,
+                PublicListeUrl = BuildPublicTalepTakipUserUrl(kullaniciId),
+                Talepler = talepler
+            };
+            return View("MisafirTaleplerim", listeVm);
+        }
+
         var req = await _context.MoveRequests.AsNoTracking()
-            .FirstOrDefaultAsync(m => m.TrackingToken == t, cancellationToken);
+            .FirstOrDefaultAsync(m => m.TrackingToken == trimmed, cancellationToken);
         if (req == null)
         {
             return NotFound();
         }
 
+        if (req.UserId.HasValue)
+        {
+            return RedirectToAction(nameof(TalepTakip),
+                new { t = req.UserId.Value.ToString(CultureInfo.InvariantCulture) });
+        }
+
         var teklifSayisi = await _context.Offers.CountAsync(o => o.MoveRequestId == req.Id, cancellationToken);
+        var trackingUrlForVm = BuildPublicTrackingUrl(trimmed);
+        if (string.IsNullOrEmpty(trackingUrlForVm))
+        {
+            var pathBase = Request.PathBase.HasValue ? Request.PathBase.Value! : string.Empty;
+            trackingUrlForVm =
+                $"{Request.Scheme}://{Request.Host.Value}{pathBase}/Home/TalepTakip?t={Uri.EscapeDataString(trimmed)}";
+        }
 
         var vm = new TalepTakipViewModel
         {
             Id = req.Id,
+            PublicTrackingUrl = trackingUrlForVm,
+            MisafirKullaniciId = null,
             Status = req.Status,
             FromAddress = req.FromAddress,
             ToAddress = req.ToAddress,
@@ -377,6 +484,10 @@ public class HomeController : Controller
         };
         return View(vm);
     }
+
+    [HttpGet]
+    public IActionResult MisafirTalepDetay(int id, int t) =>
+        RedirectToAction(nameof(Details), new { id, t });
 
     private void EnsureTrackingToken(MoveRequest request)
     {
@@ -417,6 +528,98 @@ public class HomeController : Controller
         return null;
     }
 
+    /// <summary>Takip sayfasının canlıda doğru görünmesi için önce <c>Sms:PublicBaseUrl</c>; yoksa isteğin şeması ve hostu.</summary>
+    private string BuildPublicTrackingUrl(string trackingToken)
+    {
+        var configured = (_smsSettings.Value.PublicBaseUrl ?? string.Empty).Trim().TrimEnd('/');
+        if (!string.IsNullOrEmpty(configured))
+        {
+            var path = Url.Action(nameof(TalepTakip), "Home", new { t = trackingToken });
+            if (string.IsNullOrEmpty(path))
+            {
+                return configured;
+            }
+
+            return $"{configured}{path}";
+        }
+
+        var absolute = Url.Action(nameof(TalepTakip), "Home", new { t = trackingToken }, Request.Scheme, Request.Host.Value);
+        if (!string.IsNullOrEmpty(absolute))
+        {
+            return absolute;
+        }
+
+        var pathBase = Request.PathBase.HasValue ? Request.PathBase.Value! : string.Empty;
+        return $"{Request.Scheme}://{Request.Host.Value}{pathBase}/Home/TalepTakip?t={Uri.EscapeDataString(trackingToken)}";
+    }
+
+    /// <summary>Misafir talep listesi — <c>t</c> sorgu parametresi kullanıcı Id.</summary>
+    private string BuildPublicTalepTakipUserUrl(int kullaniciId)
+    {
+        var t = kullaniciId.ToString(CultureInfo.InvariantCulture);
+        var configured = (_smsSettings.Value.PublicBaseUrl ?? string.Empty).Trim().TrimEnd('/');
+        if (!string.IsNullOrEmpty(configured))
+        {
+            var path = Url.Action(nameof(TalepTakip), "Home", new { t });
+            if (string.IsNullOrEmpty(path))
+            {
+                return configured;
+            }
+
+            return $"{configured}{path}";
+        }
+
+        var absolute = Url.Action(nameof(TalepTakip), "Home", new { t }, Request.Scheme, Request.Host.Value);
+        if (!string.IsNullOrEmpty(absolute))
+        {
+            return absolute;
+        }
+
+        var pathBase = Request.PathBase.HasValue ? Request.PathBase.Value! : string.Empty;
+        return $"{Request.Scheme}://{Request.Host.Value}{pathBase}/Home/TalepTakip?t={Uri.EscapeDataString(t)}";
+    }
+
+    private async Task<int?> EnsurePhoneGuestUserAsync(string? phone, string? name, CancellationToken cancellationToken = default)
+    {
+        var normalized = PhoneNumberHelper.NormalizeTurkishMobile(phone);
+        if (normalized == null)
+        {
+            return null;
+        }
+
+        var candidates = await _context.Users.AsNoTracking()
+            .Where(u => !u.IsAdmin)
+            .Select(u => new { u.Id, u.PhoneNumber })
+            .ToListAsync(cancellationToken);
+
+        foreach (var c in candidates)
+        {
+            if (PhoneNumberHelper.NormalizeTurkishMobile(c.PhoneNumber) == normalized)
+            {
+                return c.Id;
+            }
+        }
+
+        var guestEmail = $"guest-{normalized}@guest.roadofhome.local";
+        var byEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email == guestEmail, cancellationToken);
+        if (byEmail != null)
+        {
+            return byEmail.Id;
+        }
+
+        var guest = new User
+        {
+            Name = string.IsNullOrWhiteSpace(name) ? "Misafir" : name.Trim(),
+            PhoneNumber = normalized,
+            Email = guestEmail,
+            Password = PasswordHasher.Hash(Guid.NewGuid().ToString("N")),
+            IsAdmin = false
+        };
+        await _context.Users.AddAsync(guest, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        return guest.Id;
+    }
+
     private void LoadOfferFormViewBag()
     {
         const string sadeceAracName = "Sadece Araç";
@@ -451,13 +654,12 @@ public class HomeController : Controller
         return View(requests);
     }
 
-    [Authorize]
+    [AllowAnonymous]
     public IActionResult Details(int id)
     {
-        var userIdClaim = User.FindFirst("UserId");
-        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        if (!TryResolveMoveRequestOwnerUserIdForRead(out var userId))
         {
-            return Unauthorized();
+            return RedirectToAction("Login", "Account", new { returnUrl = Url.Action(nameof(Details), new { id, t = Request.Query["t"].ToString() }) });
         }
 
         var request = _context.MoveRequests.FirstOrDefault(x => x.Id == id && x.UserId == userId);
@@ -475,6 +677,13 @@ public class HomeController : Controller
         var photos = _context.MoveRequestPhotos
             .Where(p => p.MoveRequestId == id)
             .OrderBy(p => p.CreatedAt)
+            .ToList();
+
+        var secilenEkHizmetler = _context.MoveRequestAddOns
+            .Where(m => m.MoveRequestId == id)
+            .Join(_context.AddOnServices.AsNoTracking(), m => m.AddOnServiceId, s => s.Id, (m, s) => s.Name)
+            .Distinct()
+            .OrderBy(n => n)
             .ToList();
 
         int? acceptedCarrierId = null;
@@ -500,9 +709,12 @@ public class HomeController : Controller
         }
 
         var canReview = request.Status == "Taşınma Tamamlandı" && acceptedCarrierId.HasValue && existingReview == null;
+        var misafirId = TryGetCustomerUserId().HasValue ? null : (int?)userId;
 
         var vm = new UserRequestDetailsViewModel
         {
+            MisafirKullaniciId = misafirId,
+            SecilenEkHizmetler = secilenEkHizmetler,
             Request = request,
             Offers = offers,
             Photos = photos,
@@ -517,12 +729,11 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    [Authorize]
+    [AllowAnonymous]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Details(int id, string status)
     {
-        var userIdClaim = User.FindFirst("UserId");
-        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        if (!TryResolveMoveRequestOwnerUserIdForWrite(out var userId))
         {
             return Unauthorized();
         }
@@ -537,16 +748,17 @@ public class HomeController : Controller
         await _context.SaveChangesAsync();
 
         TempData["Success"] = "Durum güncellendi.";
-        return RedirectToAction(nameof(Details), new { id });
+        return TryGetCustomerUserId().HasValue
+            ? RedirectToAction(nameof(Details), new { id })
+            : RedirectToAction(nameof(Details), new { id, t = userId });
     }
 
     [HttpPost]
-    [Authorize]
+    [AllowAnonymous]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AcceptOffer(int offerId, int moveRequestId)
     {
-        var userIdClaim = User.FindFirst("UserId");
-        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        if (!TryResolveMoveRequestOwnerUserIdForWrite(out var userId))
         {
             return Unauthorized();
         }
@@ -615,17 +827,18 @@ public class HomeController : Controller
         }
 
         TempData["Success"] = "Seçtiğiniz teklif kabul edildi.";
-        return RedirectToAction(nameof(Reservation), new { id = moveRequestId });
+        return TryGetCustomerUserId().HasValue
+            ? RedirectToAction(nameof(Reservation), new { id = moveRequestId })
+            : RedirectToAction(nameof(Reservation), new { id = moveRequestId, t = userId });
     }
 
     [HttpGet]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<IActionResult> Reservation(int id)
     {
-        var userIdClaim = User.FindFirst("UserId");
-        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        if (!TryResolveMoveRequestOwnerUserIdForRead(out var userId))
         {
-            return Unauthorized();
+            return RedirectToAction("Login", "Account", new { returnUrl = Url.Action(nameof(Reservation), new { id, t = Request.Query["t"].ToString() }) });
         }
 
         var request = await _context.MoveRequests
@@ -657,6 +870,7 @@ public class HomeController : Controller
 
         var vm = new ReservationViewModel
         {
+            MisafirKullaniciId = TryGetCustomerUserId().HasValue ? null : userId,
             Request = request,
             AcceptedOffer = acceptedOffer,
             Contract = contract,
@@ -670,12 +884,11 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    [Authorize]
+    [AllowAnonymous]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Pay(int moveRequestId, string cardHolder, string cardNumber, string expiry, string cvv)
     {
-        var userIdClaim = User.FindFirst("UserId");
-        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        if (!TryResolveMoveRequestOwnerUserIdForWrite(out var userId))
         {
             return Unauthorized();
         }
@@ -704,7 +917,9 @@ public class HomeController : Controller
         if (existingPayment != null && existingPayment.Status == PaymentStatus.Paid)
         {
             TempData["Success"] = "Ödeme zaten tamamlanmış.";
-            return RedirectToAction(nameof(Reservation), new { id = moveRequestId });
+            return TryGetCustomerUserId().HasValue
+                ? RedirectToAction(nameof(Reservation), new { id = moveRequestId })
+                : RedirectToAction(nameof(Reservation), new { id = moveRequestId, t = userId });
         }
 
         // Fake validation; gerçek sistemde kart doğrulaması yapılmalı.
@@ -729,7 +944,9 @@ public class HomeController : Controller
         await _context.SaveChangesAsync();
 
         TempData["Success"] = "Ödeme başarıyla alındı (test).";
-        return RedirectToAction(nameof(Reservation), new { id = moveRequestId });
+        return TryGetCustomerUserId().HasValue
+            ? RedirectToAction(nameof(Reservation), new { id = moveRequestId })
+            : RedirectToAction(nameof(Reservation), new { id = moveRequestId, t = userId });
     }
 
     [HttpGet]
@@ -813,17 +1030,18 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    [Authorize]
+    [AllowAnonymous]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddReview(ReviewViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            return RedirectToAction(nameof(Details), new { id = model.MoveRequestId });
+            return TryGetCustomerUserId().HasValue
+                ? RedirectToAction(nameof(Details), new { id = model.MoveRequestId })
+                : RedirectToAction(nameof(Details), new { id = model.MoveRequestId, t = Request.Form["t"].ToString() });
         }
 
-        var userIdClaim = User.FindFirst("UserId");
-        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
+        if (!TryResolveMoveRequestOwnerUserIdForWrite(out var userId))
         {
             return Unauthorized();
         }
@@ -883,10 +1101,58 @@ public class HomeController : Controller
         }
 
         TempData["Success"] = "Değerlendirmeniz kaydedildi.";
-        return RedirectToAction(nameof(Details), new { id = model.MoveRequestId });
+        return TryGetCustomerUserId().HasValue
+            ? RedirectToAction(nameof(Details), new { id = model.MoveRequestId })
+            : RedirectToAction(nameof(Details), new { id = model.MoveRequestId, t = userId });
     }
 
     private const string AnonymousOfferSessionKey = "AnonymousOfferId";
+
+    /// <summary>Girişli müşteri claim'i veya <c>?t=kullanıcıId</c> (talep sahibi).</summary>
+    private bool TryResolveMoveRequestOwnerUserIdForRead(out int userId)
+    {
+        var claim = TryGetCustomerUserId();
+        if (claim.HasValue)
+        {
+            userId = claim.Value;
+            return true;
+        }
+
+        var t = Request.Query["t"].ToString();
+        if (int.TryParse(t, NumberStyles.Integer, CultureInfo.InvariantCulture, out var uid) && uid > 0)
+        {
+            userId = uid;
+            return true;
+        }
+
+        userId = 0;
+        return false;
+    }
+
+    private bool TryResolveMoveRequestOwnerUserIdForWrite(out int userId)
+    {
+        var claim = TryGetCustomerUserId();
+        if (claim.HasValue)
+        {
+            userId = claim.Value;
+            return true;
+        }
+
+        var t = Request.Form["t"].ToString();
+        if (string.IsNullOrEmpty(t))
+        {
+            t = Request.Query["t"].ToString();
+        }
+
+        if (int.TryParse(t, NumberStyles.Integer, CultureInfo.InvariantCulture, out var uid) && uid > 0)
+        {
+            userId = uid;
+            return true;
+        }
+
+        userId = 0;
+        return false;
+    }
 
     private int? TryGetCustomerUserId()
     {

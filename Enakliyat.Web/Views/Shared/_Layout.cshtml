@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Türkiye'nin lider nakliyat platformu. Evden eve nakliyat, ofis taşıma, depolama ve parça eşya taşıma hizmetlerinde güvenilir firmalardan anında teklif alın." />
     <meta name="keywords" content="nakliyat, evden eve nakliyat, ofis taşıma, depolama, parça eşya, taşınma, nakliye firması" />
-    <title>@ViewData["Title"] - Nakliye360 | Türkiye'nin Nakliyat Platformu</title>
+    <title>@ViewData["Title"] - Road of Home | Türkiye'nin Nakliyat Platformu</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -585,7 +585,7 @@
                 <div class="brand-icon">
                     <i class="fas fa-truck-moving"></i>
                 </div>
-                <span class="brand-text">Nakliye<span>360</span></span>
+                <span class="brand-text">Road of <span>Home</span></span>
             </a>
             
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
@@ -673,37 +673,6 @@
 
     <!-- MAIN CONTENT -->
     <main class="pt-navbar">
-        @if (TempData["Success"] != null)
-        {
-            <div class="container mt-3">
-                <div class="alert alert-success alert-custom alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    @TempData["Success"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            </div>
-        }
-        @if (TempData["Error"] != null)
-        {
-            <div class="container mt-3">
-                <div class="alert alert-danger alert-custom alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    @TempData["Error"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            </div>
-        }
-        @if (TempData["Info"] != null)
-        {
-            <div class="container mt-3">
-                <div class="alert alert-info alert-custom alert-dismissible fade show" role="alert">
-                    <i class="fas fa-info-circle me-2"></i>
-                    @TempData["Info"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            </div>
-        }
-
         @await Html.PartialAsync("_ErrorMessagesPartial")
         @RenderBody()
     </main>
@@ -715,7 +684,7 @@
                 <!-- Brand Column -->
                 <div class="col-lg-4 col-md-6">
                     <div class="footer-brand">
-                        <i class="fas fa-truck-moving me-2"></i>Nakliye<span>360</span>
+                        <i class="fas fa-truck-moving me-2"></i>Road of <span>Home</span>
                     </div>
                     <p class="footer-desc">
                         Türkiye'nin en güvenilir nakliyat platformu. 81 ilden onaylı nakliye firmaları ile evden eve nakliyat, 
@@ -793,7 +762,7 @@
                         </div>
                         <div class="footer-contact-text">
                             <strong>E-posta</strong>
-                            info@@nakliye360.com
+                            info@@roadofhome.com
                         </div>
                     </div>
                 </div>
@@ -803,7 +772,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <p class="footer-copyright mb-0">
-                            © @DateTime.Now.Year Nakliye360. Tüm hakları saklıdır.
+                            © @DateTime.Now.Year Road of Home. Tüm hakları saklıdır.
                         </p>
                     </div>
                     <div class="col-md-6">

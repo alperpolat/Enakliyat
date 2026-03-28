@@ -82,6 +82,10 @@
         <form asp-action="Pay" method="post" class="row g-3 mt-2">
             @Html.AntiForgeryToken()
             <input type="hidden" name="moveRequestId" value="@Model.Request.Id" />
+            @if (Model.MisafirKullaniciId.HasValue)
+            {
+                <input type="hidden" name="t" value="@Model.MisafirKullaniciId.Value" />
+            }
 
             <div class="col-md-6">
                 <label class="form-label">Kart Üzerindeki İsim</label>
@@ -112,5 +116,13 @@
 
     <p class="text-muted">Bu sayfayı kaydedebilir veya yazdırabilirsiniz. İleride PDF/mail entegrasyonu bu ekrandan tetiklenebilir.</p>
 
-    <a asp-action="Requests" class="btn btn-primary">Taleplerime Dön</a>
+    @if (Model.MisafirKullaniciId.HasValue)
+    {
+        <a asp-controller="Home" asp-action="TalepTakip" asp-route-t="@Model.MisafirKullaniciId.Value" class="btn btn-primary">Taleplerime Dön</a>
+        <a asp-controller="Home" asp-action="Details" asp-route-id="@Model.Request.Id" asp-route-t="@Model.MisafirKullaniciId.Value" class="btn btn-outline-secondary">Talep detayı</a>
+    }
+    else
+    {
+        <a asp-action="Requests" class="btn btn-primary">Taleplerime Dön</a>
+    }
 </div>

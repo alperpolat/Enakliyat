@@ -11,17 +11,29 @@ namespace Enakliyat.Web.Services;
 public class NotificationService : INotificationService
 {
     private readonly EmailSettings _emailSettings;
+    private readonly SmsSettings _smsSettings;
     private readonly EnakliyatDbContext _context;
     private readonly ILogger<NotificationService> _logger;
 
     public NotificationService(
         IOptions<EmailSettings> emailSettings,
+        IOptions<SmsSettings> smsSettings,
         EnakliyatDbContext context,
         ILogger<NotificationService> logger)
     {
         _emailSettings = emailSettings.Value;
+        _smsSettings = smsSettings.Value;
         _context = context;
         _logger = logger;
+    }
+
+    private string PublicSiteBaseUrl
+    {
+        get
+        {
+            var configured = (_smsSettings.PublicBaseUrl ?? string.Empty).Trim().TrimEnd('/');
+            return string.IsNullOrEmpty(configured) ? "https://roadofhome.com" : configured;
+        }
     }
 
     public async Task SendEmailAsync(string to, string subject, string body, bool isHtml = true, CancellationToken cancellationToken = default)
@@ -87,7 +99,7 @@ public class NotificationService : INotificationService
     <strong>Taşınma Tipi:</strong> {request.MoveType}<br/>
     <strong>Taşınma Tarihi:</strong> {request.MoveDate:dd.MM.yyyy}
 </p>
-<p><a href='https://nakliye360.com/Carrier/Leads'>Teklif vermek için tıklayın</a></p>";
+<p><a href='{PublicSiteBaseUrl}/Carrier/Leads'>Teklif vermek için tıklayın</a></p>";
 
         foreach (var carrier in relevantCarriers)
         {
@@ -115,7 +127,7 @@ public class NotificationService : INotificationService
     <strong>Fiyat:</strong> {offer.Price:N2} TL<br/>
     <strong>Not:</strong> {offer.Note ?? "-"}
 </p>
-<p><a href='https://nakliye360.com/Home/Details/{request.Id}'>Teklifleri görüntülemek için tıklayın</a></p>";
+<p><a href='{PublicSiteBaseUrl}/Home/Details/{request.Id}'>Teklifleri görüntülemek için tıklayın</a></p>";
 
         await SendEmailAsync(request.Email, subject, body, cancellationToken: cancellationToken);
     }
@@ -138,7 +150,7 @@ public class NotificationService : INotificationService
     <strong>Fiyat:</strong> {offer.Price:N2} TL<br/>
     <strong>Taşınma Tarihi:</strong> {request.MoveDate:dd.MM.yyyy}
 </p>
-<p><a href='https://nakliye360.com/Carrier/Reservations'>Rezervasyonları görüntülemek için tıklayın</a></p>";
+<p><a href='{PublicSiteBaseUrl}/Carrier/Reservations'>Rezervasyonları görüntülemek için tıklayın</a></p>";
 
         await SendEmailAsync(carrier.Email, subject, body, cancellationToken: cancellationToken);
     }
@@ -156,7 +168,7 @@ public class NotificationService : INotificationService
 <h3>Teklif Durumu Güncellendi</h3>
 <p><strong>Talep No:</strong> {request.Id}</p>
 <p>Maalesef bu talep için teklifiniz kabul edilmedi. Başka talepler için teklif vermeye devam edebilirsiniz.</p>
-<p><a href='https://nakliye360.com/Carrier/Leads'>Yeni talepleri görüntülemek için tıklayın</a></p>";
+<p><a href='{PublicSiteBaseUrl}/Carrier/Leads'>Yeni talepleri görüntülemek için tıklayın</a></p>";
 
         await SendEmailAsync(carrier.Email, subject, body, cancellationToken: cancellationToken);
     }
@@ -173,7 +185,7 @@ public class NotificationService : INotificationService
     <strong>Eski Durum:</strong> {oldStatus}<br/>
     <strong>Yeni Durum:</strong> {newStatus}
 </p>
-<p><a href='https://nakliye360.com/Home/Details/{request.Id}'>Detayları görüntülemek için tıklayın</a></p>";
+<p><a href='{PublicSiteBaseUrl}/Home/Details/{request.Id}'>Detayları görüntülemek için tıklayın</a></p>";
 
         await SendEmailAsync(request.Email, subject, body, cancellationToken: cancellationToken);
     }
@@ -200,7 +212,7 @@ public class NotificationService : INotificationService
     <strong>Durum:</strong> {payment.Status}
 </p>
 <p>Ödemeniz başarıyla alınmıştır. Rezervasyonunuz onaylanmıştır.</p>
-<p><a href='https://nakliye360.com/Home/Reservation/{request.Id}'>Rezervasyon detaylarını görüntülemek için tıklayın</a></p>";
+<p><a href='{PublicSiteBaseUrl}/Home/Reservation/{request.Id}'>Rezervasyon detaylarını görüntülemek için tıklayın</a></p>";
 
         await SendEmailAsync(request.Email, subject, body, cancellationToken: cancellationToken);
     }

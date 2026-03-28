@@ -4,6 +4,8 @@ namespace Enakliyat.Web.Models;
 
 public class ReservationViewModel
 {
+    public int? MisafirKullaniciId { get; set; }
+
     public MoveRequest Request { get; set; } = null!;
     public Offer? AcceptedOffer { get; set; }
     public Contract? Contract { get; set; }

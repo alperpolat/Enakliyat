@@ -1,0 +1,105 @@
+@model Enakliyat.Web.Models.MisafirTaleplerimViewModel
+@{
+    ViewData["Title"] = "Taleplerim";
+}
+
+<div class="py-5" style="background-color:#f5f7fb; min-height: 70vh;">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                <div class="card border-0 shadow rounded-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <h1 class="h4 fw-semibold mb-2">Taleplerim</h1>
+                        <p class="text-body-secondary mb-4">
+                            Merhaba <strong>@Model.MusteriAdi</strong>. Bu sayfa cep telefonunuza göre oluşturulan hesabınızdaki tüm taşınma talepleridir.
+                            Bağlantıyı kimseyle paylaşmayın.
+                        </p>
+
+                        @if (!string.IsNullOrEmpty(Model.PublicListeUrl))
+                        {
+                            <div class="mb-4 p-3 rounded-3 bg-light border">
+                                <label class="form-label small fw-semibold text-secondary mb-1">Kalıcı bağlantınız (SMS ile aynı)</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control font-monospace small" id="trackingLinkField" readonly value="@Model.PublicListeUrl" />
+                                    <button type="button" class="btn btn-primary" id="copyTrackingBtn" title="Kopyala">
+                                        <i class="fas fa-copy me-1"></i> Kopyala
+                                    </button>
+                                </div>
+                                <p class="small text-muted mb-0 mt-2" id="copyFeedback" style="display:none;"></p>
+                            </div>
+                        }
+
+                        @if (Model.Talepler.Count == 0)
+                        {
+                            <p class="text-body-secondary mb-0">Henüz kayıtlı talebiniz yok.</p>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-sm align-middle small">
+                                    <thead>
+                                        <tr class="text-secondary">
+                                            <th>No</th>
+                                            <th>Durum</th>
+                                            <th>Rota</th>
+                                            <th>Tarih</th>
+                                            <th>Teklif</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var x in Model.Talepler)
+                                        {
+                                            <tr>
+                                                <td>#@x.Id</td>
+                                                <td><strong>@x.Status</strong></td>
+                                                <td>@x.FromAddress → @x.ToAddress</td>
+                                                <td>@x.MoveDate.ToString("dd.MM.yyyy")</td>
+                                                <td>@x.TeklifSayisi</td>
+                                                <td class="text-end">
+                                                    <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@x.Id" asp-route-t="@Model.KullaniciId">Detay</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+
+                        <hr class="my-4" />
+                        <a asp-controller="Home" asp-action="TalepTakip" asp-route-t="@Model.KullaniciId" class="btn btn-outline-primary">Taleplerim</a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-link">Ana sayfa</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var btn = document.getElementById('copyTrackingBtn');
+            var field = document.getElementById('trackingLinkField');
+            var fb = document.getElementById('copyFeedback');
+            if (!btn || !field) return;
+            function showFb(ok) {
+                if (!fb) return;
+                fb.style.display = 'block';
+                fb.textContent = ok ? 'Panoya kopyalandı.' : 'Metni elle seçip kopyalayın.';
+            }
+            btn.addEventListener('click', function () {
+                var val = field.value;
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(val).then(function () { showFb(true); }).catch(function () {
+                        field.select();
+                        try { document.execCommand('copy'); showFb(true); } catch (e) { showFb(false); }
+                    });
+                    return;
+                }
+                field.select();
+                try { document.execCommand('copy'); showFb(true); } catch (e2) { showFb(false); }
+            });
+        })();
+    </script>
+}

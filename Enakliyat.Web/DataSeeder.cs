@@ -93,7 +93,7 @@ public static class DataSeeder
                 {
                     Name = $"Kullanıcı {i}",
                     PhoneNumber = $"+90 555 000 {i:0000}",
-                    Email = $"user{i}@nakliye360.test",
+                    Email = $"user{i}@roadofhome.test",
                     Password = PasswordHasher.Hash("User123!"),
                     IsAdmin = false
                 });
@@ -125,10 +125,10 @@ public static class DataSeeder
                 newCarriers.Add(new Carrier
                 {
                     Name = $"Nakliyeci {index}",
-                    CompanyName = $"Nakliye360 Taşımacılık #{index}",
+                    CompanyName = $"Road of Home Taşımacılık #{index}",
                     PhoneNumber = $"+90 532 000 {index:0000}",
                     LandlinePhone = $"+90 212 {random.Next(200, 999)} {random.Next(1000, 9999)}",
-                    Email = $"carrier{index}@nakliye360.test",
+                    Email = $"carrier{index}@roadofhome.test",
                     Website = index % 3 == 0 ? $"https://nakliyeci{index}.com" : null,
                     DistrictId = district?.Id,
                     LicenseNumber = $"YETKI-{index:0000}",
@@ -157,7 +157,7 @@ public static class DataSeeder
             {
                 carrierUsers.Add(new CarrierUser
                 {
-                    Email = carrier.Email ?? $"carrier{carrier.Id}@nakliye360.test",
+                    Email = carrier.Email ?? $"carrier{carrier.Id}@roadofhome.test",
                     Password = PasswordHasher.Hash("Carrier123!"),
                     CarrierId = carrier.Id
                 });
@@ -351,14 +351,14 @@ public static class DataSeeder
             new SystemSetting
             {
                 Key = "PlatformName",
-                Value = "Nakliye360",
+                Value = "Road of Home",
                 Description = "Platform adı",
                 Category = "General"
             },
             new SystemSetting
             {
                 Key = "SupportEmail",
-                Value = "destek@nakliye360.com",
+                Value = "destek@roadofhome.com",
                 Description = "Destek e-posta adresi",
                 Category = "General"
             },

@@ -10,7 +10,21 @@
                 <div class="card border-0 shadow rounded-4">
                     <div class="card-body p-4 p-lg-5">
                         <h1 class="h4 fw-semibold mb-3">Talep #@Model.Id</h1>
-                        <p class="text-body-secondary mb-4">Bu sayfayı yalnızca size SMS ile gönderilen bağlantı üzerinden açın; linki paylaşmayın.</p>
+                        <p class="text-body-secondary mb-3">Bu sayfa size özeldir. Tüm talepleriniz için aşağıdaki «Taleplerim» bağlantısını kullanın; kimseyle paylaşmayın.</p>
+
+                        @if (!string.IsNullOrEmpty(Model.PublicTrackingUrl))
+                        {
+                            <div class="mb-4 p-3 rounded-3 bg-light border">
+                                <label class="form-label small fw-semibold text-secondary mb-1">Tüm taleplerim (liste bağlantısı)</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control font-monospace small" id="trackingLinkField" readonly value="@Model.PublicTrackingUrl" />
+                                    <button type="button" class="btn btn-primary" id="copyTrackingBtn" title="Kopyala">
+                                        <i class="fas fa-copy me-1"></i> Kopyala
+                                    </button>
+                                </div>
+                                <p class="small text-muted mb-0 mt-2" id="copyFeedback" style="display:none;">Panoya kopyalandı.</p>
+                            </div>
+                        }
 
                         <dl class="row mb-0 small">
                             <dt class="col-sm-4 col-md-3">Durum</dt>
@@ -30,10 +44,10 @@
                         </dl>
 
                         <hr class="my-4" />
-                        <p class="small text-muted mb-3">
-                            Tüm teklifleri karşılaştırmak ve işlemleri yönetmek için hesabınızla giriş yapabilirsiniz.
-                        </p>
-                        <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary">Giriş yap</a>
+                        @if (Model.MisafirKullaniciId.HasValue)
+                        {
+                            <a asp-controller="Home" asp-action="TalepTakip" asp-route-t="@Model.MisafirKullaniciId.Value" class="btn btn-outline-primary">Taleplerim</a>
+                        }
                         <a asp-controller="Home" asp-action="Index" class="btn btn-link">Ana sayfa</a>
                     </div>
                 </div>
@@ -41,3 +55,31 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var btn = document.getElementById('copyTrackingBtn');
+            var field = document.getElementById('trackingLinkField');
+            var fb = document.getElementById('copyFeedback');
+            if (!btn || !field) return;
+            function showFb(ok) {
+                if (!fb) return;
+                fb.style.display = 'block';
+                fb.textContent = ok ? 'Panoya kopyalandı.' : 'Metni elle seçip kopyalayın.';
+            }
+            btn.addEventListener('click', function () {
+                var val = field.value;
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(val).then(function () { showFb(true); }).catch(function () {
+                        field.select();
+                        try { document.execCommand('copy'); showFb(true); } catch (e) { showFb(false); }
+                    });
+                    return;
+                }
+                field.select();
+                try { document.execCommand('copy'); showFb(true); } catch (e2) { showFb(false); }
+            });
+        })();
+    </script>
+}

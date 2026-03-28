@@ -9,7 +9,16 @@
         <div>
             <ol class="breadcrumb mb-1 small text-uppercase">
                 <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Ana Sayfa</a></li>
-                <li class="breadcrumb-item"><a asp-action="Requests">Taleplerim</a></li>
+                <li class="breadcrumb-item">
+                    @if (Model.MisafirKullaniciId.HasValue)
+                    {
+                        <a asp-controller="Home" asp-action="TalepTakip" asp-route-t="@Model.MisafirKullaniciId.Value">Taleplerim</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Requests">Taleplerim</a>
+                    }
+                </li>
                 <li class="breadcrumb-item active">Talep Detayı</li>
             </ol>
             <h3 class="mb-0">Talep Detayı</h3>
@@ -42,9 +51,63 @@
                             <div class="fw-semibold">@Model.Request.ToAddress</div>
                         </div>
                     </div>
+                    <div class="row g-3 mb-3 small">
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="small text-body text-opacity-50 text-uppercase">Ad Soyad</div>
+                            <div class="fw-semibold">@Model.Request.CustomerName</div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="small text-body text-opacity-50 text-uppercase">Telefon</div>
+                            <div class="fw-semibold">@Model.Request.PhoneNumber</div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="small text-body text-opacity-50 text-uppercase">E-posta</div>
+                            <div class="fw-semibold">@(string.IsNullOrWhiteSpace(Model.Request.Email) ? "—" : Model.Request.Email)</div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="small text-body text-opacity-50 text-uppercase">Taşınma tarihi</div>
+                            <div class="fw-semibold">@Model.Request.MoveDate.ToString("dd.MM.yyyy")</div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="small text-body text-opacity-50 text-uppercase">Oda tipi</div>
+                            <div class="fw-semibold">@(string.IsNullOrWhiteSpace(Model.Request.RoomType) ? "—" : Model.Request.RoomType)</div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="small text-body text-opacity-50 text-uppercase">Çıkış katı</div>
+                            <div class="fw-semibold">@(Model.Request.FromFloor.HasValue ? Model.Request.FromFloor.Value.ToString() : "—")</div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="small text-body text-opacity-50 text-uppercase">Varış katı</div>
+                            <div class="fw-semibold">@(Model.Request.ToFloor.HasValue ? Model.Request.ToFloor.Value.ToString() : "—")</div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="small text-body text-opacity-50 text-uppercase">Çıkış adresinde asansör</div>
+                            <div class="fw-semibold">@(Model.Request.FromHasElevator ? "Evet" : "Hayır")</div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="small text-body text-opacity-50 text-uppercase">Varış adresinde asansör</div>
+                            <div class="fw-semibold">@(Model.Request.ToHasElevator ? "Evet" : "Hayır")</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="small text-body text-opacity-50 text-uppercase mb-1">Ek hizmetler</div>
+                        @if (Model.SecilenEkHizmetler.Count == 0)
+                        {
+                            <div class="text-body text-opacity-75">Seçilen ek hizmet yok.</div>
+                        }
+                        else
+                        {
+                            <ul class="mb-0 ps-3">
+                                @foreach (var ad in Model.SecilenEkHizmetler)
+                                {
+                                    <li class="fw-semibold">@ad</li>
+                                }
+                            </ul>
+                        }
+                    </div>
                     <div class="mb-2">
                         <div class="small text-body text-opacity-50 text-uppercase">Notlar</div>
-                        <div class="text-body text-opacity-75">@Model.Request.Notes</div>
+                        <div class="text-body text-opacity-75">@(string.IsNullOrWhiteSpace(Model.Request.Notes) ? "—" : Model.Request.Notes)</div>
                     </div>
                 </div>
             </div>
@@ -76,6 +139,10 @@
                     <form asp-action="Details" method="post" class="mb-0">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="id" value="@Model.Request.Id" />
+                        @if (Model.MisafirKullaniciId.HasValue)
+                        {
+                            <input type="hidden" name="t" value="@Model.MisafirKullaniciId.Value" />
+                        }
 
                         <div class="row g-3 align-items-end">
                             <div class="col-md-6">
@@ -87,8 +154,10 @@
                                     <option value="İptal" selected="@(Model.Request.Status == "İptal" ? "selected" : null)">İptal</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <button type="submit" class="btn btn-theme mt-3 mt-md-0 fw-semibold">Durumu Kaydet</button>
+                            <div class="col-md-auto d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary mt-3 mt-md-0 px-4 py-2 fw-semibold rounded-3 shadow-sm">
+                                    <i class="fas fa-save me-2"></i>Durumu Kaydet
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -160,7 +229,11 @@
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="offerId" value="@offer.Id" />
                                                 <input type="hidden" name="moveRequestId" value="@Model.Request.Id" />
-                                                <button type="submit" class="btn btn-sm btn-theme fw-semibold">Bu teklifi kabul et</button>
+                                                @if (Model.MisafirKullaniciId.HasValue)
+                                                {
+                                                    <input type="hidden" name="t" value="@Model.MisafirKullaniciId.Value" />
+                                                }
+                                                <button type="submit" class="btn btn-sm btn-primary fw-semibold shadow-sm">Bu teklifi kabul et</button>
                                             </form>
                                         }
                                     </div>
@@ -196,6 +269,10 @@
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="MoveRequestId" value="@Model.Request.Id" />
                                 <input type="hidden" name="CarrierId" value="@Model.AcceptedCarrierId" />
+                                @if (Model.MisafirKullaniciId.HasValue)
+                                {
+                                    <input type="hidden" name="t" value="@Model.MisafirKullaniciId.Value" />
+                                }
 
                                 <div class="mb-3">
                                     <label class="form-label">Puanınız (1-5)</label>
@@ -213,7 +290,7 @@
                                     <textarea name="Comment" class="form-control" rows="3" maxlength="1000"></textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-theme fw-semibold">Değerlendirmeyi Kaydet</button>
+                                <button type="submit" class="btn btn-primary px-4 fw-semibold rounded-3 shadow-sm">Değerlendirmeyi Kaydet</button>
                             </form>
                         }
                     </div>
@@ -270,7 +347,14 @@
                         }
                     }
 
-                    <a asp-action="Requests" class="btn btn-outline-secondary fw-semibold mt-auto">Taleplere Dön</a>
+                    @if (Model.MisafirKullaniciId.HasValue)
+                    {
+                        <a asp-controller="Home" asp-action="TalepTakip" asp-route-t="@Model.MisafirKullaniciId.Value" class="btn btn-outline-secondary fw-semibold mt-auto">Taleplerime Dön</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Requests" class="btn btn-outline-secondary fw-semibold mt-auto">Taleplere Dön</a>
+                    }
                 </div>
             </div>
         </div>
