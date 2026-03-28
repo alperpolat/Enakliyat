@@ -616,10 +616,26 @@ public class AdminController : Controller
             .OrderByDescending(o => o.CreatedAt)
             .ToListAsync();
 
+        var photos = await _context.MoveRequestPhotos
+            .AsNoTracking()
+            .Where(p => p.MoveRequestId == id)
+            .OrderBy(p => p.CreatedAt)
+            .ToListAsync();
+
+        var secilenEkHizmetler = await _context.MoveRequestAddOns
+            .AsNoTracking()
+            .Where(m => m.MoveRequestId == id)
+            .Join(_context.AddOnServices.AsNoTracking(), m => m.AddOnServiceId, s => s.Id, (m, s) => s.Name)
+            .Distinct()
+            .OrderBy(n => n)
+            .ToListAsync();
+
         var vm = new AdminRequestDetailsViewModel
         {
             Request = request,
-            Offers = offers
+            Offers = offers,
+            Photos = photos,
+            SecilenEkHizmetler = secilenEkHizmetler
         };
 
         return View(vm);
