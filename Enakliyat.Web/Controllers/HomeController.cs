@@ -147,7 +147,15 @@ public class HomeController : Controller
 
         try
         {
-            if (!model.FromCityId.HasValue || !model.ToCityId.HasValue)
+            var vehicleOnly = string.Equals(model.MoveType, "VehicleOnly", StringComparison.OrdinalIgnoreCase);
+            if (vehicleOnly)
+            {
+                if (!model.ToCityId.HasValue)
+                {
+                    ModelState.AddModelError(string.Empty, "Lütfen aracın geleceği adresi listeden seçin.");
+                }
+            }
+            else if (!model.FromCityId.HasValue || !model.ToCityId.HasValue)
             {
                 ModelState.AddModelError(string.Empty, "Lütfen nereden ve nereye adreslerini listeden seçin.");
             }
@@ -175,8 +183,18 @@ public class HomeController : Controller
                 effectiveUserId = guestUserId.Value;
             }
 
-            var fromAddress = BuildAddress(model.FromCityId, model.FromDistrictId, model.FromNeighborhoodId);
-            var toAddress = BuildAddress(model.ToCityId, model.ToDistrictId, model.ToNeighborhoodId);
+            string fromAddress;
+            string toAddress;
+            if (vehicleOnly)
+            {
+                fromAddress = "Sadece araç — çıkış adresi belirtilmedi";
+                toAddress = BuildAddress(model.ToCityId, model.ToDistrictId, model.ToNeighborhoodId);
+            }
+            else
+            {
+                fromAddress = BuildAddress(model.FromCityId, model.FromDistrictId, model.FromNeighborhoodId);
+                toAddress = BuildAddress(model.ToCityId, model.ToDistrictId, model.ToNeighborhoodId);
+            }
 
             MoveRequest request;
             var isNew = model.MoveRequestId <= 0;
@@ -224,9 +242,9 @@ public class HomeController : Controller
 
             request.FromAddress = fromAddress;
             request.ToAddress = toAddress;
-            request.FromCityId = model.FromCityId;
-            request.FromDistrictId = model.FromDistrictId;
-            request.FromNeighborhoodId = model.FromNeighborhoodId;
+            request.FromCityId = vehicleOnly ? null : model.FromCityId;
+            request.FromDistrictId = vehicleOnly ? null : model.FromDistrictId;
+            request.FromNeighborhoodId = vehicleOnly ? null : model.FromNeighborhoodId;
             request.ToCityId = model.ToCityId;
             request.ToDistrictId = model.ToDistrictId;
             request.ToNeighborhoodId = model.ToNeighborhoodId;
@@ -238,11 +256,22 @@ public class HomeController : Controller
             request.MoveDate = moveStart;
             request.MoveDateEnd = moveEnd.HasValue && moveEnd.Value > moveStart ? moveEnd : null;
             request.MoveType = string.IsNullOrWhiteSpace(model.MoveType) ? "Home" : model.MoveType;
-            request.RoomType = model.RoomType;
-            request.FromFloor = model.FromFloor;
-            request.FromHasElevator = model.FromHasElevator;
-            request.ToFloor = model.ToFloor;
-            request.ToHasElevator = model.ToHasElevator;
+            if (vehicleOnly)
+            {
+                request.RoomType = null;
+                request.FromFloor = null;
+                request.ToFloor = null;
+                request.FromHasElevator = false;
+                request.ToHasElevator = false;
+            }
+            else
+            {
+                request.RoomType = model.RoomType;
+                request.FromFloor = model.FromFloor;
+                request.FromHasElevator = model.FromHasElevator;
+                request.ToFloor = model.ToFloor;
+                request.ToHasElevator = model.ToHasElevator;
+            }
             request.Notes = model.Notes;
             request.Status = "Teklif Bekliyor";
             request.UserId = effectiveUserId;
@@ -1181,6 +1210,7 @@ public class HomeController : Controller
         return moveType.Trim().ToLowerInvariant() switch
         {
             "office" => "Office",
+            "vehicleonly" or "vehicle" => "VehicleOnly",
             "storage" => "Storage",
             "partial" => "Partial",
             "international" => "International",

@@ -180,6 +180,8 @@
     
     .quote-tabs {
         display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
         background: #f1f5f9;
         border-radius: 12px;
         padding: 4px;
@@ -187,8 +189,9 @@
     }
     
     .quote-tab {
-        flex: 1;
-        padding: 0.875rem 1rem;
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 0.875rem 0.65rem;
         border: none;
         background: transparent;
         color: #64748b;
@@ -1166,6 +1169,10 @@
                             <i class="fas fa-building"></i>
                             <span>Ofis</span>
                         </button>
+                        <button class="quote-tab" data-tab="vehicle" type="button">
+                            <i class="fas fa-truck"></i>
+                            <span>Sadece Araç</span>
+                        </button>
                         <button class="quote-tab" data-tab="storage" type="button">
                             <i class="fas fa-warehouse"></i>
                             <span>Depolama</span>
@@ -1787,6 +1794,7 @@
                 const moveTypeMap = {
                     'home': 'Home',
                     'office': 'Office',
+                    'vehicle': 'VehicleOnly',
                     'storage': 'Storage',
                     'partial': 'Partial'
                 };

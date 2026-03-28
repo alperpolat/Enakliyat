@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Teklif Formu";
+    var vehicleOnly = string.Equals(Model.MoveType, "VehicleOnly", StringComparison.OrdinalIgnoreCase);
 }
 
 <style>
@@ -39,7 +40,7 @@
         <div class="row justify-content-center mb-4">
             <div class="col-12 col-lg-10">
                 <h1 class="h4 fw-semibold mb-2">Ücretsiz teklif formu</h1>
-                <p class="text-body-secondary mb-0">Taşıma tipi: <strong>@Model.MoveType</strong></p>
+                <p class="text-body-secondary mb-0">Taşıma tipi: <strong>@(vehicleOnly ? "Sadece Araç" : Model.MoveType)</strong></p>
             </div>
         </div>
 
@@ -55,6 +56,8 @@
                             <div asp-validation-summary="All" class="text-danger small mb-2"></div>
 
                             <div class="row g-3 g-lg-4">
+                                @if (!vehicleOnly)
+                                {
                                 <div class="col-12">
                                     <label class="form-label">Nereden taşınacak?</label>
                                     <div class="position-relative">
@@ -67,8 +70,15 @@
                                         <div id="fromLocationSuggestions" class="location-suggestions" style="display: none;"></div>
                                     </div>
                                 </div>
+                                }
+                                else
+                                {
+                                    <input type="hidden" asp-for="FromCityId" id="fromCityId" />
+                                    <input type="hidden" asp-for="FromDistrictId" id="fromDistrictId" />
+                                    <input type="hidden" asp-for="FromNeighborhoodId" id="fromNeighborhoodId" />
+                                }
                                 <div class="col-12">
-                                    <label class="form-label">Nereye taşınacak?</label>
+                                    <label class="form-label">@(vehicleOnly ? "Araç nereye gelecek?" : "Nereye taşınacak?")</label>
                                     <div class="position-relative">
                                         <i class="fas fa-flag-checkered position-absolute text-muted" style="left:1rem; top:50%; transform:translateY(-50%); z-index:1; pointer-events:none;"></i>
                                         <input type="text" class="form-control form-control-lg ps-5" id="toLocationText"
@@ -97,11 +107,11 @@
                                     <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label" for="moveDateRangeDisplay">Taşınma tarihi</label>
+                                    <label class="form-label" for="moveDateRangeDisplay" id="moveDateRangeLabel">@(vehicleOnly ? "Araç Kiralama Tarihi" : "Taşınma tarihi")</label>
                                     <div class="position-relative">
                                         <i class="fas fa-calendar-alt position-absolute text-muted" style="left:1rem; top:50%; transform:translateY(-50%); z-index:2; pointer-events:none;"></i>
                                         <input type="text" class="form-control form-control-lg ps-5" id="moveDateRangeDisplay"
-                                               placeholder="Başlangıç ve bitiş seçin" autocomplete="off" readonly />
+                                               placeholder="@(vehicleOnly ? "Kiralama dönemi seçin" : "Başlangıç ve bitiş seçin")" autocomplete="off" readonly />
                                     </div>
                                     <div class="form-text">Tek gün: aynı güne iki kez tıklayın veya yalnızca bir gün seçip uygulayın.</div>
                                     <input type="hidden" asp-for="MoveDate" id="offerMoveDate" asp-format="{0:yyyy-MM-dd}" />
@@ -110,6 +120,8 @@
                                     <span asp-validation-for="MoveDateEnd" class="text-danger"></span>
                                 </div>
 
+                                @if (!vehicleOnly)
+                                {
                                 <div class="col-md-6">
                                     <label asp-for="RoomType" class="form-label" id="roomTypeLabel">Oda tipi seçin</label>
                                     <select asp-for="RoomType" class="form-select form-select-lg" id="roomTypeSelect">
@@ -142,19 +154,23 @@
                                         <label class="form-check-label" asp-for="ToHasElevator">Varış adresinde asansör var</label>
                                     </div>
                                 </div>
+                                }
 
                                 <div class="col-12">
-                                    <label asp-for="Notes" class="form-label" id="notesLabel">Taşınma detaylarını girin</label>
-                                    <textarea asp-for="Notes" class="form-control" rows="4" id="notesTextarea" placeholder="Eşyaların tarifleri, asansör ihtiyacı, araç yanaşabilme imkanı vb."></textarea>
+                                    <label asp-for="Notes" class="form-label" id="notesLabel">@(vehicleOnly ? "Detay" : "Taşınma detaylarını girin")</label>
+                                    <textarea asp-for="Notes" class="form-control" rows="4" id="notesTextarea" placeholder="@(vehicleOnly ? "Araç tipi, kasa hacmi, süre, özel istekler vb." : "Eşyaların tarifleri, asansör ihtiyacı, araç yanaşabilme imkanı vb.")"></textarea>
                                     <span asp-validation-for="Notes" class="text-danger"></span>
                                 </div>
 
+                                @if (!vehicleOnly)
+                                {
                                 <div class="col-12">
                                     <label class="form-label">Eşyalarınızın Fotoğrafları (isteğe bağlı)</label>
                                     <input asp-for="Photos" type="file" class="form-control" multiple />
                                 </div>
+                                }
 
-                                @if (ViewBag.AddOnServices != null)
+                                @if (!vehicleOnly && ViewBag.AddOnServices != null)
                                 {
                                     <div class="col-12">
                                         <hr />
@@ -229,10 +245,21 @@
             const roomSelect = document.getElementById('roomTypeSelect');
             const notesLabel = document.getElementById('notesLabel');
             const notesTextarea = document.getElementById('notesTextarea');
+            const dateLabel = document.getElementById('moveDateRangeLabel');
+            const dateDisplay = document.getElementById('moveDateRangeDisplay');
+
+            if (moveType === 'vehicleonly') {
+                if (dateLabel) dateLabel.textContent = 'Araç Kiralama Tarihi';
+                if (dateDisplay) dateDisplay.setAttribute('placeholder', 'Kiralama dönemi seçin');
+                if (notesLabel) notesLabel.textContent = 'Detay';
+                if (notesTextarea) {
+                    notesTextarea.setAttribute('placeholder', 'Araç tipi, kasa hacmi, süre, özel istekler vb.');
+                }
+                return;
+            }
 
             if (!roomLabel || !roomSelect || !notesLabel || !notesTextarea) return;
 
-            // Varsayılan: Ev taşıma
             let roomText = 'Oda tipi seçin';
             let notesText = 'Taşınma detaylarını girin';
             let notesPlaceholder = 'Eşyaların tarifleri, asansör ihtiyacı, araç yanaşabilme imkanı vb.';
@@ -356,7 +383,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            setupLocationAutocomplete('fromLocationText', 'fromLocationSuggestions', 'fromCityId', 'fromDistrictId', 'fromNeighborhoodId');
+            if (document.getElementById('fromLocationText')) {
+                setupLocationAutocomplete('fromLocationText', 'fromLocationSuggestions', 'fromCityId', 'fromDistrictId', 'fromNeighborhoodId');
+            }
             setupLocationAutocomplete('toLocationText', 'toLocationSuggestions', 'toCityId', 'toDistrictId', 'toNeighborhoodId');
 
             var displayEl = document.getElementById('moveDateRangeDisplay');
