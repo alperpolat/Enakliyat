@@ -16,7 +16,7 @@ public static class DataSeeder
         {
             var admin = new User
             {
-                Email = "admin@enakliyat.local",
+                Email = "admin@ibo.com",
                 Password = PasswordHasher.Hash("Admin123!"),
                 IsAdmin = true
             };
@@ -24,314 +24,316 @@ public static class DataSeeder
             context.Users.Add(admin);
             await context.SaveChangesAsync();
         }
+        #region test
 
-        if (!context.Users.Any(u => !u.IsAdmin))
-        {
-            var user = new User
-            {
-                Email = "user@enakliyat.local",
-                Password = PasswordHasher.Hash("User123!"),
-                IsAdmin = false
-            };
+        //if (!context.Users.Any(u => !u.IsAdmin))
+        //{
+        //    var user = new User
+        //    {
+        //        Email = "user@enakliyat.local",
+        //        Password = PasswordHasher.Hash("User123!"),
+        //        IsAdmin = false
+        //    };
 
-            context.Users.Add(user);
-            await context.SaveChangesAsync();
-        }
+        //    context.Users.Add(user);
+        //    await context.SaveChangesAsync();
+        //}
 
-        if (!context.Carriers.Any())
-        {
-            // İstanbul'dan bir district al (varsa)
-            var istanbulDistrict = await context.Districts
-                .Include(d => d.City)
-                .Where(d => d.City.Name == "İstanbul")
-                .FirstOrDefaultAsync();
+        //if (!context.Carriers.Any())
+        //{
+        //    // İstanbul'dan bir district al (varsa)
+        //    var istanbulDistrict = await context.Districts
+        //        .Include(d => d.City)
+        //        .Where(d => d.City.Name == "İstanbul")
+        //        .FirstOrDefaultAsync();
 
-            var carrier = new Carrier
-            {
-                Name = "Demo Nakliyeci",
-                CompanyName = "Demo Nakliyat",
-                PhoneNumber = "+90 555 000 0000",
-                LandlinePhone = "+90 212 000 0000",
-                Email = "carrier@enakliyat.local",
-                Website = "https://demo-nakliyat.com",
-                DistrictId = istanbulDistrict?.Id,
-                LicenseNumber = "YETKI-DEMO-001",
-                VehicleInfo = "3+1 kamyon, 2 personel",
-                ServiceAreas = "İstanbul, Ankara",
-                Description = "Demo amaçlı onaylı nakliyeci.",
-                TaxOffice = "Beşiktaş Vergi Dairesi",
-                TaxNumber = "1234567890",
-                InvoiceAddress = "İstanbul, Beşiktaş, Demo Mahallesi, Demo Sokak No:1",
-                IsApproved = true,
-                IsRejected = false
-            };
+        //    var carrier = new Carrier
+        //    {
+        //        Name = "Demo Nakliyeci",
+        //        CompanyName = "Demo Nakliyat",
+        //        PhoneNumber = "+90 555 000 0000",
+        //        LandlinePhone = "+90 212 000 0000",
+        //        Email = "carrier@enakliyat.local",
+        //        Website = "https://demo-nakliyat.com",
+        //        DistrictId = istanbulDistrict?.Id,
+        //        LicenseNumber = "YETKI-DEMO-001",
+        //        VehicleInfo = "3+1 kamyon, 2 personel",
+        //        ServiceAreas = "İstanbul, Ankara",
+        //        Description = "Demo amaçlı onaylı nakliyeci.",
+        //        TaxOffice = "Beşiktaş Vergi Dairesi",
+        //        TaxNumber = "1234567890",
+        //        InvoiceAddress = "İstanbul, Beşiktaş, Demo Mahallesi, Demo Sokak No:1",
+        //        IsApproved = true,
+        //        IsRejected = false
+        //    };
 
-            await context.Carriers.AddAsync(carrier);
-            await context.SaveChangesAsync();
+        //    await context.Carriers.AddAsync(carrier);
+        //    await context.SaveChangesAsync();
 
-            var carrierUser = new CarrierUser
-            {
-                Email = "carrier@enakliyat.local",
-                Password = PasswordHasher.Hash("Carrier123!"),
-                CarrierId = carrier.Id
-            };
+        //    var carrierUser = new CarrierUser
+        //    {
+        //        Email = "carrier@enakliyat.local",
+        //        Password = PasswordHasher.Hash("Carrier123!"),
+        //        CarrierId = carrier.Id
+        //    };
 
-            await context.CarrierUsers.AddAsync(carrierUser);
-            await context.SaveChangesAsync();
-        }
+        //    await context.CarrierUsers.AddAsync(carrierUser);
+        //    await context.SaveChangesAsync();
+        //}
+        #endregion
     }
+    #region fakedata
+    //public static async Task SeedFakeDataAsync(EnakliyatDbContext context)
+    //{
+    //    // Kullanıcılar (normal)
+    //    if (!context.Users.Any(u => !u.IsAdmin))
+    //    {
+    //        var fakeUsers = new List<User>();
+    //        for (int i = 1; i <= 60; i++)
+    //        {
+    //            fakeUsers.Add(new User
+    //            {
+    //                Name = $"Kullanıcı {i}",
+    //                PhoneNumber = $"+90 555 000 {i:0000}",
+    //                Email = $"user{i}@roadofhome.test",
+    //                Password = PasswordHasher.Hash("User123!"),
+    //                IsAdmin = false
+    //            });
+    //        }
 
-    public static async Task SeedFakeDataAsync(EnakliyatDbContext context)
-    {
-        // Kullanıcılar (normal)
-        if (!context.Users.Any(u => !u.IsAdmin))
-        {
-            var fakeUsers = new List<User>();
-            for (int i = 1; i <= 60; i++)
-            {
-                fakeUsers.Add(new User
-                {
-                    Name = $"Kullanıcı {i}",
-                    PhoneNumber = $"+90 555 000 {i:0000}",
-                    Email = $"user{i}@roadofhome.test",
-                    Password = PasswordHasher.Hash("User123!"),
-                    IsAdmin = false
-                });
-            }
+    //        await context.Users.AddRangeAsync(fakeUsers);
+    //        await context.SaveChangesAsync();
+    //    }
 
-            await context.Users.AddRangeAsync(fakeUsers);
-            await context.SaveChangesAsync();
-        }
+    //    // 50 nakliyeci
+    //    if (context.Carriers.Count() < 50)
+    //    {
+    //        var existingCarrierCount = context.Carriers.Count();
+    //        var carriersToCreate = 50 - existingCarrierCount;
 
-        // 50 nakliyeci
-        if (context.Carriers.Count() < 50)
-        {
-            var existingCarrierCount = context.Carriers.Count();
-            var carriersToCreate = 50 - existingCarrierCount;
+    //        // Rastgele district'ler al
+    //        var districts = await context.Districts
+    //            .Include(d => d.City)
+    //            .Where(d => d.City.Name == "İstanbul" || d.City.Name == "Ankara" || d.City.Name == "İzmir")
+    //            .ToListAsync();
+    //        var random = new Random();
 
-            // Rastgele district'ler al
-            var districts = await context.Districts
-                .Include(d => d.City)
-                .Where(d => d.City.Name == "İstanbul" || d.City.Name == "Ankara" || d.City.Name == "İzmir")
-                .ToListAsync();
-            var random = new Random();
+    //        var newCarriers = new List<Carrier>();
+    //        for (int i = 1; i <= carriersToCreate; i++)
+    //        {
+    //            int index = existingCarrierCount + i;
+    //            var district = districts.Any() ? districts[random.Next(districts.Count)] : null;
 
-            var newCarriers = new List<Carrier>();
-            for (int i = 1; i <= carriersToCreate; i++)
-            {
-                int index = existingCarrierCount + i;
-                var district = districts.Any() ? districts[random.Next(districts.Count)] : null;
-                
-                newCarriers.Add(new Carrier
-                {
-                    Name = $"Nakliyeci {index}",
-                    CompanyName = $"Road of Home Taşımacılık #{index}",
-                    PhoneNumber = $"+90 532 000 {index:0000}",
-                    LandlinePhone = $"+90 212 {random.Next(200, 999)} {random.Next(1000, 9999)}",
-                    Email = $"carrier{index}@roadofhome.test",
-                    Website = index % 3 == 0 ? $"https://nakliyeci{index}.com" : null,
-                    DistrictId = district?.Id,
-                    LicenseNumber = $"YETKI-{index:0000}",
-                    VehicleInfo = "1 kamyon, 3 personel",
-                    ServiceAreas = "İstanbul, Ankara, İzmir",
-                    Description = "Test amaçlı eklenen demo nakliyeci.",
-                    TaxOffice = district != null ? $"{district.Name} Vergi Dairesi" : "Beşiktaş Vergi Dairesi",
-                    TaxNumber = $"{random.Next(100000000, 999999999)}",
-                    InvoiceAddress = district != null 
-                        ? $"{district.City.Name}, {district.Name}, Demo Mahallesi, Demo Sokak No:{index}"
-                        : "İstanbul, Beşiktaş, Demo Mahallesi, Demo Sokak No:1",
-                    IsApproved = true,
-                    IsRejected = false,
-                    IsSuspended = false,
-                    AverageRating = 4.2,
-                    ReviewCount = 0
-                });
-            }
+    //            newCarriers.Add(new Carrier
+    //            {
+    //                Name = $"Nakliyeci {index}",
+    //                CompanyName = $"Road of Home Taşımacılık #{index}",
+    //                PhoneNumber = $"+90 532 000 {index:0000}",
+    //                LandlinePhone = $"+90 212 {random.Next(200, 999)} {random.Next(1000, 9999)}",
+    //                Email = $"carrier{index}@roadofhome.test",
+    //                Website = index % 3 == 0 ? $"https://nakliyeci{index}.com" : null,
+    //                DistrictId = district?.Id,
+    //                LicenseNumber = $"YETKI-{index:0000}",
+    //                VehicleInfo = "1 kamyon, 3 personel",
+    //                ServiceAreas = "İstanbul, Ankara, İzmir",
+    //                Description = "Test amaçlı eklenen demo nakliyeci.",
+    //                TaxOffice = district != null ? $"{district.Name} Vergi Dairesi" : "Beşiktaş Vergi Dairesi",
+    //                TaxNumber = $"{random.Next(100000000, 999999999)}",
+    //                InvoiceAddress = district != null 
+    //                    ? $"{district.City.Name}, {district.Name}, Demo Mahallesi, Demo Sokak No:{index}"
+    //                    : "İstanbul, Beşiktaş, Demo Mahallesi, Demo Sokak No:1",
+    //                IsApproved = true,
+    //                IsRejected = false,
+    //                IsSuspended = false,
+    //                AverageRating = 4.2,
+    //                ReviewCount = 0
+    //            });
+    //        }
 
-            await context.Carriers.AddRangeAsync(newCarriers);
-            await context.SaveChangesAsync();
+    //        await context.Carriers.AddRangeAsync(newCarriers);
+    //        await context.SaveChangesAsync();
 
-            // Her carrier için bir CarrierUser
-            var carrierUsers = new List<CarrierUser>();
-            foreach (var carrier in newCarriers)
-            {
-                carrierUsers.Add(new CarrierUser
-                {
-                    Email = carrier.Email ?? $"carrier{carrier.Id}@roadofhome.test",
-                    Password = PasswordHasher.Hash("Carrier123!"),
-                    CarrierId = carrier.Id
-                });
-            }
+    //        // Her carrier için bir CarrierUser
+    //        var carrierUsers = new List<CarrierUser>();
+    //        foreach (var carrier in newCarriers)
+    //        {
+    //            carrierUsers.Add(new CarrierUser
+    //            {
+    //                Email = carrier.Email ?? $"carrier{carrier.Id}@roadofhome.test",
+    //                Password = PasswordHasher.Hash("Carrier123!"),
+    //                CarrierId = carrier.Id
+    //            });
+    //        }
 
-            await context.CarrierUsers.AddRangeAsync(carrierUsers);
-            await context.SaveChangesAsync();
-        }
+    //        await context.CarrierUsers.AddRangeAsync(carrierUsers);
+    //        await context.SaveChangesAsync();
+    //    }
 
-        // İşler (MoveRequest + Offer)
-        if (!context.MoveRequests.Any())
-        {
-            var moveTypes = new[] { "Ev", "Parça", "Ofis", "Depolama" };
-            var statuses = new[] { "Yeni", "Teklif Bekliyor", "Planlandı", "Tamamlandı", "İptal Edildi" };
-            var offerStatuses = new[] { "Beklemede", "Kabul Edildi", "Reddedildi" };
+    //    // İşler (MoveRequest + Offer)
+    //    if (!context.MoveRequests.Any())
+    //    {
+    //        var moveTypes = new[] { "Ev", "Parça", "Ofis", "Depolama" };
+    //        var statuses = new[] { "Yeni", "Teklif Bekliyor", "Planlandı", "Tamamlandı", "İptal Edildi" };
+    //        var offerStatuses = new[] { "Beklemede", "Kabul Edildi", "Reddedildi" };
 
-            var users = context.Users.Where(u => !u.IsAdmin).ToList();
-            var carriers = context.Carriers.Take(50).ToList();
+    //        var users = context.Users.Where(u => !u.IsAdmin).ToList();
+    //        var carriers = context.Carriers.Take(50).ToList();
 
-            if (users.Count == 0 || carriers.Count == 0)
-            {
-                return;
-            }
+    //        if (users.Count == 0 || carriers.Count == 0)
+    //        {
+    //            return;
+    //        }
 
-            var random = new Random();
-            var moveRequests = new List<MoveRequest>();
-            var offers = new List<Offer>();
-            var contracts = new List<Contract>();
-            var payments = new List<Payment>();
-            var reviews = new List<Review>();
+    //        var random = new Random();
+    //        var moveRequests = new List<MoveRequest>();
+    //        var offers = new List<Offer>();
+    //        var contracts = new List<Contract>();
+    //        var payments = new List<Payment>();
+    //        var reviews = new List<Review>();
 
-            foreach (var carrier in carriers)
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    var user = users[random.Next(users.Count)];
-                    var moveType = moveTypes[(i + carrier.Id) % moveTypes.Length];
-                    // Statüleri dengeli dağıtmak için index'e göre cycyle
-                    var status = statuses[(i + carrier.Id) % statuses.Length];
-                    var daysOffset = random.Next(-30, 30);
+    //        foreach (var carrier in carriers)
+    //        {
+    //            for (int i = 0; i < 10; i++)
+    //            {
+    //                var user = users[random.Next(users.Count)];
+    //                var moveType = moveTypes[(i + carrier.Id) % moveTypes.Length];
+    //                // Statüleri dengeli dağıtmak için index'e göre cycyle
+    //                var status = statuses[(i + carrier.Id) % statuses.Length];
+    //                var daysOffset = random.Next(-30, 30);
 
-                    var request = new MoveRequest
-                    {
-                        CustomerName = user.Name != string.Empty ? user.Name : $"Müşteri {user.Id}",
-                        PhoneNumber = string.IsNullOrWhiteSpace(user.PhoneNumber) ? "+90 555 111 1111" : user.PhoneNumber,
-                        Email = user.Email,
-                        FromAddress = "İstanbul, Beşiktaş",
-                        ToAddress = "Ankara, Çankaya",
-                        MoveDate = DateTime.UtcNow.AddDays(daysOffset),
-                        Notes = "Demo veri - otomatik oluşturulmuş taşıma isteği.",
-                        MoveType = moveType,
-                        Status = status,
-                        FromFloor = random.Next(1, 6),
-                        FromHasElevator = random.NextDouble() > 0.5,
-                        ToFloor = random.Next(1, 6),
-                        ToHasElevator = random.NextDouble() > 0.5,
-                        RoomType = moveType == "Ev" ? "3+1" : null,
-                        UserId = user.Id
-                    };
+    //                var request = new MoveRequest
+    //                {
+    //                    CustomerName = user.Name != string.Empty ? user.Name : $"Müşteri {user.Id}",
+    //                    PhoneNumber = string.IsNullOrWhiteSpace(user.PhoneNumber) ? "+90 555 111 1111" : user.PhoneNumber,
+    //                    Email = user.Email,
+    //                    FromAddress = "İstanbul, Beşiktaş",
+    //                    ToAddress = "Ankara, Çankaya",
+    //                    MoveDate = DateTime.UtcNow.AddDays(daysOffset),
+    //                    Notes = "Demo veri - otomatik oluşturulmuş taşıma isteği.",
+    //                    MoveType = moveType,
+    //                    Status = status,
+    //                    FromFloor = random.Next(1, 6),
+    //                    FromHasElevator = random.NextDouble() > 0.5,
+    //                    ToFloor = random.Next(1, 6),
+    //                    ToHasElevator = random.NextDouble() > 0.5,
+    //                    RoomType = moveType == "Ev" ? "3+1" : null,
+    //                    UserId = user.Id
+    //                };
 
-                    moveRequests.Add(request);
+    //                moveRequests.Add(request);
 
-                    var priceBase = moveType switch
-                    {
-                        "Ev" => 6000,
-                        "Parça" => 1500,
-                        "Ofis" => 8000,
-                        "Depolama" => 2500,
-                        _ => 5000
-                    };
+    //                var priceBase = moveType switch
+    //                {
+    //                    "Ev" => 6000,
+    //                    "Parça" => 1500,
+    //                    "Ofis" => 8000,
+    //                    "Depolama" => 2500,
+    //                    _ => 5000
+    //                };
 
-                    var offer = new Offer
-                    {
-                        CarrierId = carrier.Id,
-                        MoveRequest = request,
-                        Price = priceBase + random.Next(0, 3000),
-                        Note = "Demo teklif - sistem testi için hazırlanmıştır.",
-                        Status = offerStatuses[random.Next(offerStatuses.Length)]
-                    };
+    //                var offer = new Offer
+    //                {
+    //                    CarrierId = carrier.Id,
+    //                    MoveRequest = request,
+    //                    Price = priceBase + random.Next(0, 3000),
+    //                    Note = "Demo teklif - sistem testi için hazırlanmıştır.",
+    //                    Status = offerStatuses[random.Next(offerStatuses.Length)]
+    //                };
 
-                    offers.Add(offer);
+    //                offers.Add(offer);
 
-                    // Tamamlanan işlere sözleşme ve %10 kapora ödemesi ekle
-                    if (status == "Tamamlandı")
-                    {
-                        var contract = new Contract
-                        {
-                            MoveRequest = request,
-                            Offer = offer,
-                            ContractNumber = $"CNT-{request.Id}-{carrier.Id}",
-                            IsInsuranceIncluded = random.NextDouble() > 0.3,
-                            InsuranceCompany = "Demo Sigorta",
-                            PolicyNumber = $"POL-{random.Next(100000, 999999)}",
-                            CoverageDescription = "Demo taşınma sigortası",
-                            CoverageAmount = offer.Price * 2
-                        };
-                        contracts.Add(contract);
+    //                // Tamamlanan işlere sözleşme ve %10 kapora ödemesi ekle
+    //                if (status == "Tamamlandı")
+    //                {
+    //                    var contract = new Contract
+    //                    {
+    //                        MoveRequest = request,
+    //                        Offer = offer,
+    //                        ContractNumber = $"CNT-{request.Id}-{carrier.Id}",
+    //                        IsInsuranceIncluded = random.NextDouble() > 0.3,
+    //                        InsuranceCompany = "Demo Sigorta",
+    //                        PolicyNumber = $"POL-{random.Next(100000, 999999)}",
+    //                        CoverageDescription = "Demo taşınma sigortası",
+    //                        CoverageAmount = offer.Price * 2
+    //                    };
+    //                    contracts.Add(contract);
 
-                        var payment = new Payment
-                        {
-                            Contract = contract,
-                            Amount = Math.Round(offer.Price * 0.10m, 2),
-                            Currency = "TRY",
-                            Status = PaymentStatus.Paid,
-                            Method = PaymentMethod.Card,
-                            ExternalReference = $"DEMO-{Guid.NewGuid():N}".Substring(0, 20)
-                        };
-                        payments.Add(payment);
-                    }
+    //                    var payment = new Payment
+    //                    {
+    //                        Contract = contract,
+    //                        Amount = Math.Round(offer.Price * 0.10m, 2),
+    //                        Currency = "TRY",
+    //                        Status = PaymentStatus.Paid,
+    //                        Method = PaymentMethod.Card,
+    //                        ExternalReference = $"DEMO-{Guid.NewGuid():N}".Substring(0, 20)
+    //                    };
+    //                    payments.Add(payment);
+    //                }
 
-                    // Bazı tamamlanan işler için kullanıcı yorumu oluşturalım
-                    if (status == "Tamamlandı" && random.NextDouble() > 0.3)
-                    {
-                        var rating = random.Next(4, 6); // 4-5 arası
-                        var commentOptions = new[]
-                        {
-                            "Ekip zamanında geldi, eşyalar sorunsuz taşındı.",
-                            "İletişim ve paketleme çok iyiydi, tavsiye ederim.",
-                            "Fiyat / performans olarak oldukça memnun kaldım.",
-                            "Ufak tefek aksaklıklar dışında genel olarak iyiydi.",
-                            "Beklentimi karşıladı, tekrar taşınsam yine çalışırım."
-                        };
-                        var review = new Review
-                        {
-                            MoveRequest = request,
-                            CarrierId = carrier.Id,
-                            UserId = user.Id,
-                            Rating = rating,
-                            Comment = commentOptions[random.Next(commentOptions.Length)]
-                        };
-                        reviews.Add(review);
-                    }
-                }
-            }
+    //                // Bazı tamamlanan işler için kullanıcı yorumu oluşturalım
+    //                if (status == "Tamamlandı" && random.NextDouble() > 0.3)
+    //                {
+    //                    var rating = random.Next(4, 6); // 4-5 arası
+    //                    var commentOptions = new[]
+    //                    {
+    //                        "Ekip zamanında geldi, eşyalar sorunsuz taşındı.",
+    //                        "İletişim ve paketleme çok iyiydi, tavsiye ederim.",
+    //                        "Fiyat / performans olarak oldukça memnun kaldım.",
+    //                        "Ufak tefek aksaklıklar dışında genel olarak iyiydi.",
+    //                        "Beklentimi karşıladı, tekrar taşınsam yine çalışırım."
+    //                    };
+    //                    var review = new Review
+    //                    {
+    //                        MoveRequest = request,
+    //                        CarrierId = carrier.Id,
+    //                        UserId = user.Id,
+    //                        Rating = rating,
+    //                        Comment = commentOptions[random.Next(commentOptions.Length)]
+    //                    };
+    //                    reviews.Add(review);
+    //                }
+    //            }
+    //        }
 
-            await context.MoveRequests.AddRangeAsync(moveRequests);
-            await context.Offers.AddRangeAsync(offers);
-            if (contracts.Any())
-            {
-                await context.Contracts.AddRangeAsync(contracts);
-            }
-            if (payments.Any())
-            {
-                await context.Payments.AddRangeAsync(payments);
-            }
-            if (reviews.Any())
-            {
-                await context.Reviews.AddRangeAsync(reviews);
-            }
-            await context.SaveChangesAsync();
+    //        await context.MoveRequests.AddRangeAsync(moveRequests);
+    //        await context.Offers.AddRangeAsync(offers);
+    //        if (contracts.Any())
+    //        {
+    //            await context.Contracts.AddRangeAsync(contracts);
+    //        }
+    //        if (payments.Any())
+    //        {
+    //            await context.Payments.AddRangeAsync(payments);
+    //        }
+    //        if (reviews.Any())
+    //        {
+    //            await context.Reviews.AddRangeAsync(reviews);
+    //        }
+    //        await context.SaveChangesAsync();
 
-            // Carrier ortalama puan ve review sayısını güncelle
-            if (reviews.Any())
-            {
-                var ratingsByCarrier = reviews
-                    .GroupBy(r => r.CarrierId)
-                    .Select(g => new { CarrierId = g.Key, Avg = g.Average(r => r.Rating), Count = g.Count() })
-                    .ToList();
+    //        // Carrier ortalama puan ve review sayısını güncelle
+    //        if (reviews.Any())
+    //        {
+    //            var ratingsByCarrier = reviews
+    //                .GroupBy(r => r.CarrierId)
+    //                .Select(g => new { CarrierId = g.Key, Avg = g.Average(r => r.Rating), Count = g.Count() })
+    //                .ToList();
 
-                var affectedCarrierIds = ratingsByCarrier.Select(x => x.CarrierId).ToList();
-                var affectedCarriers = context.Carriers.Where(c => affectedCarrierIds.Contains(c.Id)).ToList();
+    //            var affectedCarrierIds = ratingsByCarrier.Select(x => x.CarrierId).ToList();
+    //            var affectedCarriers = context.Carriers.Where(c => affectedCarrierIds.Contains(c.Id)).ToList();
 
-                foreach (var c in affectedCarriers)
-                {
-                    var stats = ratingsByCarrier.First(x => x.CarrierId == c.Id);
-                    c.AverageRating = stats.Avg;
-                    c.ReviewCount = stats.Count;
-                }
+    //            foreach (var c in affectedCarriers)
+    //            {
+    //                var stats = ratingsByCarrier.First(x => x.CarrierId == c.Id);
+    //                c.AverageRating = stats.Avg;
+    //                c.ReviewCount = stats.Count;
+    //            }
 
-                await context.SaveChangesAsync();
-            }
-        }
-    }
-
+    //            await context.SaveChangesAsync();
+    //        }
+    //    }
+    //}
+    #endregion
     public static async Task SeedSystemSettingsAsync(EnakliyatDbContext context)
     {
         if (context.SystemSettings.Any())

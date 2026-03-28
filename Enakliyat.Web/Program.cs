@@ -198,7 +198,7 @@ app.UseMiddleware<Enakliyat.Web.Middleware.GlobalExceptionHandlerMiddleware>();
            try
            {
                Log.Information("Fake data seed işlemi başlatılıyor...");
-               await DataSeeder.SeedFakeDataAsync(context);
+               //await DataSeeder.SeedFakeDataAsync(context);
                Log.Information("Fake data seed tamamlandı.");
            }
            catch (Exception ex)
